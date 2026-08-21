@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login | Smart Attendance System</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+</head>
+<body>
+    <div class="login-page">
+        <a href="index.html" class="back-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Back to Home
+        </a>
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-icon student"><i class="fa-solid fa-user-graduate"></i></div>
+                <h2>Student Login</h2>
+                
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Roll Number</label>
+                    <input type="text" class="form-input" id="roll" placeholder="e.g. CS2024001" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" id="name" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="password-wrap">
+                        <input type="password" class="form-input" id="password" placeholder="Enter password" required>
+                        <button type="button" class="toggle-pass" onclick="togglePass()"><i class="fa-solid fa-eye-slash"></i></button>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label><input type="checkbox"> Remember me</label>
+                    <a href="#">Forgot password?</a>
+                </div>
+                <button type="submit" class="login-btn" id="submitBtn">
+                    <span class="btn-text">Sign In</span>
+                    <span class="loader"><span></span><span></span><span></span></span>
+                </button>
+            </form>
+            <div class="divider"><span>or</span></div>
+            <p class="switch-text">Are you a teacher? <a href="teacher-login.html">Login as Teacher</a></p>
+       
+        </div>
+    </div>
+    <script src="config.js"></script>
+    <script src="common.js"></script>
+    <script src="student-login.js"></script>
+</body>
+</html>

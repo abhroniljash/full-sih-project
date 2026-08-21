@@ -1,0 +1,23 @@
+{
+  "name": "smart-attendance-backend",
+  "version": "1.0.0",
+  "description": "Backend API for the Smart Attendance System (Smart India Hackathon project) — replaces the localStorage/sessionStorage mock data layer used by index.js, student-*.js and teacher-*.js with a real REST API.",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed": "node src/utils/seed.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "express-rate-limit": "^7.4.0"
+  }
+}
