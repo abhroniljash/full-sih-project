@@ -29,7 +29,7 @@ input, button, textarea, select { font-family: inherit; outline: none; }
     
 }
 .sidebar-head {
-    width: 500px;
+    width: 200px;
     height: 50px;
     background-image: url('logo.jpeg');
     background-size: contain; 
@@ -37,8 +37,8 @@ input, button, textarea, select { font-family: inherit; outline: none; }
     background-position: left center;
     animation: changeLogo 4s infinite;
     margin-bottom: 30px;
-    margin-left: 10px;
-    margin-top: 5px;
+    margin-left: 20px;
+    margin-top: 15px;
 }
 
 @keyframes changeLogo {
@@ -432,23 +432,16 @@ table .text-blue { color: #4f46e5; font-weight: 600; }
 .chart-card .card-body {
     height: 280px;
     position: relative;
-    
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .chart-card canvas {
     max-height: 100% !important;
-    width: 550px;
-    
-}
-#weeklyChart{
-    padding-left: 80px;
-}
-#participationChart{
-   margin-left: 45px;
-
-}
-
-.card chart-card{
-    width: 800px;
+    max-width: 100% !important;
+    width: auto !important;
+    height: auto !important;
 }
     
 
@@ -527,3 +520,35 @@ table .text-blue { color: #4f46e5; font-weight: 600; }
 @keyframes checkPop { 0% { transform: scale(0); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
 
 .face-btn-group { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+/* Responsive Adjustments for Mobile */
+@media (max-width: 768px) {
+    .dash-layout { flex-direction: column; }
+    .sidebar { transform: translateX(-100%); z-index: 1000; }
+    .sidebar.open { transform: translateX(0); }
+    .main-area { margin-left: 0; width: 100%; }
+    .topbar { padding: 12px; }
+    .content { padding: 12px; width: 100%; overflow-x: hidden; }
+    
+    .stats-row { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+    .chart-row { grid-template-columns: 1fr; gap: 10px; }
+    .live-split { grid-template-columns: 1fr; }
+    
+    .card-head { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .card-head .btn, .card-head button { align-self: flex-start; }
+    
+    .filter-row { flex-direction: column; align-items: stretch; }
+    .filter-row .form-input, .filter-row select.form-input { min-width: 100%; width: 100%; }
+    
+    .table-wrap { overflow-x: auto; width: 100%; max-width: 100vw; -webkit-overflow-scrolling: touch; }
+    .data-table th, .data-table td { white-space: nowrap; }
+    
+    .action-btns { display: flex; flex-direction: column; gap: 5px; }
+    
+    .face-circle-frame { width: 200px; height: 200px; }
+    .progress-ring { width: 200px; height: 200px; }
+    .face-video-clip { width: 180px; height: 180px; top: 10px; left: 10px; }
+    
+    #weeklyChart { padding-left: 0 !important; margin-left: 0 !important; }
+    #participationChart { margin-left: 0 !important; }
+}
