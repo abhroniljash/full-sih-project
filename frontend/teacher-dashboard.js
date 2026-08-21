@@ -589,7 +589,7 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(label => {
             ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             
-            capturedDescriptor = descriptor;
+            capturedDescriptor = Array.from(descriptor);
             capturedImageBase64 = canvas.toDataURL('image/jpeg', 0.8);
             
             submitBtn.disabled = false;
