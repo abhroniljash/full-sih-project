@@ -1,7 +1,8 @@
 // --- Backend API configuration ---
-// Change this if your backend runs somewhere other than localhost:5000
-// (e.g. deployed URL) or if you're serving the frontend from a different origin.
-var API_BASE = 'http://localhost:5000/api';
+// Use the current origin if deployed, otherwise fallback to localhost:5000 for local dev
+var API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' && window.location.port === '5500' 
+  ? 'http://localhost:5000/api' 
+  : '/api';
 
 // --- face-api.js model configuration ---
 // Models are fetched from a public CDN at runtime (~6MB total, cached by the

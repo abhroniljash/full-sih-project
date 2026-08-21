@@ -40,6 +40,19 @@ app.use('/api/attendance', attendanceRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/students', studentsRoutes);
 
+// --- Serve Frontend Static Files ---
+const path = require('path');
+const frontendPath = path.join(__dirname, '../../frontend');
+app.use(express.static(frontendPath));
+app.get('*', (req, res, next) => {
+  // If it starts with /api, let the 404 handler catch it
+  if (req.url.startsWith('/api')) {
+    return next();
+  }
+  // Otherwise, serve index.html for frontend routing or just let it fall back
+  res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
 app.use(notFoundHandler);
 app.use(errorHandler);
 
