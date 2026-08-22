@@ -25,6 +25,7 @@ const DEFAULT_DATA = {
   attendance: [],
   messages: [],
   broadcast_notifications: [],
+  teacher_activity: [],
 };
 
 function ensureFile() {

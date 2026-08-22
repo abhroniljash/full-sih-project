@@ -12,12 +12,13 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-head">
-                <div class="sidebar-head-inner" style="padding: 15px; font-weight: bold; font-size: 18px; color: #1e293b;">
-                    <i class="fa-solid fa-shield-halved" style="color: #4f46e5; margin-right: 8px;"></i>Admin Panel
-                </div>
+                <div class="logo"><i class="fa-solid fa-shield-halved"></i></div>
+                <div class="brand">Admin <span>Panel</span></div>
             </div>
             <nav class="sidebar-nav">
-                <button class="nav-item active" data-sec="register-teacher"><span class="icon"><i class="fa-solid fa-chalkboard-user"></i></span> Register Teacher</button>
+                <button class="nav-item active" data-sec="register-teacher"><span class="icon"><i class="fa-solid fa-user-plus"></i></span> Register Teacher</button>
+                <button class="nav-item" data-sec="teachers-list"><span class="icon"><i class="fa-solid fa-chalkboard-user"></i></span> Manage Teachers</button>
+                <button class="nav-item" data-sec="activity-logs"><span class="icon"><i class="fa-solid fa-clock-rotate-left"></i></span> Activity Logs</button>
                 <button class="nav-item" data-sec="broadcast"><span class="icon"><i class="fa-solid fa-bullhorn"></i></span> Broadcast Alert</button>
             </nav>
             <div class="sidebar-foot">
@@ -123,6 +124,61 @@
                                     </button>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- === TEACHERS LIST === -->
+                <div class="section" id="sec-teachers-list" style="display:none;">
+                    <div class="card">
+                        <div class="card-head">
+                            <h3><i class="fa-solid fa-chalkboard-user" style="margin-right:8px;color:#10b981;"></i>Registered Teachers</h3>
+                            <button class="btn btn-primary btn-sm" onclick="fetchTeachers()"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Emp ID</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Department</th>
+                                            <th>Subject</th>
+                                            <th>Registered On</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="teachersTbody">
+                                        <tr><td colspan="6" style="text-align:center;">Loading teachers...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- === ACTIVITY LOGS === -->
+                <div class="section" id="sec-activity-logs" style="display:none;">
+                    <div class="card">
+                        <div class="card-head">
+                            <h3><i class="fa-solid fa-clock-rotate-left" style="margin-right:8px;color:#3b82f6;"></i>Teacher Session Logs</h3>
+                            <button class="btn btn-primary btn-sm" onclick="fetchActivityLogs()"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>Teacher Name</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="activityTbody">
+                                        <tr><td colspan="3" style="text-align:center;">Loading activity...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

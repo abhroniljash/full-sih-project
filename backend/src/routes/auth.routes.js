@@ -8,6 +8,7 @@ router.post('/student/register', ctrl.studentRegister);
 router.post('/student/login', ctrl.studentLogin);
 router.post('/teacher/register', authenticate, requireRole('admin'), ctrl.teacherRegister);
 router.post('/teacher/login', ctrl.teacherLogin);
+router.post('/teacher/logout', authenticate, ctrl.teacherLogout);
 router.get('/me', authenticate, ctrl.me);
 
 module.exports = router;

@@ -1,7 +1,7 @@
 // --- Auth & Setup ---
 var admin = Auth.getUser('admin');
 var adminToken = Auth.getToken('admin');
-if (!admin || !adminToken) goTo('admin-login.html');
+if (!admin || !adminToken) goTo('secure-admin-portal.html');
 
 var elHUName = document.getElementById('hUName');
 if(elHUName) elHUName.textContent = admin.name;
@@ -28,6 +28,8 @@ function switchSec(secId) {
 
     var titles = {
         'register-teacher': ['Register Teacher', 'Create a new teacher account'],
+        'teachers-list': ['Manage Teachers', 'View and manage registered teachers'],
+        'activity-logs': ['Activity Logs', 'Monitor teacher session history'],
         'broadcast': ['Broadcast Alert', 'Send notifications to all teachers']
     };
     if(titles[secId]) {
@@ -36,6 +38,9 @@ function switchSec(secId) {
         var elPgSub = document.getElementById('pgSub');
         if(elPgSub) elPgSub.textContent = titles[secId][1];
     }
+    
+    if (secId === 'teachers-list') fetchTeachers();
+    if (secId === 'activity-logs') fetchActivityLogs();
 }
 
 navItems.forEach(function(btn) {
@@ -129,6 +134,71 @@ if(broadcastForm) {
         });
     });
 }
+
+// --- Data Fetching ---
+window.fetchTeachers = function() {
+    var tbody = document.getElementById('teachersTbody');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Loading teachers...</td></tr>';
+    
+    API.get('/admin/teachers', adminToken)
+    .then(function(res) {
+        var teachers = res.teachers || [];
+        if (teachers.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No teachers registered yet.</td></tr>';
+            return;
+        }
+        var html = '';
+        teachers.forEach(function(t) {
+            html += '<tr>';
+            html += '<td><strong>' + (t.employeeId || '-') + '</strong></td>';
+            html += '<td>' + (t.name || '-') + '</td>';
+            html += '<td>' + (t.email || '-') + '</td>';
+            html += '<td>' + (t.department || '-') + '</td>';
+            html += '<td>' + (t.subject || '-') + '</td>';
+            html += '<td>' + (t.createdAt ? formatDate(t.createdAt) : '-') + '</td>';
+            html += '</tr>';
+        });
+        tbody.innerHTML = html;
+    })
+    .catch(function(err) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#ef4444;">Failed to load teachers</td></tr>';
+    });
+};
+
+window.fetchActivityLogs = function() {
+    var tbody = document.getElementById('activityTbody');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Loading activity...</td></tr>';
+    
+    API.get('/admin/teacher-activity', adminToken)
+    .then(function(res) {
+        var logs = res.activity || [];
+        if (logs.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No activity logged yet.</td></tr>';
+            return;
+        }
+        
+        // Sort descending
+        logs.sort(function(a, b) {
+            return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+
+        var html = '';
+        logs.forEach(function(log) {
+            var badge = log.type === 'login' ? '<span class="badge" style="background:#22c55e;">Login</span>' : '<span class="badge" style="background:#f59e0b;">Logout</span>';
+            html += '<tr>';
+            html += '<td>' + (log.createdAt ? formatDateTime(log.createdAt) : '-') + '</td>';
+            html += '<td><strong>' + (log.teacherName || '-') + '</strong></td>';
+            html += '<td>' + badge + '</td>';
+            html += '</tr>';
+        });
+        tbody.innerHTML = html;
+    })
+    .catch(function(err) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#ef4444;">Failed to load activity logs</td></tr>';
+    });
+};
 
 // Init
 switchSec('register-teacher');

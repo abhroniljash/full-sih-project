@@ -116,6 +116,13 @@ const teacherLogin = asyncHandler(async (req, res) => {
   if (!ok) throw new ApiError(401, 'Invalid email or password');
 
   const token = signToken({ id: teacher.id, role: 'teacher', email: teacher.email });
+  
+  await repo.insert('teacher_activity', {
+    teacherId: teacher.id,
+    teacherName: teacher.name,
+    type: 'login'
+  });
+
   res.json({ success: true, token, user: sanitizeTeacher(teacher) });
 });
 
@@ -167,4 +174,19 @@ const me = asyncHandler(async (req, res) => {
   res.json({ success: true, user: sanitizeTeacher(teacher), role: 'teacher' });
 });
 
-module.exports = { studentRegister, studentLogin, teacherRegister, teacherLogin, adminLogin, me };
+// POST /api/auth/teacher/logout
+const teacherLogout = asyncHandler(async (req, res) => {
+  if (req.user && req.user.role === 'teacher') {
+    const teacher = repo.findOne('teachers', (t) => t.id === req.user.id);
+    if (teacher) {
+      await repo.insert('teacher_activity', {
+        teacherId: teacher.id,
+        teacherName: teacher.name,
+        type: 'logout'
+      });
+    }
+  }
+  res.json({ success: true });
+});
+
+module.exports = { studentRegister, studentLogin, teacherRegister, teacherLogin, teacherLogout, adminLogin, me };
