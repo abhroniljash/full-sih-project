@@ -17,8 +17,8 @@ if(elTodayDate) elTodayDate.textContent = formatDateTime(new Date());
 
 var currentLiveSessionId = null;
 var faceDetectInterval = null;
-var knownFaces = [];              // [{rollNumber, name, descriptor}] fetched once per live session
-var markedThisSession = {};       // rollNumber -> true, to avoid duplicate API calls while scanning
+var knownFaces = [];  
+var markedThisSession = {};
 
 // --- Sidebar Navigation ---
 var navItems = document.querySelectorAll('.nav-item');
@@ -27,7 +27,7 @@ var overlay = document.getElementById('overlay');
 var sidebar = document.getElementById('sidebar');
 
 function switchSec(secId) {
-    // Save to sessionStorage so it survives page reloads
+    
     sessionStorage.setItem('teacher_current_sec', secId);
 
     navItems.forEach(function(btn) {
