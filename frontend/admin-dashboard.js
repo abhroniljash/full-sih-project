@@ -136,20 +136,22 @@ if(broadcastForm) {
 }
 
 // --- Data Fetching ---
+var allTeachersData = [];
+
 window.fetchTeachers = function() {
     var tbody = document.getElementById('teachersTbody');
     if (!tbody) return;
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Loading teachers...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Loading teachers...</td></tr>';
     
     API.get('/admin/teachers', adminToken)
     .then(function(res) {
-        var teachers = res.teachers || [];
-        if (teachers.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No teachers registered yet.</td></tr>';
+        allTeachersData = res.teachers || [];
+        if (allTeachersData.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No teachers registered yet.</td></tr>';
             return;
         }
         var html = '';
-        teachers.forEach(function(t) {
+        allTeachersData.forEach(function(t) {
             html += '<tr>';
             html += '<td><strong>' + (t.employeeId || '-') + '</strong></td>';
             html += '<td>' + (t.name || '-') + '</td>';
@@ -157,13 +159,47 @@ window.fetchTeachers = function() {
             html += '<td>' + (t.department || '-') + '</td>';
             html += '<td>' + (t.subject || '-') + '</td>';
             html += '<td>' + (t.createdAt ? formatDate(t.createdAt) : '-') + '</td>';
+            html += '<td><button class="btn btn-sm" style="background:#fee2e2;color:#ef4444;padding:4px 8px;font-size:12px;" onclick="deleteTeacher(\'' + t.id + '\')"><i class="fa-solid fa-trash"></i></button></td>';
             html += '</tr>';
         });
         tbody.innerHTML = html;
     })
     .catch(function(err) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#ef4444;">Failed to load teachers</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#ef4444;">Failed to load teachers</td></tr>';
     });
+};
+
+window.deleteTeacher = function(id) {
+    if (!confirm('Are you sure you want to delete this teacher?')) return;
+    API.request('DELETE', '/admin/teachers/' + id, null, adminToken)
+    .then(function() {
+        showToast('Teacher deleted successfully', 'success');
+        fetchTeachers();
+    })
+    .catch(function(err) {
+        showToast(err.message || 'Failed to delete teacher', 'danger');
+    });
+};
+
+window.exportTeachersCSV = function() {
+    if (!allTeachersData || allTeachersData.length === 0) {
+        showToast('No data to export', 'warning');
+        return;
+    }
+    var csv = 'Employee ID,Name,Email,Department,Subject,Registered On\n';
+    allTeachersData.forEach(function(t) {
+        var date = t.createdAt ? formatDate(t.createdAt) : '-';
+        csv += `"${t.employeeId || '-'}","${t.name || '-'}","${t.email || '-'}","${t.department || '-'}","${t.subject || '-'}","${date}"\n`;
+    });
+    
+    var blob = new Blob([csv], { type: 'text/csv' });
+    var url = window.URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'teachers_export.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 };
 
 window.fetchActivityLogs = function() {

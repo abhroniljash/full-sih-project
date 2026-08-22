@@ -133,7 +133,10 @@
                     <div class="card">
                         <div class="card-head">
                             <h3><i class="fa-solid fa-chalkboard-user" style="margin-right:8px;color:#10b981;"></i>Registered Teachers</h3>
-                            <button class="btn btn-primary btn-sm" onclick="fetchTeachers()"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+                            <div>
+                                <button class="btn btn-primary btn-sm" onclick="exportTeachersCSV()" style="margin-right: 8px; background: #10b981; border-color: #10b981;"><i class="fa-solid fa-download"></i> Export CSV</button>
+                                <button class="btn btn-primary btn-sm" onclick="fetchTeachers()"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="table-container">
@@ -146,10 +149,11 @@
                                             <th>Department</th>
                                             <th>Subject</th>
                                             <th>Registered On</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody id="teachersTbody">
-                                        <tr><td colspan="6" style="text-align:center;">Loading teachers...</td></tr>
+                                        <tr><td colspan="7" style="text-align:center;">Loading teachers...</td></tr>
                                     </tbody>
                                 </table>
                             </div>

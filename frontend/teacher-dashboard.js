@@ -9,6 +9,14 @@ if(elUName) elUName.textContent = teacher.name;
 var elHUName = document.getElementById('hUName');
 if(elHUName) elHUName.textContent = teacher.name;
 
+var elCSubject = document.getElementById('cSubject');
+if (elCSubject) {
+    elCSubject.value = teacher.subject || 'General';
+    elCSubject.readOnly = true;
+    elCSubject.style.backgroundColor = '#f1f5f9';
+    elCSubject.style.color = '#64748b';
+}
+
 var elUAvatar = document.getElementById('uAvatar');
 if(elUAvatar) elUAvatar.textContent = teacher.name.charAt(0);
 
