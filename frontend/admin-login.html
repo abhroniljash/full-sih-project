@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Login | Smart Attendance System</title>
+    <title>Admin Login | Smart Attendance System</title>
     <link rel="stylesheet" href="login.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css">
 </head>
 <body>
     <div class="login-page">
@@ -15,25 +15,19 @@
         </a>
         <div class="login-card">
             <div class="login-header">
-                <div class="login-icon teacher"><i class="fa-solid fa-school"></i></div>
-                <h2>Teacher Login</h2>
-               
+                <div class="login-icon admin"><i class="fa-solid fa-shield-halved"></i></div>
+                <h2>Admin Login</h2>
             </div>
-            <form id="loginForm">
+            <form id="adminLoginForm">
                 <div class="form-group">
-                    <label class="form-label">Institute Email</label>
-                    <input type="email" class="form-input" id="email" placeholder="teacher@agemc.in" required>
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-input" id="username" placeholder="admin" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Password</label>
                     <div class="password-wrap">
                         <input type="password" class="form-input" id="password" placeholder="Enter password" required>
-                        <button type="button" class="toggle-pass" onclick="togglePass()"><i class="fa-regular fa-eye-slash"></i></button>
                     </div>
-                </div>
-                <div class="form-row">
-                    <label><input type="checkbox"> Remember me</label>
-                    <a href="#">Forgot password?</a>
                 </div>
                 <button type="submit" class="login-btn" id="submitBtn">
                     <span class="btn-text">Sign In</span>
@@ -44,6 +38,6 @@
     </div>
     <script src="config.js"></script>
     <script src="common.js"></script>
-    <script src="teacher-login.js"></script>
+    <script src="admin-login.js"></script>
 </body>
 </html>

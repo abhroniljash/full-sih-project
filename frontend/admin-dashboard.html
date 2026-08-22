@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Smart Attendance</title>
+    <link rel="stylesheet" href="teacher-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css">
+</head>
+<body>
+    <div class="dash-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-head">
+                <div class="sidebar-head-inner" style="padding: 15px; font-weight: bold; font-size: 18px; color: #1e293b;">
+                    <i class="fa-solid fa-shield-halved" style="color: #4f46e5; margin-right: 8px;"></i>Admin Panel
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-sec="register-teacher"><span class="icon"><i class="fa-solid fa-chalkboard-user"></i></span> Register Teacher</button>
+                <button class="nav-item" data-sec="broadcast"><span class="icon"><i class="fa-solid fa-bullhorn"></i></span> Broadcast Alert</button>
+            </nav>
+            <div class="sidebar-foot">
+                <button class="logout-btn-full" id="logoutBtn" title="Logout">
+                    <span class="icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></span> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!--Main-->
+        <main class="main-area">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <div>
+                        <div class="page-title" id="pgTitle">Admin Dashboard</div>
+                        <div class="page-sub" id="pgSub">Administration tools</div>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <div class="header-user">
+                        <div>
+                            <div class="header-uname" id="hUName">Admin</div>
+                            <div class="header-urole">Administrator</div>
+                        </div>
+                        <div class="user-avatar" style="background:#ef4444;"><i class="fa-solid fa-user-shield"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- === TEACHER REGISTRATION === -->
+                <div class="section active" id="sec-register-teacher">
+                    <div class="card" style="max-width: 600px; margin: 0 auto;">
+                        <div class="card-head">
+                            <h3><i class="fa-solid fa-user-plus" style="margin-right:8px;color:#4f46e5;"></i>Register New Teacher</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="teacherRegisterForm">
+                                <div class="form-grid" style="margin-bottom:24px; grid-template-columns: 1fr;">
+                                    <div class="form-group">
+                                        <label class="form-label">Full Name</label>
+                                        <input type="text" class="form-input" id="tName" placeholder="e.g. Dr. Sarah Smith" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Institute Email</label>
+                                        <input type="email" class="form-input" id="tEmail" placeholder="e.g. sarah.s@institute.edu" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Department</label>
+                                        <input type="text" class="form-input" id="tDept" placeholder="e.g. Computer Science" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Subject (Default)</label>
+                                        <input type="text" class="form-input" id="tSubj" placeholder="e.g. Algorithms" required>
+                                    </div>
+                                    <div class="form-group full">
+                                        <label class="form-label">Password</label>
+                                        <input type="text" class="form-input" id="tPass" value="teacher123" required>
+                                        <div style="font-size:12px;color:#94a3b8;margin-top:4px;">Give this password to the teacher.</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="text-align:right;">
+                                    <button type="submit" class="btn btn-primary" id="submitRegBtn" style="padding:12px 32px;font-size:15px;">
+                                        Create Teacher Account
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- === NOTIFICATION BROADCASTER === -->
+                <div class="section" id="sec-broadcast" style="display:none;">
+                    <div class="card" style="max-width: 600px; margin: 0 auto;">
+                        <div class="card-head">
+                            <h3><i class="fa-solid fa-bullhorn" style="margin-right:8px;color:#f59e0b;"></i>Broadcast Notification</h3>
+                        </div>
+                        <div class="card-body">
+                            <p style="font-size: 14px; color: #64748b; margin-bottom: 20px;">
+                                Send an alert or announcement to all teachers. It will appear in their notification bell.
+                            </p>
+                            <form id="broadcastForm">
+                                <div class="form-group" style="margin-bottom:16px;">
+                                    <label class="form-label">Notification Title</label>
+                                    <input type="text" class="form-input" id="bTitle" placeholder="e.g. System Maintenance" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom:16px;">
+                                    <label class="form-label">Message</label>
+                                    <textarea class="form-input" id="bMessage" placeholder="Type your announcement here..." rows="4" required></textarea>
+                                </div>
+                                <div class="form-group" style="margin-bottom:24px;">
+                                    <label class="form-label">Type (Color)</label>
+                                    <select class="form-input" id="bType">
+                                        <option value="info">Info (Blue)</option>
+                                        <option value="warning">Warning (Orange)</option>
+                                        <option value="success">Success (Green)</option>
+                                    </select>
+                                </div>
+                                <div style="text-align:right;">
+                                    <button type="submit" class="btn btn-primary" id="submitBroadcastBtn" style="padding:12px 32px;font-size:15px; background: #f59e0b;">
+                                        Send Broadcast
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="common.js"></script>
+    <script src="admin-dashboard.js"></script>
+</body>
+</html>

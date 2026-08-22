@@ -44,7 +44,33 @@ const getNotifications = asyncHandler(async (req, res) => {
     read: true
   });
 
+  // Append broadcast notifications
+  const broadcasts = repo.all('broadcast_notifications') || [];
+  broadcasts.forEach(b => {
+    notifications.push({
+      id: b.id,
+      type: b.type || 'info',
+      title: b.title,
+      message: b.message,
+      time: b.createdAt,
+      read: false
+    });
+  });
+
   res.json({ success: true, notifications });
 });
 
-module.exports = { getNotifications };
+const broadcastNotification = asyncHandler(async (req, res) => {
+  const { title, message, type } = req.body;
+  if (!title || !message) throw new ApiError(400, 'Title and message are required');
+
+  const notification = await repo.insert('broadcast_notifications', {
+    title,
+    message,
+    type: type || 'info'
+  });
+
+  res.status(201).json({ success: true, notification });
+});
+
+module.exports = { getNotifications, broadcastNotification };

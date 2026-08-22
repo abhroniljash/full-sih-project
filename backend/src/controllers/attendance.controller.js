@@ -8,7 +8,7 @@ function getActiveOrThrow(sessionId) {
   return session;
 }
 
-// POST /api/attendance/mark  (student marks themself present) { sessionId }
+
 const markSelf = asyncHandler(async (req, res) => {
   const { sessionId } = req.body;
   if (!sessionId) throw new ApiError(400, 'sessionId is required');
@@ -34,7 +34,7 @@ const markSelf = asyncHandler(async (req, res) => {
   res.status(201).json({ success: true, record });
 });
 
-// POST /api/attendance/mark-manual  (teacher / camera-hardware marks a student) { sessionId, rollNumber, studentName }
+
 const markManual = asyncHandler(async (req, res) => {
   const { sessionId, rollNumber, studentName } = req.body;
   if (!sessionId || !rollNumber || !studentName) {
@@ -64,7 +64,7 @@ const markManual = asyncHandler(async (req, res) => {
   res.status(201).json({ success: true, record });
 });
 
-// GET /api/attendance/session/:sessionId  (teacher, must own the session)
+
 const listBySession = asyncHandler(async (req, res) => {
   const session = repo.findOne('sessions', (s) => s.sessionId === req.params.sessionId);
   if (!session) throw new ApiError(404, 'Session not found');
@@ -76,7 +76,7 @@ const listBySession = asyncHandler(async (req, res) => {
   res.json({ success: true, count: records.length, records });
 });
 
-// GET /api/attendance/student/:rollNumber  (the student themself, or any teacher)
+
 const listByStudent = asyncHandler(async (req, res) => {
   const roll = req.params.rollNumber.trim().toUpperCase();
   if (req.user.role === 'student' && req.user.rollNumber !== roll) {
@@ -87,7 +87,7 @@ const listByStudent = asyncHandler(async (req, res) => {
   res.json({ success: true, count: records.length, records });
 });
 
-// GET /api/attendance/reports/class?subject=Physics  (teacher only, scoped to their own sessions)
+
 const classReport = asyncHandler(async (req, res) => {
   const { subject } = req.query;
   if (!subject) throw new ApiError(400, 'subject query param is required');
@@ -117,7 +117,7 @@ const classReport = asyncHandler(async (req, res) => {
   res.json({ success: true, subject, totalClasses, rows });
 });
 
-// GET /api/attendance/reports/date?subject=Physics&date=2026-08-21
+
 const dateReport = asyncHandler(async (req, res) => {
   const { subject, date } = req.query;
   if (!subject || !date) throw new ApiError(400, 'subject and date query params are required');

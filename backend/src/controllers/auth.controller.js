@@ -119,6 +119,37 @@ const teacherLogin = asyncHandler(async (req, res) => {
   res.json({ success: true, token, user: sanitizeTeacher(teacher) });
 });
 
+function sanitizeAdmin(a) {
+  const { passwordHash, ...rest } = a;
+  return rest;
+}
+
+// POST /api/auth/admin/login
+const adminLogin = asyncHandler(async (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) throw new ApiError(400, 'username and password required');
+
+  let admin = repo.findOne('admins', (a) => a.username === username);
+  
+  // Seed default admin if no admins exist
+  if (!admin && repo.all('admins').length === 0 && username === 'admin') {
+    const passwordHash = await bcrypt.hash('admin123', 10);
+    admin = await repo.insert('admins', {
+      username: 'admin',
+      name: 'Super Admin',
+      passwordHash
+    });
+  }
+
+  if (!admin) throw new ApiError(401, 'Invalid credentials');
+  
+  const ok = await bcrypt.compare(password, admin.passwordHash);
+  if (!ok) throw new ApiError(401, 'Invalid credentials');
+
+  const token = signToken({ id: admin.id, role: 'admin', username: admin.username });
+  res.json({ success: true, token, user: sanitizeAdmin(admin) });
+});
+
 // GET /api/auth/me
 const me = asyncHandler(async (req, res) => {
   if (req.user.role === 'student') {
@@ -126,9 +157,14 @@ const me = asyncHandler(async (req, res) => {
     if (!student) throw new ApiError(404, 'Student not found');
     return res.json({ success: true, user: sanitizeStudent(student), role: 'student' });
   }
+  if (req.user.role === 'admin') {
+    const admin = repo.findOne('admins', (a) => a.id === req.user.id);
+    if (!admin) throw new ApiError(404, 'Admin not found');
+    return res.json({ success: true, user: sanitizeAdmin(admin), role: 'admin' });
+  }
   const teacher = repo.findOne('teachers', (t) => t.id === req.user.id);
   if (!teacher) throw new ApiError(404, 'Teacher not found');
   res.json({ success: true, user: sanitizeTeacher(teacher), role: 'teacher' });
 });
 
-module.exports = { studentRegister, studentLogin, teacherRegister, teacherLogin, me };
+module.exports = { studentRegister, studentLogin, teacherRegister, teacherLogin, adminLogin, me };

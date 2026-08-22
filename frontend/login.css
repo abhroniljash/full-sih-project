@@ -58,6 +58,7 @@ a:hover { color: #4338ca; }
 }
 .login-icon.teacher { background: #eef2ff; }
 .login-icon.student { background: #f0fdf4; }
+.login-icon.admin { background: #fee2e2; color: #ef4444; }
 .login-header h2 {
     font-size: 22px;
     font-weight: 700;

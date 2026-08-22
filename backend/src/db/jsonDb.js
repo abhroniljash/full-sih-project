@@ -18,11 +18,13 @@ const path = require('path');
 const DB_FILE = path.join(__dirname, '..', 'data', 'db.json');
 
 const DEFAULT_DATA = {
+  admins: [],
   teachers: [],
   students: [],
   sessions: [],
   attendance: [],
   messages: [],
+  broadcast_notifications: [],
 };
 
 function ensureFile() {
