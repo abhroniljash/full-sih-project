@@ -414,82 +414,31 @@
                             </div>
                         </div>
 
-                        <!-- Anti-Proxy Controls -->
-                        <div class="card" style="margin:0;">
-                            <div class="card-head" style="border-bottom:3px solid #ef4444;">
-                                <h3><i class="fa-solid fa-shield-halved" style="margin-right:8px;color:#ef4444;"></i>Anti-Proxy Controls</h3>
-                            </div>
-                            <div class="card-body" style="padding:20px;">
-                                <div class="form-group" style="margin-bottom:12px;">
-                                    <label class="form-label">Geofencing Radius (meters)</label>
-                                    <input type="number" class="form-input" value="100" min="10" max="1000">
-                                </div>
-                                <div class="form-group" style="margin-bottom:12px;">
-                                    <label class="form-label">Liveness Detection Threshold</label>
-                                    <select class="form-input">
-                                        <option value="standard">Standard (Blink Detection)</option>
-                                        <option value="high">High (Head Movement + Blink)</option>
-                                        <option value="max">Maximum (Multi-step Challenge)</option>
-                                    </select>
-                                </div>
-                                <div class="form-group" style="margin-bottom:16px;">
-                                    <label class="form-label" style="display:flex;align-items:center;gap:8px;">
-                                        <input type="checkbox" checked> Require Face Match for Attendance
-                                    </label>
-                                </div>
-                                <button class="btn btn-primary btn-sm" onclick="showToast('Security settings saved!','success')" style="width:100%;background:#ef4444;border-color:#ef4444;">Save Security</button>
-                            </div>
-                        </div>
-
-                        <!-- Notifications & Alerts -->
-                        <div class="card" style="margin:0;">
-                            <div class="card-head" style="border-bottom:3px solid #f59e0b;">
-                                <h3><i class="fa-solid fa-bell" style="margin-right:8px;color:#f59e0b;"></i>Notifications & Alerts</h3>
-                            </div>
-                            <div class="card-body" style="padding:20px;">
-                                <div class="form-group" style="margin-bottom:12px;">
-                                    <label class="form-label">Low Attendance Warning (%)</label>
-                                    <input type="number" class="form-input" value="75" min="50" max="100">
-                                    <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Alert when student falls below this %</div>
-                                </div>
-                                <div class="form-group" style="margin-bottom:12px;">
-                                    <label class="form-label" style="display:flex;align-items:center;gap:8px;">
-                                        <input type="checkbox" checked> Email alerts for critical attendance
-                                    </label>
-                                </div>
-                                <div class="form-group" style="margin-bottom:16px;">
-                                    <label class="form-label" style="display:flex;align-items:center;gap:8px;">
-                                        <input type="checkbox"> Send daily attendance summary email
-                                    </label>
-                                </div>
-                                <button class="btn btn-primary btn-sm" onclick="showToast('Notification settings saved!','success')" style="width:100%;background:#f59e0b;border-color:#f59e0b;">Save Alerts</button>
-                            </div>
-                        </div>
-
-                        <!-- Class & Session Defaults -->
+                        <!-- Schedule Auto-Session -->
                         <div class="card" style="margin:0;">
                             <div class="card-head" style="border-bottom:3px solid #10b981;">
-                                <h3><i class="fa-solid fa-clock" style="margin-right:8px;color:#10b981;"></i>Class & Session Defaults</h3>
+                                <h3><i class="fa-solid fa-clock" style="margin-right:8px;color:#10b981;"></i>Schedule Auto-Session</h3>
                             </div>
                             <div class="card-body" style="padding:20px;">
                                 <div class="form-group" style="margin-bottom:12px;">
-                                    <label class="form-label">Session Duration (minutes)</label>
-                                    <input type="number" class="form-input" value="60" min="15" max="180">
-                                </div>
-                                <div class="form-group" style="margin-bottom:12px;">
-                                    <label class="form-label">Late Entry Grace Period (minutes)</label>
-                                    <input type="number" class="form-input" value="10" min="0" max="30">
-                                </div>
-                                <div class="form-group" style="margin-bottom:16px;">
-                                    <label class="form-label">Auto-end Session After</label>
-                                    <select class="form-input">
-                                        <option value="never">Never (Manual Only)</option>
-                                        <option value="60">1 Hour</option>
-                                        <option value="90">1.5 Hours</option>
-                                        <option value="120">2 Hours</option>
+                                    <label class="form-label">Subject</label>
+                                    <select class="form-input" id="schedSubject">
+                                        <option value="">-- Select Subject --</option>
                                     </select>
                                 </div>
-                                <button class="btn btn-primary btn-sm" onclick="showToast('Session defaults saved!','success')" style="width:100%;background:#10b981;border-color:#10b981;">Save Defaults</button>
+                                <div class="form-group" style="margin-bottom:12px;">
+                                    <label class="form-label">Class / Section</label>
+                                    <input type="text" class="form-input" id="schedClass" placeholder="e.g. CS-A">
+                                </div>
+                                <div class="form-group" style="margin-bottom:12px;">
+                                    <label class="form-label">Date</label>
+                                    <input type="date" class="form-input" id="schedDate">
+                                </div>
+                                <div class="form-group" style="margin-bottom:16px;">
+                                    <label class="form-label">Time</label>
+                                    <input type="time" class="form-input" id="schedTime">
+                                </div>
+                                <button class="btn btn-primary btn-sm" id="btnSchedule" style="width:100%;background:#10b981;border-color:#10b981;">Schedule Session</button>
                             </div>
                         </div>
 

@@ -82,4 +82,28 @@ const endSession = asyncHandler(async (req, res) => {
   res.json({ success: true, session: updated });
 });
 
-module.exports = { createSession, listSessions, getActiveSession, getSession, endSession };
+// POST /api/sessions/schedule (teacher only)
+const scheduleSession = asyncHandler(async (req, res) => {
+  const { subject, className, date, time } = req.body;
+  if (!subject || !className || !date || !time) {
+    throw new ApiError(400, 'subject, className, date, and time are required');
+  }
+
+  const teacher = repo.findOne('teachers', (t) => t.id === req.user.id);
+  if (!teacher) throw new ApiError(404, 'Teacher not found');
+
+  const scheduled = await repo.insert('scheduled_sessions', {
+    id: Date.now().toString(),
+    subject: subject.trim(),
+    className: className.trim(),
+    teacherId: teacher.id,
+    teacher: teacher.name,
+    scheduledDate: date,
+    scheduledTime: time,
+    status: 'pending' // will change to 'started' when cron runs it
+  });
+
+  res.json({ success: true, scheduledSession: scheduled });
+});
+
+module.exports = { createSession, listSessions, getActiveSession, getSession, endSession, scheduleSession };

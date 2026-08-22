@@ -4,6 +4,7 @@ const ctrl = require('../controllers/session.controller');
 const { authenticate, requireRole } = require('../middleware/auth');
 
 router.post('/', authenticate, requireRole('teacher'), ctrl.createSession);
+router.post('/schedule', authenticate, requireRole('teacher'), ctrl.scheduleSession);
 router.get('/', authenticate, ctrl.listSessions);
 router.get('/active', authenticate, ctrl.getActiveSession);
 router.get('/:sessionId', authenticate, ctrl.getSession);

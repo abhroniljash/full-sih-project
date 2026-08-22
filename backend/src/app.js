@@ -14,6 +14,9 @@ const messageRoutes = require('./routes/messages.routes');
 
 const adminRoutes = require('./routes/admin.routes');
 
+// Initialize background jobs
+require('./cron');
+
 const app = express();
 
 app.use(

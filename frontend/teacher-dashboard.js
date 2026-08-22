@@ -68,6 +68,50 @@ if(setDeptEl) setDeptEl.value = teacher.department || '';
             showToast(isDark ? 'Dark Mode enabled' : 'Light Mode enabled', 'success');
         });
     }
+
+    // Populate Settings Sched Subject
+    setTimeout(function() {
+        if(typeof populateSubjectSelect === 'function') {
+            populateSubjectSelect(document.getElementById('schedSubject')).catch(function(){});
+        }
+    }, 500);
+
+    var btnSchedule = document.getElementById('btnSchedule');
+    if (btnSchedule) {
+        btnSchedule.addEventListener('click', function() {
+            var subj = document.getElementById('schedSubject').value;
+            var cls = document.getElementById('schedClass').value.trim();
+            var dt = document.getElementById('schedDate').value;
+            var tm = document.getElementById('schedTime').value;
+            
+            if (!subj || !cls || !dt || !tm) {
+                showToast('Please fill all scheduling fields', 'warning');
+                return;
+            }
+
+            var btn = this;
+            btn.disabled = true;
+            btn.textContent = 'Scheduling...';
+
+            API.post('/sessions/schedule', {
+                subject: subj,
+                className: cls,
+                date: dt,
+                time: tm
+            }, teacherToken).then(function() {
+                showToast('Session scheduled for ' + dt + ' ' + tm, 'success');
+                document.getElementById('schedClass').value = '';
+                document.getElementById('schedDate').value = '';
+                document.getElementById('schedTime').value = '';
+            }).catch(function(err) {
+                showToast(err.message || 'Failed to schedule', 'danger');
+            }).finally(function() {
+                btn.disabled = false;
+                btn.textContent = 'Schedule Session';
+            });
+        });
+    }
+
 })();
 
 var currentLiveSessionId = null;
