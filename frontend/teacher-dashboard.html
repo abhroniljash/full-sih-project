@@ -235,11 +235,11 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label">Roll Number</label>
-                                        <input type="text" class="form-input" id="srRoll" placeholder="e.g. CS2024" required>
+                                        <input type="tel" class="form-input" id="srRoll" placeholder="e.g. 2024001" required oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label">Registration Number</label>
-                                        <input type="text" class="form-input" id="srRegNo" placeholder="e.g. 123456789" required>
+                                        <input type="tel" class="form-input" id="srRegNo" placeholder="e.g. 123456789" required oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label">Department</label>
@@ -356,6 +356,183 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- === SETTINGS === -->
+                <div class="section" id="sec-settings">
+                    <div style="margin-bottom:24px;">
+                        <h2 style="font-size:22px;font-weight:700;color:#1e293b;margin-bottom:4px;">⚙️ Settings</h2>
+                        <p style="color:#64748b;font-size:14px;">Customize your dashboard preferences and controls.</p>
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;">
+
+                        <!-- Update Profile -->
+                        <div class="card" style="margin:0;">
+                            <div class="card-head" style="border-bottom:3px solid #4f46e5;">
+                                <h3><i class="fa-solid fa-user-pen" style="margin-right:8px;color:#4f46e5;"></i>Update Profile</h3>
+                            </div>
+                            <div class="card-body" style="padding:20px;">
+                                <div class="form-group" style="margin-bottom:12px;">
+                                    <label class="form-label">Display Name</label>
+                                    <input type="text" class="form-input" id="setName" placeholder="Your name">
+                                </div>
+                                <div class="form-group" style="margin-bottom:12px;">
+                                    <label class="form-label">Department</label>
+                                    <input type="text" class="form-input" id="setDept" placeholder="e.g. Computer Science">
+                                </div>
+                                <div class="form-group" style="margin-bottom:16px;">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-input" id="setPhone" placeholder="e.g. 9876543210">
+                                </div>
+                                <button class="btn btn-primary btn-sm" onclick="showToast('Profile updated!','success')" style="width:100%;">Save Profile</button>
+                            </div>
+                        </div>
+
+                        <!-- Theme -->
+                        <div class="card" style="margin:0;">
+                            <div class="card-head" style="border-bottom:3px solid #8b5cf6;">
+                                <h3><i class="fa-solid fa-palette" style="margin-right:8px;color:#8b5cf6;"></i>Theme & Display</h3>
+                            </div>
+                            <div class="card-body" style="padding:20px;">
+                                <div class="form-group" style="margin-bottom:12px;">
+                                    <label class="form-label">Color Theme</label>
+                                    <select class="form-input" id="setTheme">
+                                        <option value="light">Light (Default)</option>
+                                        <option value="dark">Dark Mode</option>
+                                        <option value="blue">Ocean Blue</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="margin-bottom:12px;">
+                                    <label class="form-label">Font Size</label>
+                                    <select class="form-input" id="setFontSize">
+                                        <option value="normal">Normal</option>
+                                        <option value="large">Large</option>
+                                        <option value="compact">Compact</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="margin-bottom:16px;">
+                                    <label class="form-label">Sidebar Position</label>
+                                    <select class="form-input">
+                                        <option value="left">Left (Default)</option>
+                                        <option value="right">Right</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary btn-sm" onclick="showToast('Theme preferences saved!','success')" style="width:100%;background:#8b5cf6;border-color:#8b5cf6;">Apply Theme</button>
+                            </div>
+                        </div>
+
+                        <!-- Anti-Proxy Controls -->
+                        <div class="card" style="margin:0;">
+                            <div class="card-head" style="border-bottom:3px solid #ef4444;">
+                                <h3><i class="fa-solid fa-shield-halved" style="margin-right:8px;color:#ef4444;"></i>Anti-Proxy Controls</h3>
+                            </div>
+                            <div class="card-body" style="padding:20px;">
+                                <div class="form-group" style="margin-bottom:12px;">
+                                    <label class="form-label">Geofencing Radius (meters)</label>
+                                    <input type="number" class="form-input" value="100" min="10" max="1000">
+                                </div>
+                                <div class="form-group" style="margin-bottom:12px;">
+                                    <label class="form-label">Liveness Detection Threshold</label>
+                                    <select class="form-input">
+                                        <option value="standard">Standard (Blink Detection)</option>
+                                        <option value="high">High (Head Movement + Blink)</option>
+                                        <option value="max">Maximum (Multi-step Challenge)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="margin-bottom:16px;">
+                                    <label class="form-label" style="display:flex;align-items:center;gap:8px;">
+                                        <input type="checkbox" checked> Require Face Match for Attendance
+                                    </label>
+                                </div>
+                                <button class="btn btn-primary btn-sm" onclick="showToast('Security settings saved!','success')" style="width:100%;background:#ef4444;border-color:#ef4444;">Save Security</button>
+                            </div>
+                        </div>
+
+                        <!-- Notifications & Alerts -->
+                        <div class="card" style="margin:0;">
+                            <div class="card-head" style="border-bottom:3px solid #f59e0b;">
+                                <h3><i class="fa-solid fa-bell" style="margin-right:8px;color:#f59e0b;"></i>Notifications & Alerts</h3>
+                            </div>
+                            <div class="card-body" style="padding:20px;">
+                                <div class="form-group" style="margin-bottom:12px;">
+                                    <label class="form-label">Low Attendance Warning (%)</label>
+                                    <input type="number" class="form-input" value="75" min="50" max="100">
+                                    <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Alert when student falls below this %</div>
+                                </div>
+                                <div class="form-group" style="margin-bottom:12px;">
+                                    <label class="form-label" style="display:flex;align-items:center;gap:8px;">
+                                        <input type="checkbox" checked> Email alerts for critical attendance
+                                    </label>
+                                </div>
+                                <div class="form-group" style="margin-bottom:16px;">
+                                    <label class="form-label" style="display:flex;align-items:center;gap:8px;">
+                                        <input type="checkbox"> Send daily attendance summary email
+                                    </label>
+                                </div>
+                                <button class="btn btn-primary btn-sm" onclick="showToast('Notification settings saved!','success')" style="width:100%;background:#f59e0b;border-color:#f59e0b;">Save Alerts</button>
+                            </div>
+                        </div>
+
+                        <!-- Class & Session Defaults -->
+                        <div class="card" style="margin:0;">
+                            <div class="card-head" style="border-bottom:3px solid #10b981;">
+                                <h3><i class="fa-solid fa-clock" style="margin-right:8px;color:#10b981;"></i>Class & Session Defaults</h3>
+                            </div>
+                            <div class="card-body" style="padding:20px;">
+                                <div class="form-group" style="margin-bottom:12px;">
+                                    <label class="form-label">Session Duration (minutes)</label>
+                                    <input type="number" class="form-input" value="60" min="15" max="180">
+                                </div>
+                                <div class="form-group" style="margin-bottom:12px;">
+                                    <label class="form-label">Late Entry Grace Period (minutes)</label>
+                                    <input type="number" class="form-input" value="10" min="0" max="30">
+                                </div>
+                                <div class="form-group" style="margin-bottom:16px;">
+                                    <label class="form-label">Auto-end Session After</label>
+                                    <select class="form-input">
+                                        <option value="never">Never (Manual Only)</option>
+                                        <option value="60">1 Hour</option>
+                                        <option value="90">1.5 Hours</option>
+                                        <option value="120">2 Hours</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary btn-sm" onclick="showToast('Session defaults saved!','success')" style="width:100%;background:#10b981;border-color:#10b981;">Save Defaults</button>
+                            </div>
+                        </div>
+
+                        <!-- Data Export -->
+                        <div class="card" style="margin:0;">
+                            <div class="card-head" style="border-bottom:3px solid #06b6d4;">
+                                <h3><i class="fa-solid fa-file-export" style="margin-right:8px;color:#06b6d4;"></i>Data Export Formatting</h3>
+                            </div>
+                            <div class="card-body" style="padding:20px;">
+                                <div class="form-group" style="margin-bottom:12px;">
+                                    <label class="form-label">Default Export Format</label>
+                                    <select class="form-input">
+                                        <option value="csv">CSV (.csv)</option>
+                                        <option value="xlsx">Excel (.xlsx)</option>
+                                        <option value="pdf">PDF Report</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="margin-bottom:12px;">
+                                    <label class="form-label">Report Layout</label>
+                                    <select class="form-input">
+                                        <option value="detailed">Detailed (All Columns)</option>
+                                        <option value="summary">Summary (Totals Only)</option>
+                                        <option value="compact">Compact (One Page)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="margin-bottom:16px;">
+                                    <label class="form-label" style="display:flex;align-items:center;gap:8px;">
+                                        <input type="checkbox" checked> Include institution header in exports
+                                    </label>
+                                </div>
+                                <button class="btn btn-primary btn-sm" onclick="showToast('Export settings saved!','success')" style="width:100%;background:#06b6d4;border-color:#06b6d4;">Save Export Settings</button>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 

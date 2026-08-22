@@ -23,6 +23,12 @@ if(elUAvatar) elUAvatar.textContent = teacher.name.charAt(0);
 var elTodayDate = document.getElementById('todayDate');
 if(elTodayDate) elTodayDate.textContent = formatDateTime(new Date());
 
+// Pre-fill Settings Profile
+var setNameEl = document.getElementById('setName');
+if(setNameEl) setNameEl.value = teacher.name || '';
+var setDeptEl = document.getElementById('setDept');
+if(setDeptEl) setDeptEl.value = teacher.department || '';
+
 var currentLiveSessionId = null;
 var faceDetectInterval = null;
 var knownFaces = [];  

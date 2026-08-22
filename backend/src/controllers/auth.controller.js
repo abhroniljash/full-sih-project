@@ -24,6 +24,12 @@ const studentRegister = asyncHandler(async (req, res) => {
   if (!rollNumber || !name || !password) {
     throw new ApiError(400, 'rollNumber, name and password are required');
   }
+  if (!/^\d+$/.test(rollNumber.trim())) {
+    throw new ApiError(400, 'Roll Number must contain only numbers');
+  }
+  if (req.body.registrationNumber && !/^\d+$/.test(req.body.registrationNumber.trim())) {
+    throw new ApiError(400, 'Registration Number must contain only numbers');
+  }
   if (password.length < 6) {
     throw new ApiError(400, 'Password must be at least 6 characters');
   }

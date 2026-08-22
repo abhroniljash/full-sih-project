@@ -66,7 +66,7 @@ if(regForm) {
         var tSubj = document.getElementById('tSubj').value.trim();
         var tPass = document.getElementById('tPass').value;
 
-        if (!tEmail || !tEmail.includes('@') || !tPass) {
+        if (!tEmail.endsWith('@agemc.ac.in') || !tEmail.endsWith('@gmail.com') || !tPass) {
             showToast('Valid email and password required', 'warning');
             return;
         }
