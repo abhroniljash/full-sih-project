@@ -1,3 +1,11 @@
+// --- POLYFILL FOR HOSTINGER (Older Node.js versions) ---
+if (typeof global.crypto === 'undefined') {
+  try {
+    global.crypto = require('crypto').webcrypto || require('crypto');
+  } catch (e) {}
+}
+
+require('dotenv').config();
 const app = require('./app');
 const config = require('./config');
 const db = require('./db/cloudDb');

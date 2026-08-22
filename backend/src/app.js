@@ -1,3 +1,11 @@
+// --- POLYFILL FOR HOSTINGER (Older Node.js versions) ---
+if (typeof global.crypto === 'undefined') {
+  try {
+    global.crypto = require('crypto').webcrypto || require('crypto');
+  } catch (e) {
+    console.error('Crypto polyfill failed', e);
+  }
+}
 const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
