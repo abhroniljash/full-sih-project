@@ -523,8 +523,15 @@ function populateSubjectSelect(selectEl) {
     return getTeacherSubjects().then(function(subjs) {
         if(selectEl) {
             selectEl.innerHTML = '<option value="">-- Select Subject --</option>';
+            // Always add the teacher's default subject if they have one
+            if (teacher && teacher.subject) {
+                selectEl.innerHTML += '<option value="'+teacher.subject+'">'+teacher.subject+'</option>';
+            }
             for(var k in subjs) {
-                selectEl.innerHTML += '<option value="'+k+'">'+k+'</option>';
+                // Avoid duplicating the default subject
+                if (!teacher || k !== teacher.subject) {
+                    selectEl.innerHTML += '<option value="'+k+'">'+k+'</option>';
+                }
             }
         }
         return subjs;
