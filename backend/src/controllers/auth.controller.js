@@ -133,7 +133,7 @@ const adminLogin = asyncHandler(async (req, res) => {
   
   // Seed default admin if no admins exist
   if (!admin && repo.all('admins').length === 0 && username === 'admin') {
-    const passwordHash = await bcrypt.hash('admin123', 10);
+    const passwordHash = await bcrypt.hash(password, 10);
     admin = await repo.insert('admins', {
       username: 'admin',
       name: 'Super Admin',
