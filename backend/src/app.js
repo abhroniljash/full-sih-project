@@ -27,6 +27,19 @@ app.use(
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+// Temporary Debug Route for User
+app.get('/api/db-status', (req, res) => {
+  const uri = process.env.DATABASE_URL || process.env.MONGO_URI;
+  res.json({
+    hasUrlProvided: !!uri,
+    urlLength: uri ? uri.length : 0,
+    urlStartsWith: uri ? uri.substring(0, 15) : null,
+    mongooseState: require('mongoose').connection.readyState,
+    stateMeaning: ['Disconnected', 'Connected', 'Connecting', 'Disconnecting'][require('mongoose').connection.readyState] || 'Unknown',
+    message: "If state is Disconnected, MongoDB is blocking Render (IP issue) or password is wrong."
+  });
+});
+
 // Basic protection for the login endpoints against brute force.
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
