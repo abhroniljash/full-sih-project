@@ -71,6 +71,11 @@ if(regForm) {
             return;
         }
 
+        if (!tEmail.endsWith('@agemc.ac.in')) {
+            showToast('Email not supported. Must use @agemc.ac.in domain.', 'danger');
+            return;
+        }
+
         var btn = document.getElementById('submitRegBtn');
         btn.disabled = true;
         btn.textContent = 'Creating...';

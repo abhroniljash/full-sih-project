@@ -71,6 +71,9 @@ const teacherRegister = asyncHandler(async (req, res) => {
   if (!email || !email.includes('@') || !password) {
     throw new ApiError(400, 'A valid email and password are required');
   }
+  if (!email.trim().toLowerCase().endsWith('@agemc.ac.in')) {
+    throw new ApiError(400, 'Email not supported. Must use @agemc.ac.in domain.');
+  }
   if (password.length < 6) {
     throw new ApiError(400, 'Password must be at least 6 characters');
   }

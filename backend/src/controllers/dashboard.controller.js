@@ -92,10 +92,16 @@ const studentDashboard = asyncHandler(async (req, res) => {
 });
 
 // GET /api/dashboard/teacher  (teacher only)
-// Reproduces loadDashboard() from teacher-dashboard.js.
+// Returns stats scoped to the logged-in teacher's own sessions & attendance only.
 const teacherDashboard = asyncHandler(async (req, res) => {
-  const sessions = repo.all('sessions');
-  const attendance = repo.all('attendance');
+  const teacherId = req.user.id;
+
+  // Only this teacher's sessions
+  const sessions = repo.findMany('sessions', (s) => s.teacherId === teacherId);
+  const sessionIds = new Set(sessions.map((s) => s.sessionId));
+
+  // Only attendance from this teacher's sessions
+  const attendance = repo.findMany('attendance', (a) => sessionIds.has(a.sessionId));
 
   const activeCount = sessions.filter((s) => s.status === 'active').length;
   const subjects = [...new Set(sessions.map((s) => s.subject))];
@@ -127,8 +133,9 @@ const teacherDashboard = asyncHandler(async (req, res) => {
     weeklyData.push({ day, date: dateStr, count });
   }
 
-  const totalRegistered = repo.all('students').length;
+  // Participation: only students who attended THIS teacher's sessions
   const uniqueRolls = new Set(attendance.map((a) => a.rollNumber));
+  const totalRegistered = repo.all('students').length;
   const totalParticipated = uniqueRolls.size;
   const neverAttended = totalRegistered - totalParticipated;
   const participationData = { totalRegistered, totalParticipated, neverAttended };
