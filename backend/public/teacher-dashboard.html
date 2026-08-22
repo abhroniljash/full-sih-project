@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard | Smart Attendance System</title>
+    <link rel="stylesheet" href="teacher-dashboard.css?v=2">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/css/icons.min.css">
+</head>
+<body>
+    <div class="dash-layout">
+        <div class="overlay" id="overlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-head">
+                
+            </div>
+            <nav class="sidebar-nav">
+                
+                <button class="nav-item active" data-sec="dashboard"><span class="icon"><i class="ph ph-list-dashes"></i></span>Teacher Dashboard</button>
+                <button class="nav-item" data-sec="create"><span class="icon"><i class="fa-solid fa-square-plus"></i></span> Create Session</button>
+                <button class="nav-item" data-sec="live"><span class="icon"><i class="ph ph-broadcast"></i></span> Live Session <span class="badge" id="liveBadge" style="display:none">1</span></button>
+            <div class="nav-group-label collapsible" data-toggle="performance-group">
+                <span class="icon"><i class="fa-solid fa-chart-simple"></i></span>Performance
+                  <i class="fa-solid fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="nav-group-items" id="performance-group">
+              <button class="nav-item" data-sec="report-class"><span class="icon"><i class="fa-regular fa-clipboard"></i></span> Class Report</button>
+              <button class="nav-item" data-sec="report-date"><span class="icon"><i class="fa-solid fa-calendar-days"></i></span> Date-wise Report</button>
+            </div>
+            <div class="nav-group-label" style="margin-top:10px;">Administration</div>
+            <button class="nav-item" data-sec="register"><span class="icon"><i class="fa-solid fa-user-plus"></i></span> Student Registration</button>
+            <button class="nav-item" data-sec="students"><span class="icon"><i class="fa-solid fa-users"></i></span> Student Details</button>
+            </nav>
+            <div class="sidebar-foot">
+    <button class="nav-item foot-item" data-sec="settings">
+        <span class="icon"><i class="fa-solid fa-gear"></i></span> Settings
+    </button>
+    <button class="logout-btn-full" id="logoutBtn" title="Logout">
+        <span class="icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></span> Logout
+    </button>
+</div>
+        </aside>
+
+        <!--Main-->
+
+         <main class="main-area">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-btn" id="menuBtn">☰</button>
+                    <div>
+                        <div class="page-title" id="pgTitle"> Teacher Dashboard</div>
+                        <div class="page-sub" id="pgSub">Overview of your classes</div>
+                    </div>
+                </div>
+               
+                
+<div class="topbar-right">
+    <div class="topbar-date" id="todayDate"></div>
+    <button class="icon-btn" id="msgBtn"><i class="fa-regular fa-comment"></i><span class="msg-dot" id="msgDot" style="display:none"></span></button>
+    <button class="icon-btn" id="notifBtn"><i class="fa-regular fa-bell"></i><span class="notif-dot" id="notifDot" style="display:none"></span></button>
+    <div class="header-divider"></div>
+    <div class="header-user">
+        <div>
+            <div class="header-uname" id="hUName">Teacher</div>
+            <div class="header-urole">Teacher</div>
+        </div>
+        <div class="user-avatar" id="uAvatar"></div>
+    </div>
+</div>
+            </div>
+
+            <div class="content">
+                <!-- === DASHBOARD === -->
+                <div class="section active" id="sec-dashboard">
+                    <div class="stats-row">
+                        <div class="stat-box">
+                            <div class="stat-icon" style="background:#eef2ff;"><i class="fa-solid fa-book"></i></div>
+                            <div class="stat-label">Total Sessions</div>
+                            <div class="stat-val" id="sTotalSessions">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-icon" style="background:#f0fdf4;"><i class="fa-solid fa-square-check"></i></div>
+                            <div class="stat-label">Active Now</div>
+                            <div class="stat-val" id="sActiveNow">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-icon" style="background:#fffbeb;"><i class="fa-solid fa-user-graduate"></i></div>
+                            <div class="stat-label">Total Attendance Marked</div>
+                            <div class="stat-val" id="sTotalAtt">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-icon" style="background:#fef2f2;"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                            <div class="stat-label">Total Classes</div>
+                            <div class="stat-val" id="sTotalClasses">0</div>
+                        </div>
+                    </div>
+                    <div class="chart-row">
+    <div class="card chart-card">
+        <div class="card-head"><h3>Weekly Attendance Trends</h3></div>
+        <div class="card-body"><canvas id="weeklyChart" height="200"></canvas></div>
+    </div>
+    <div class="card chart-card donut-card">
+        <div class="card-head"><h3>Average Participation</h3></div>
+        <div class="card-body"><canvas id="participationChart"></canvas></div>
+    </div>
+</div>
+
+                    <!-- Recent Sessions -->
+                    <div class="card">
+                        <div class="card-head">
+                            <h3>Recent Sessions</h3>
+                            <button class="btn btn-sm btn-primary" onclick="switchSec('create')">+ New Session</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-wrap" id="recentTable"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- === CREATE SESSION === -->
+                <div class="section" id="sec-create">
+                    <div class="card">
+                        <div class="card-head"><h3>Create New Session</h3></div>
+                        <div class="card-body">
+                            <form id="createForm">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label">Subject / Course *</label>
+                                        <input type="text" class="form-input" id="cSubject" placeholder="e.g. Data Structures" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Class / Section *</label>
+                                        <input type="text" class="form-input" id="cClass" placeholder="e.g. CS-A 5th Sem" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Room / Lab</label>
+                                        <input type="text" class="form-input" id="cRoom" placeholder="e.g. Room 301">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Duration</label>
+                                        <select class="form-input" id="cDuration">
+                                            <option value="30">30 Minutes</option>
+                                            <option value="45">45 Minutes</option>
+                                            <option value="60" selected>1 Hour</option>
+                                            <option value="90">1.5 Hours</option>
+                                            <option value="120">2 Hours</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group full">
+                                        <label class="form-label">Class Description</label>
+                                        <textarea class="form-input" id="cDesc" placeholder="Today's topic..."></textarea>
+                                    </div>
+                                    <div class="full">
+                                        <button type="submit" class="btn btn-primary">Create Session & Generate ID →</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="session-result" id="sessionResult">
+                                <div class="label">Session ID Generated</div>
+                                <div class="sid" id="genSessionId"></div>
+                                <button class="copy-btn" id="copyIdBtn"><i class="fa-regular fa-clipboard"></i> Copy Session ID</button>
+                                <div class="hint">Share this ID with students. Camera will use this to mark attendance.</div>
+                                <div style="margin-top:14px;">
+                                    <button class="btn btn-success btn-sm" onclick="switchSec('live')">Go to Live Session →</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- === LIVE SESSION === -->
+                <div class="section" id="sec-live">
+                    <div id="liveContent">
+                        <!-- No active session state -->
+                        <div id="noLive" class="card">
+                            <div class="card-body">
+                                <div class="empty">
+                                    <div class="empty-icon"><i class="fa-solid fa-hourglass"></i></div>
+                                    <h4>No Active Session</h4>
+                                    <p>Create a session first to start live attendance tracking.</p>
+                                    <button class="btn btn-primary" style="margin-top:16px;" onclick="switchSec('create')">Create Session</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Active session state -->
+                        <div id="hasLive" style="display:none;">
+                            <div style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
+                                <div>
+                                    <span class="badge badge-green" style="margin-right:8px;">Live</span>
+                                    <span style="font-size:14px;font-weight:600;color:#1e293b;" id="liveSubject"></span>
+                                </div>
+                                <button class="btn btn-sm btn-danger" id="endSessionBtn"><i class="fa-solid fa-square"></i>End Session</button>
+                            </div>
+                            <div class="live-split">
+                                <div class="camera-box" id="cameraBox">
+                                    <div class="camera-placeholder" id="camPlaceholder">
+                                        <div class="cam-icon"><i class="fa-solid fa-video"></i></div>
+                                        <p>Camera Feed</p>
+                                        <p class="sub" id="camSubText">Live face-recognition attendance will run here</p>
+                                        <button class="btn btn-primary" style="margin-top:16px;" id="startCamBtn">Start Camera</button>
+                                    </div>
+                                    <video id="camVideo" autoplay playsinline style="display:none;"></video>
+                                </div>
+                                <div class="live-info">
+                                    <div class="live-header">
+                                        <div class="session-tag" id="liveSessionTag">SAS-XXXXXX</div>
+                                        <div class="subject-name" id="liveSubjectName">Subject</div>
+                                        <div class="meta" id="liveMeta">Class • Room • Started at --:--</div>
+                                    </div>
+                                    <div class="live-count" id="liveCount">Students Present: 0</div>
+                                    <div class="live-list" id="liveList">
+                                        <!-- populated by JS -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- === STUDENT REGISTRATION === -->
+                <div class="section" id="sec-register">
+                    <div class="card">
+                        <div class="card-head">
+                            <h3><i class="fa-solid fa-user-plus" style="margin-right:8px;color:#4f46e5;"></i>Register New Student</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="studentRegisterForm">
+                                <div class="form-grid" style="margin-bottom:24px;">
+                                    <div class="form-group">
+                                        <label class="form-label">Full Name</label>
+                                        <input type="text" class="form-input" id="srName" placeholder="e.g. John Doe" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Roll Number</label>
+                                        <input type="tel" class="form-input" id="srRoll" placeholder="e.g. 2024001" required oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Registration Number</label>
+                                        <input type="tel" class="form-input" id="srRegNo" placeholder="e.g. 123456789" required oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Department</label>
+                                        <input type="text" class="form-input" id="srDept" placeholder="e.g. Computer Science" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Semester / Year</label>
+                                        <input type="text" class="form-input" id="srSem" placeholder="e.g. 5th Semester" required>
+                                    </div>
+                                    <div class="form-group full">
+                                        <label class="form-label">Password</label>
+                                        <input type="text" class="form-input" id="srPass" value="password123" required>
+                                        <div style="font-size:12px;color:#94a3b8;margin-top:4px;">Default password for the student. They can change this later.</div>
+                                    </div>
+                                </div>
+
+                                <h4 style="font-size:15px;color:#1e293b;margin-bottom:16px;border-top:1px solid #e2e8f0;padding-top:20px;">Face ID Setup</h4>
+                                <div id="faceCaptureArea" class="face-capture-area">
+                                    <div class="face-circle-frame">
+                                        <svg class="progress-ring" viewBox="0 0 240 240">
+                                            <circle class="progress-ring-bg" cx="120" cy="120" r="108" />
+                                            <circle class="progress-ring-fill" id="progressRing" cx="120" cy="120" r="108" />
+                                        </svg>
+                                        <div class="face-video-clip">
+                                            <video id="faceVideo" autoplay playsinline muted></video>
+                                        </div>
+                                        <div class="face-overlay-text" id="faceOverlayText"></div>
+                                    </div>
+
+                                    <div class="liveness-instruction" id="livenessInstruction">
+                                        Position face in the circle
+                                    </div>
+                                </div>
+
+                                <div class="face-btn-group" id="faceBtnGroup" style="justify-content:flex-start;">
+                                    <button class="btn btn-primary" id="startRegCamBtn" type="button">
+                                        <i class="fa-solid fa-camera"></i> Start Camera & Enroll Face
+                                    </button>
+                                    <button class="btn btn-warning" id="recaptureRegBtn" type="button" style="display:none;">
+                                        <i class="fa-solid fa-rotate"></i> Re-Capture
+                                    </button>
+                                    <button class="btn btn-danger" id="cancelRegCamBtn" type="button" style="display:none;">
+                                        <i class="fa-solid fa-xmark"></i> Stop Camera
+                                    </button>
+                                </div>
+                                <div id="regFaceStatus" style="font-size:13px;color:#64748b;margin-top:10px;">
+                                    * A face must be enrolled before registering the student.
+                                </div>
+                                
+                                <div style="margin-top:32px;text-align:right;">
+                                    <button type="submit" class="btn btn-success" id="submitRegBtn" disabled style="padding:12px 32px;font-size:15px;">
+                                        Complete Registration
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- === STUDENT DETAILS === -->
+                <div class="section" id="sec-students">
+                    <div class="card">
+                        <div class="card-head" style="display:flex; justify-content:space-between; align-items:center;">
+                            <h3><i class="fa-solid fa-users" style="margin-right:8px;color:#4f46e5;"></i>Registered Students</h3>
+                            <button class="btn btn-primary" id="exportStudentsBtn" style="font-size:13px; padding:6px 12px;">
+                                <i class="fa-solid fa-file-csv"></i> Export to CSV
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-wrap" id="studentDetailsTableWrap">
+                                <div class="empty" style="padding:40px 0;"><p>Loading student details...</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- === CLASS REPORT === -->
+                <div class="section" id="sec-report-class">
+                    <div class="card">
+                        <div class="card-head"><h3>Class Attendance Report</h3></div>
+                        <div class="card-body" style="padding:20px 24px;">
+                            <div class="filter-row">
+                                <select class="form-input" id="rcSubject" style="min-width:220px;">
+                                    <option value="">-- Select Subject --</option>
+                                </select>
+                            </div>
+                            <div id="classReportBody">
+                                <div class="empty">
+                                    <div class="empty-icon"><i class="fa-solid fa-square"></i></div>
+                                    <h4>Select a Subject</h4>
+                                    <p>Choose a subject above to see student attendance report.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- === DATE REPORT === -->
+                <div class="section" id="sec-report-date">
+                    <div class="card">
+                        <div class="card-head"><h3>Date-wise Attendance Report</h3></div>
+                        <div class="card-body" style="padding:20px 24px;">
+                            <div class="filter-row">
+                                <select class="form-input" id="rdSubject" style="min-width:220px;">
+                                    <option value="">-- Select Subject --</option>
+                                </select>
+                                <input type="date" class="form-input" id="rdDate" style="min-width:180px;">
+                            </div>
+                            <div id="dateReportBody">
+                                <div class="empty">
+                                    <div class="empty-icon"><i class="fa-solid fa-calendar"></i></div>
+                                    <h4>Select Subject & Date</h4>
+                                    <p>Choose a subject and date to see who was present.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- === SETTINGS === -->
+                <div class="section" id="sec-settings">
+                    <div style="margin-bottom:24px;">
+                    
+                    <div id="settings-grid" style="display:grid;gap:20px;align-items:start;">
+                        
+                        <!-- Left Column -->
+                        <div style="display:flex;flex-direction:column;gap:20px;">
+                            <!-- Update Profile -->
+                            <div class="card" style="margin:0;border-top:3px solid #3b36d6;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="padding:16px 20px;border-bottom:none;">
+                                    <h3 style="font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;margin:0;color:#1e293b;"><i class="fa-regular fa-user" style="color:#3b36d6;"></i> Update Profile</h3>
+                                </div>
+                                <div class="card-body" style="padding:0 20px 20px 20px;">
+                                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px;">
+                                        <div class="form-group" style="margin:0;">
+                                            <label class="form-label" style="font-size:12px;color:#64748b;">Display Name</label>
+                                            <input type="text" class="form-input" id="setName" placeholder="Sourish Sanyal" style="padding:8px 12px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
+                                        </div>
+                                        <div class="form-group" style="margin:0;">
+                                            <label class="form-label" style="font-size:12px;color:#64748b;">Department</label>
+                                            <input type="text" class="form-input" id="setDept" placeholder="CSE" style="padding:8px 12px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom:16px;">
+                                        <label class="form-label" style="font-size:12px;color:#64748b;">Phone Number</label>
+                                        <input type="text" class="form-input" placeholder="e.g. 9876543210" style="padding:8px 12px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
+                                    </div>
+                                    <button class="btn btn-primary" onclick="showToast('Profile updated!', 'success')" style="width:100%;background:#3b36d6;border-color:#3b36d6;border-radius:6px;padding:8px;font-weight:600;">Save Profile</button>
+                                </div>
+                            </div>
+
+                            <!-- Data Export Formatting -->
+                            <div class="card" style="margin:0;border-top:3px solid #6d28d9;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="padding:16px 20px;border-bottom:none;">
+                                    <h3 style="font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;margin:0;color:#1e293b;"><i class="fa-solid fa-download" style="color:#6d28d9;"></i> Data Export Formatting</h3>
+                                </div>
+                                <div class="card-body" style="padding:0 20px 20px 20px;">
+                                    <div class="form-group" style="margin-bottom:12px;">
+                                        <label class="form-label" style="font-size:12px;color:#64748b;">Default Export Format</label>
+                                        <select class="form-input" style="padding:8px 12px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
+                                            <option value="csv">CSV (.csv)</option>
+                                            <option value="xlsx">Excel (.xlsx)</option>
+                                            <option value="pdf">PDF Report</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom:12px;">
+                                        <label class="form-label" style="font-size:12px;color:#64748b;">Report Layout</label>
+                                        <select class="form-input" style="padding:8px 12px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
+                                            <option value="detailed">Detailed (All Columns)</option>
+                                            <option value="summary">Summary (Totals Only)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div style="display:flex;flex-direction:column;gap:20px;">
+                            <!-- Theme & Display -->
+                            <div class="card" style="margin:0;border-top:3px solid #8b5cf6;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="padding:16px 20px;border-bottom:none;">
+                                    <h3 style="font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;margin:0;color:#1e293b;"><i class="fa-solid fa-palette" style="color:#8b5cf6;"></i> Theme & Display</h3>
+                                </div>
+                                <div class="card-body" style="padding:0 20px 20px 20px;">
+                                    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:#f8fafc;border-radius:8px;margin-bottom:16px;border:1px solid #f1f5f9;">
+                                        <div>
+                                            <div style="font-weight:600;font-size:14px;color:#0f172a;">Dark Mode</div>
+                                            <div style="font-size:11px;color:#64748b;">Switch between light and dark theme</div>
+                                        </div>
+                                        <label style="position:relative;display:inline-block;width:44px;height:24px;cursor:pointer;">
+                                            <input type="checkbox" id="darkModeToggle" style="opacity:0;width:0;height:0;">
+                                            <span id="toggleTrack" style="position:absolute;top:0;left:0;right:0;bottom:0;background:#cbd5e1;border-radius:24px;transition:0.3s;"></span>
+                                            <span id="toggleDot" style="position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:0.3s;box-shadow:0 1px 2px rgba(0,0,0,0.2);"></span>
+                                        </label>
+                                    </div>
+                                    <div style="padding:10px;border-radius:8px;background:#eff6ff;text-align:center;" id="themeStatusBox">
+                                        <i class="fa-regular fa-sun" style="color:#f59e0b;font-size:16px;margin-right:6px;"></i>
+                                        <span style="font-weight:600;font-size:14px;color:#1e3a8a;" id="themeStatusText">Light Mode Active</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Schedule Auto-Session -->
+                            <div class="card" style="margin:0;border-top:3px solid #059669;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="padding:16px 20px;border-bottom:none;">
+                                    <h3 style="font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;margin:0;color:#1e293b;"><i class="fa-regular fa-clock" style="color:#059669;"></i> Schedule Auto-Session</h3>
+                                </div>
+                                <div class="card-body" style="padding:0 20px 20px 20px;">
+                                    <div class="form-group" style="margin-bottom:12px;">
+                                        <label class="form-label" style="font-size:12px;color:#64748b;">Subject</label>
+                                        <select class="form-input" id="schedSubject" style="padding:8px 12px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
+                                            <option value="">-- Select Subject --</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom:12px;">
+                                        <label class="form-label" style="font-size:12px;color:#64748b;">Class / Section</label>
+                                        <input type="text" class="form-input" id="schedClass" placeholder="e.g. CS-A" style="padding:8px 12px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
+                                    </div>
+                                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+                                        <div class="form-group" style="margin:0;">
+                                            <label class="form-label" style="font-size:12px;color:#64748b;">Date</label>
+                                            <input type="date" class="form-input" id="schedDate" style="padding:8px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
+                                        </div>
+                                        <div class="form-group" style="margin:0;">
+                                            <label class="form-label" style="font-size:12px;color:#64748b;">Time</label>
+                                            <input type="time" class="form-input" id="schedTime" style="padding:8px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary" id="btnSchedule" style="width:100%;background:#059669;border-color:#059669;border-radius:6px;padding:8px;font-weight:600;">Schedule Session</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script src="config.js"></script>
+    <script src="common.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <script src="face.js"></script>
+    <script src="teacher-dashboard.js"></script>
+
+</body>
+</html>

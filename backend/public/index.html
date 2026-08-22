@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Attendance System</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&family=Noto+Sans+Devanagari:wght@700&family=Noto+Sans+Bengali:wght@700&family=Noto+Sans+Tamil:wght@700&family=Noto+Sans+Telugu:wght@700&family=Noto+Sans+Gujarati:wght@700&family=Noto+Sans+Kannada:wght@700&family=Noto+Sans+Malayalam:wght@700&family=Noto+Sans+Gurmukhi:wght@700&display=swap" rel="stylesheet">
+    <link rel="icon" href="favicon.jpeg" type="image/jpeg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <div class="nav-logo">
+                
+                
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#">Contact Us</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+       
+        <h1>Anti-Proxy <span id="typing-text" class="hero-highlight"></span> System<br>with Face Recognition</h1>
+        <p>Step into the future of campus administration with our Smart Attendance System.</p>
+        <div class="hero-buttons">
+            <a href="#get-started" class="btn btn-primary">Get Started </a>
+            <a href="#features" class="btn btn-outline">Learn More</a>
+        </div>
+    </section>
+
+    <section class="roles-section" id="get-started">
+        <h2>Choose Your Role</h2>
+        <p>Select how you want to access the system.</p>
+        <div class="roles-grid">
+
+            <div class="role-card teacher" onclick="window.location='/teacher-login'">
+                <div class="role-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+                <h3>Teacher</h3>
+                <p>Create class sessions, generate session IDs, monitor live attendance, and view detailed reports.</p>
+                <a href="/teacher-login" class="btn btn-primary">Login as Teacher </a>
+            </div>
+            <div class="role-card student" onclick="window.location='/student-login'">
+                <div class="role-icon"><i class="fa-solid fa-user-graduate"></i></div>
+                <h3>Student</h3>
+                <p>View your attendance records, track your percentage, and see how many classes you need for 75%.</p>
+                <a href="/student-login" class="btn btn-primary">Login as Student </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="features-section" id="features">
+        <h2>Key Features</h2>
+        <p style="font-size:16px;color:#64748b;margin-bottom:0;">Built for real classroom needs.</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="icon"><i class="fa-solid fa-camera"></i></div>
+                <h4>Hardware Camera</h4>
+                <p>Arduino-based camera integration for real-time face capture.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon"><i class="fa-solid fa-route"></i></div>
+                <h4>Live Tracking</h4>
+                <p>See attendance being marked in real-time with timestamps.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon"><i class="fa-solid fa-chart-simple"></i></div>
+                <h4>Detailed Reports</h4>
+                <p>Class-wise, date-wise, and student-wise attendance reports.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon"><i class="fa-solid fa-bullseye"></i></div>
+                <h4>75% Tracker</h4>
+                <p>Students can track how many more classes they need for 75%.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        Built for Smart India Hackathon 2026
+    </footer>
+    <script src="index.js"></script>
+</body>
+</html>

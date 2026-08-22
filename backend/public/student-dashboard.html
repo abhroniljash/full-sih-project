@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | Smart Attendance System</title>
+    <link rel="stylesheet" href="student-dashboard.css?v=2">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div class="student-layout">
+        <nav class="topnav">
+            <div class="topnav-brand">
+                <div class="logo"></div>
+                
+            </div>
+            <div class="topnav-right">
+                <div class="user-pill">
+                    <div class="avatar" id="uAvatar">S</div>
+                    <div class="uname" id="uName">Student</div>
+                </div>
+                <button class="logout-btn" id="logoutBtn" title="Logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div class="welcome-bar">
+                <h2>Welcome, <span id="welcomeName">Student</span>!</h2>
+                <p>Track your attendance across all subjects.</p>
+                <div class="roll-tag" id="rollTag">Roll: ---</div>
+            </div>
+
+            <div class="summary-row">
+                <div class="summary-card">
+                    <div class="s-icon" style="background:#eef2ff;"><i class="fa-solid fa-chalkboard"></i></div>
+                    <div class="s-val" id="totalClasses">0</div>
+                    <div class="s-label">Total Classes Held</div>
+                </div>
+                <div class="summary-card">
+                    <div class="s-icon" style="background:#f0fdf4;"><i class="fa-solid fa-square-check"></i></div>
+                    <div class="s-val" id="totalAttended">0</div>
+                    <div class="s-label">Classes Attended</div>
+                </div>
+                <div class="summary-card">
+                    <div class="s-icon" style="background:#fffbeb;"><i class="fa-solid fa-chart-simple"></i></div>
+                    <div class="s-val" id="overallPerc">0%</div>
+                    <div class="s-label">Overall Percentage</div>
+                </div>
+            </div>
+
+
+
+            <div class="card">
+                <div class="card-head">
+                    <h3>75% Attendance Tracker</h3>
+                </div>
+                <div class="card-body tracker-card" id="trackerList">
+                    <!-- Populated by JS -->
+                    <div class="empty" style="padding:24px 0;">
+                        <p>No data available yet.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head">
+                    <h3>Recent Attendance Logs</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-wrap" id="historyTable">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="common.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <script src="face.js"></script>
+    <script src="student-dashboard.js"></script>
+</body>
+</html>
