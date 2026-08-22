@@ -364,115 +364,123 @@
                     <div style="margin-bottom:24px;">
                         <h2 style="font-size:22px;font-weight:700;color:#1e293b;margin-bottom:4px;">⚙️ Settings</h2>
                         <p style="color:#64748b;font-size:14px;">Customize your dashboard preferences and controls.</p>
-                    </div>
-
-                    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;">
-
-                        <!-- Update Profile -->
-                        <div class="card" style="margin:0;">
-                            <div class="card-head" style="border-bottom:3px solid #4f46e5;">
-                                <h3><i class="fa-solid fa-user-pen" style="margin-right:8px;color:#4f46e5;"></i>Update Profile</h3>
-                            </div>
-                            <div class="card-body" style="padding:20px;">
-                                <div class="form-group" style="margin-bottom:12px;">
-                                    <label class="form-label">Display Name</label>
-                                    <input type="text" class="form-input" id="setName" placeholder="Your name">
+                                  <style>
+                        @media (min-width: 768px) {
+                            #settings-grid { grid-template-columns: 1.3fr 1fr; }
+                        }
+                        @media (max-width: 767px) {
+                            #settings-grid { grid-template-columns: 1fr; }
+                        }
+                    </style>
+                    <div id="settings-grid" style="display:grid;gap:20px;align-items:start;">
+                        
+                        <!-- Left Column -->
+                        <div style="display:flex;flex-direction:column;gap:20px;">
+                            <!-- Update Profile -->
+                            <div class="card" style="margin:0;border-top:3px solid #3b36d6;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="padding:16px 20px;border-bottom:none;">
+                                    <h3 style="font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;margin:0;color:#1e293b;"><i class="fa-regular fa-user" style="color:#3b36d6;"></i> Update Profile</h3>
                                 </div>
-                                <div class="form-group" style="margin-bottom:12px;">
-                                    <label class="form-label">Department</label>
-                                    <input type="text" class="form-input" id="setDept" placeholder="e.g. Computer Science">
-                                </div>
-                                <div class="form-group" style="margin-bottom:16px;">
-                                    <label class="form-label">Phone Number</label>
-                                    <input type="tel" class="form-input" id="setPhone" placeholder="e.g. 9876543210">
-                                </div>
-                                <button class="btn btn-primary btn-sm" onclick="showToast('Profile updated!','success')" style="width:100%;">Save Profile</button>
-                            </div>
-                        </div>
-
-                        <!-- Theme -->
-                        <div class="card" style="margin:0;">
-                            <div class="card-head" style="border-bottom:3px solid #8b5cf6;">
-                                <h3><i class="fa-solid fa-palette" style="margin-right:8px;color:#8b5cf6;"></i>Theme & Display</h3>
-                            </div>
-                            <div class="card-body" style="padding:20px;">
-                                <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #e2e8f0;">
-                                    <div>
-                                        <div style="font-weight:600;font-size:15px;">Dark Mode</div>
-                                        <div style="font-size:12px;color:#94a3b8;">Switch between light and dark theme</div>
+                                <div class="card-body" style="padding:0 20px 20px 20px;">
+                                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px;">
+                                        <div class="form-group" style="margin:0;">
+                                            <label class="form-label" style="font-size:12px;color:#64748b;">Display Name</label>
+                                            <input type="text" class="form-input" id="setName" placeholder="Sourish Sanyal" style="padding:8px 12px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
+                                        </div>
+                                        <div class="form-group" style="margin:0;">
+                                            <label class="form-label" style="font-size:12px;color:#64748b;">Department</label>
+                                            <input type="text" class="form-input" id="setDept" placeholder="CSE" style="padding:8px 12px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
+                                        </div>
                                     </div>
-                                    <label style="position:relative;display:inline-block;width:52px;height:28px;cursor:pointer;">
-                                        <input type="checkbox" id="darkModeToggle" style="opacity:0;width:0;height:0;">
-                                        <span id="toggleTrack" style="position:absolute;top:0;left:0;right:0;bottom:0;background:#cbd5e1;border-radius:28px;transition:0.3s;"></span>
-                                        <span id="toggleDot" style="position:absolute;top:3px;left:3px;width:22px;height:22px;background:#fff;border-radius:50%;transition:0.3s;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></span>
-                                    </label>
+                                    <div class="form-group" style="margin-bottom:16px;">
+                                        <label class="form-label" style="font-size:12px;color:#64748b;">Phone Number</label>
+                                        <input type="text" class="form-input" placeholder="e.g. 9876543210" style="padding:8px 12px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
+                                    </div>
+                                    <button class="btn btn-primary" onclick="showToast('Profile updated!', 'success')" style="width:100%;background:#3b36d6;border-color:#3b36d6;border-radius:6px;padding:8px;font-weight:600;">Save Profile</button>
                                 </div>
-                                <div style="margin-top:16px;padding:12px;border-radius:8px;background:#f8fafc;text-align:center;" id="themeStatusBox">
-                                    <i class="fa-solid fa-sun" style="color:#f59e0b;font-size:20px;margin-right:8px;"></i>
-                                    <span style="font-weight:600;" id="themeStatusText">Light Mode Active</span>
+                            </div>
+
+                            <!-- Data Export Formatting -->
+                            <div class="card" style="margin:0;border-top:3px solid #6d28d9;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="padding:16px 20px;border-bottom:none;">
+                                    <h3 style="font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;margin:0;color:#1e293b;"><i class="fa-solid fa-download" style="color:#6d28d9;"></i> Data Export Formatting</h3>
+                                </div>
+                                <div class="card-body" style="padding:0 20px 20px 20px;">
+                                    <div class="form-group" style="margin-bottom:12px;">
+                                        <label class="form-label" style="font-size:12px;color:#64748b;">Default Export Format</label>
+                                        <select class="form-input" style="padding:8px 12px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
+                                            <option value="csv">CSV (.csv)</option>
+                                            <option value="xlsx">Excel (.xlsx)</option>
+                                            <option value="pdf">PDF Report</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom:12px;">
+                                        <label class="form-label" style="font-size:12px;color:#64748b;">Report Layout</label>
+                                        <select class="form-input" style="padding:8px 12px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
+                                            <option value="detailed">Detailed (All Columns)</option>
+                                            <option value="summary">Summary (Totals Only)</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Schedule Auto-Session -->
-                        <div class="card" style="margin:0;">
-                            <div class="card-head" style="border-bottom:3px solid #10b981;">
-                                <h3><i class="fa-solid fa-clock" style="margin-right:8px;color:#10b981;"></i>Schedule Auto-Session</h3>
+                        <!-- Right Column -->
+                        <div style="display:flex;flex-direction:column;gap:20px;">
+                            <!-- Theme & Display -->
+                            <div class="card" style="margin:0;border-top:3px solid #8b5cf6;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="padding:16px 20px;border-bottom:none;">
+                                    <h3 style="font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;margin:0;color:#1e293b;"><i class="fa-solid fa-palette" style="color:#8b5cf6;"></i> Theme & Display</h3>
+                                </div>
+                                <div class="card-body" style="padding:0 20px 20px 20px;">
+                                    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:#f8fafc;border-radius:8px;margin-bottom:16px;border:1px solid #f1f5f9;">
+                                        <div>
+                                            <div style="font-weight:600;font-size:14px;color:#0f172a;">Dark Mode</div>
+                                            <div style="font-size:11px;color:#64748b;">Switch between light and dark theme</div>
+                                        </div>
+                                        <label style="position:relative;display:inline-block;width:44px;height:24px;cursor:pointer;">
+                                            <input type="checkbox" id="darkModeToggle" style="opacity:0;width:0;height:0;">
+                                            <span id="toggleTrack" style="position:absolute;top:0;left:0;right:0;bottom:0;background:#cbd5e1;border-radius:24px;transition:0.3s;"></span>
+                                            <span id="toggleDot" style="position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:0.3s;box-shadow:0 1px 2px rgba(0,0,0,0.2);"></span>
+                                        </label>
+                                    </div>
+                                    <div style="padding:10px;border-radius:8px;background:#eff6ff;text-align:center;" id="themeStatusBox">
+                                        <i class="fa-regular fa-sun" style="color:#f59e0b;font-size:16px;margin-right:6px;"></i>
+                                        <span style="font-weight:600;font-size:14px;color:#1e3a8a;" id="themeStatusText">Light Mode Active</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="card-body" style="padding:20px;">
-                                <div class="form-group" style="margin-bottom:12px;">
-                                    <label class="form-label">Subject</label>
-                                    <select class="form-input" id="schedSubject">
-                                        <option value="">-- Select Subject --</option>
-                                    </select>
+
+                            <!-- Schedule Auto-Session -->
+                            <div class="card" style="margin:0;border-top:3px solid #059669;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                                <div style="padding:16px 20px;border-bottom:none;">
+                                    <h3 style="font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;margin:0;color:#1e293b;"><i class="fa-regular fa-clock" style="color:#059669;"></i> Schedule Auto-Session</h3>
                                 </div>
-                                <div class="form-group" style="margin-bottom:12px;">
-                                    <label class="form-label">Class / Section</label>
-                                    <input type="text" class="form-input" id="schedClass" placeholder="e.g. CS-A">
+                                <div class="card-body" style="padding:0 20px 20px 20px;">
+                                    <div class="form-group" style="margin-bottom:12px;">
+                                        <label class="form-label" style="font-size:12px;color:#64748b;">Subject</label>
+                                        <select class="form-input" id="schedSubject" style="padding:8px 12px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
+                                            <option value="">-- Select Subject --</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom:12px;">
+                                        <label class="form-label" style="font-size:12px;color:#64748b;">Class / Section</label>
+                                        <input type="text" class="form-input" id="schedClass" placeholder="e.g. CS-A" style="padding:8px 12px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
+                                    </div>
+                                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+                                        <div class="form-group" style="margin:0;">
+                                            <label class="form-label" style="font-size:12px;color:#64748b;">Date</label>
+                                            <input type="date" class="form-input" id="schedDate" style="padding:8px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
+                                        </div>
+                                        <div class="form-group" style="margin:0;">
+                                            <label class="form-label" style="font-size:12px;color:#64748b;">Time</label>
+                                            <input type="time" class="form-input" id="schedTime" style="padding:8px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary" id="btnSchedule" style="width:100%;background:#059669;border-color:#059669;border-radius:6px;padding:8px;font-weight:600;">Schedule Session</button>
                                 </div>
-                                <div class="form-group" style="margin-bottom:12px;">
-                                    <label class="form-label">Date</label>
-                                    <input type="date" class="form-input" id="schedDate">
-                                </div>
-                                <div class="form-group" style="margin-bottom:16px;">
-                                    <label class="form-label">Time</label>
-                                    <input type="time" class="form-input" id="schedTime">
-                                </div>
-                                <button class="btn btn-primary btn-sm" id="btnSchedule" style="width:100%;background:#10b981;border-color:#10b981;">Schedule Session</button>
                             </div>
                         </div>
-
-                        <!-- Data Export -->
-                        <div class="card" style="margin:0;">
-                            <div class="card-head" style="border-bottom:3px solid #06b6d4;">
-                                <h3><i class="fa-solid fa-file-export" style="margin-right:8px;color:#06b6d4;"></i>Data Export Formatting</h3>
-                            </div>
-                            <div class="card-body" style="padding:20px;">
-                                <div class="form-group" style="margin-bottom:12px;">
-                                    <label class="form-label">Default Export Format</label>
-                                    <select class="form-input">
-                                        <option value="csv">CSV (.csv)</option>
-                                        <option value="xlsx">Excel (.xlsx)</option>
-                                        <option value="pdf">PDF Report</option>
-                                    </select>
-                                </div>
-                                <div class="form-group" style="margin-bottom:12px;">
-                                    <label class="form-label">Report Layout</label>
-                                    <select class="form-input">
-                                        <option value="detailed">Detailed (All Columns)</option>
-                                        <option value="summary">Summary (Totals Only)</option>
-                                        <option value="compact">Compact (One Page)</option>
-                                    </select>
-                                </div>
-                                <div class="form-group" style="margin-bottom:16px;">
-                                    <label class="form-label" style="display:flex;align-items:center;gap:8px;">
-                                        <input type="checkbox" checked> Include institution header in exports
-                                    </label>
-                                </div>
-                                <button class="btn btn-primary btn-sm" onclick="showToast('Export settings saved!','success')" style="width:100%;background:#06b6d4;border-color:#06b6d4;">Save Export Settings</button>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
 
