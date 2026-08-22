@@ -112,6 +112,27 @@ const teacherDashboard = asyncHandler(async (req, res) => {
       status: s.status,
     }));
 
+  const weeklyData = [];
+  const today = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    const count = attendance.filter((a) => {
+      if (!a.timestamp) return false;
+      const aDate = new Date(a.timestamp);
+      return !isNaN(aDate) && aDate.toISOString().startsWith(dateStr);
+    }).length;
+    const day = d.toLocaleDateString('en-US', { weekday: 'short' });
+    weeklyData.push({ day, date: dateStr, count });
+  }
+
+  const totalRegistered = repo.all('students').length;
+  const uniqueRolls = new Set(attendance.map((a) => a.rollNumber));
+  const totalParticipated = uniqueRolls.size;
+  const neverAttended = totalRegistered - totalParticipated;
+  const participationData = { totalRegistered, totalParticipated, neverAttended };
+
   res.json({
     success: true,
     totalSessions: sessions.length,
@@ -119,6 +140,8 @@ const teacherDashboard = asyncHandler(async (req, res) => {
     totalAttendanceMarks: attendance.length,
     totalSubjects: subjects.length,
     recentSessions,
+    weeklyData,
+    participationData,
   });
 });
 

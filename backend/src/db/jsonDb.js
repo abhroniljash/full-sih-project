@@ -22,6 +22,7 @@ const DEFAULT_DATA = {
   students: [],
   sessions: [],
   attendance: [],
+  messages: [],
 };
 
 function ensureFile() {

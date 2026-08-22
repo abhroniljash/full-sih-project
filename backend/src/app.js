@@ -9,6 +9,8 @@ const sessionRoutes = require('./routes/session.routes');
 const attendanceRoutes = require('./routes/attendance.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
 const studentsRoutes = require('./routes/students.routes');
+const notificationRoutes = require('./routes/notifications.routes');
+const messageRoutes = require('./routes/messages.routes');
 
 const app = express();
 
@@ -40,6 +42,8 @@ app.use('/api/sessions', sessionRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/students', studentsRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/messages', messageRoutes);
 
 // --- Serve Frontend Static Files ---
 const path = require('path');

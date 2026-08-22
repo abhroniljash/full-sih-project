@@ -217,6 +217,11 @@ input, button, textarea, select { font-family: inherit; outline: none; }
     background: none; border: none; font-size: 17px; color: #64748b; cursor: pointer;
 }
 .icon-btn:hover { background: #f1f5f9; }
+.notif-dot, .msg-dot {
+    position: absolute; top: 6px; right: 6px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #ef4444;
+}
 .icon-btn.has-dot::after {
     content: ''; position: absolute; top: 6px; right: 7px;
     width: 6px; height: 6px; background: #ef4444; border-radius: 50%;

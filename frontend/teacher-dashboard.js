@@ -30,6 +30,15 @@ function switchSec(secId) {
     
     sessionStorage.setItem('teacher_current_sec', secId);
 
+    // Close performance dropdown if navigating away from performance sections
+    var perfSections = ['report-class', 'report-date'];
+    if (perfSections.indexOf(secId) === -1) {
+        var perfLabel = document.querySelector('.nav-group-label.collapsible[data-toggle="performance-group"]');
+        var perfGroup = document.getElementById('performance-group');
+        if (perfLabel) perfLabel.classList.remove('open');
+        if (perfGroup) perfGroup.classList.remove('open');
+    }
+
     navItems.forEach(function(btn) {
         if(btn.dataset.sec === secId) btn.classList.add('active');
         else btn.classList.remove('active');
@@ -131,38 +140,67 @@ function loadDashboard() {
             recentTable.innerHTML = tHTML;
         }
 
-        // --- Charts (illustrative — not backed by real weekly data yet) ---
+        // --- Weekly Attendance Trends (real data) ---
         var weeklyCanvas = document.getElementById('weeklyChart');
-        if(weeklyCanvas && !weeklyCanvas.dataset.rendered) {
-            weeklyCanvas.dataset.rendered = 'true';
-            new Chart(weeklyCanvas, {
+        if(weeklyCanvas) {
+            if(window._weeklyChartInstance) window._weeklyChartInstance.destroy();
+            var wCtx = weeklyCanvas.getContext('2d');
+            var gradient = wCtx.createLinearGradient(0, 0, 0, 280);
+            gradient.addColorStop(0, 'rgba(99, 102, 241, 0.3)');
+            gradient.addColorStop(1, 'rgba(99, 102, 241, 0.01)');
+            var wData = res.weeklyData || [];
+            window._weeklyChartInstance = new Chart(weeklyCanvas, {
                 type: 'line',
                 data: {
-                    labels: ['Mon','Tue','Wed','Thu','Fri'],
+                    labels: wData.map(function(d){ return d.day; }),
                     datasets: [{
-                        data: [82,88,80,86,83],
-                        borderColor: '#4f46e5',
-                        backgroundColor: 'rgba(79,70,229,0.08)',
-                        fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#4f46e5'
+                        label: 'Attendance',
+                        data: wData.map(function(d){ return d.count; }),
+                        borderColor: '#6366f1',
+                        backgroundColor: gradient,
+                        fill: true, tension: 0.4, pointRadius: 5,
+                        pointBackgroundColor: '#6366f1',
+                        pointBorderColor: '#fff', pointBorderWidth: 2,
+                        pointHoverRadius: 7, borderWidth: 3
                     }]
                 },
                 options: {
-                    plugins: { legend: { display: false } },
-                    scales: { y: { min: 0, max: 100 } }
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false },
+                        tooltip: { backgroundColor: '#1e293b', titleFont: { size: 13 }, bodyFont: { size: 12 }, padding: 10, cornerRadius: 8 }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 }, color: '#94a3b8' } },
+                        x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#94a3b8' } }
+                    }
                 }
             });
         }
 
+        // --- Participation Chart (real data) ---
         var donutCanvas = document.getElementById('participationChart');
-        if(donutCanvas && !donutCanvas.dataset.rendered) {
-            donutCanvas.dataset.rendered = 'true';
-            new Chart(donutCanvas, {
+        if(donutCanvas) {
+            if(window._participationChartInstance) window._participationChartInstance.destroy();
+            var pData = res.participationData || { totalParticipated: 0, neverAttended: 0 };
+            window._participationChartInstance = new Chart(donutCanvas, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Present','Absent','Late'],
-                    datasets: [{ data: [75, 15, 10], backgroundColor: ['#4f46e5','#c7d2fe','#e2e8f0'] }]
+                    labels: ['Active Students', 'Never Attended'],
+                    datasets: [{
+                        data: [pData.totalParticipated, pData.neverAttended],
+                        backgroundColor: ['#6366f1', '#e2e8f0'],
+                        hoverBackgroundColor: ['#4f46e5', '#cbd5e1'],
+                        borderWidth: 0, borderRadius: 4
+                    }]
                 },
-                options: { plugins: { legend: { position: 'bottom' } } }
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle', font: { size: 12 } } },
+                        tooltip: { backgroundColor: '#1e293b', padding: 10, cornerRadius: 8 }
+                    }
+                }
             });
         }
     }).catch(function(err) {
@@ -478,11 +516,10 @@ try {
 } catch (e) {
     console.error("Section loaded with missing elements, but execution continued.", e);
 }
-document.querySelectorAll('.nav-group-label.collapsible').forEach(label => {
-    label.addEventListener('click', () => {
-        const targetId = label.dataset.toggle;
-        const target = document.getElementById(targetId);
-
+document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label) {
+    label.addEventListener('click', function() {
+        var targetId = label.dataset.toggle;
+        var target = document.getElementById(targetId);
         label.classList.toggle('open');
         target.classList.toggle('open');
     });
@@ -826,4 +863,128 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(label => {
     }
 
 
+})();
+
+// --- Notification Panel ---
+(function() {
+    var notifBtn = document.getElementById('notifBtn');
+    var notifDot = document.getElementById('notifDot');
+    if (!notifBtn) return;
+
+    var panel = document.createElement('div');
+    panel.id = 'notifPanel';
+    panel.style.cssText = 'display:none;position:fixed;top:60px;right:80px;width:360px;max-height:440px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.12);z-index:200;overflow:hidden;';
+    panel.innerHTML = '<div style="padding:16px 20px;border-bottom:1px solid #e2e8f0;font-weight:700;font-size:15px;color:#1e293b;display:flex;justify-content:space-between;align-items:center;">Notifications <button id="notifClose" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:18px;">✕</button></div><div id="notifList" style="overflow-y:auto;max-height:370px;padding:8px 0;"></div>';
+    document.body.appendChild(panel);
+
+    notifBtn.addEventListener('click', function() {
+        if (panel.style.display === 'none') {
+            panel.style.display = 'block';
+            loadNotifications();
+        } else {
+            panel.style.display = 'none';
+        }
+    });
+
+    document.getElementById('notifClose').addEventListener('click', function() {
+        panel.style.display = 'none';
+    });
+
+    function loadNotifications() {
+        var list = document.getElementById('notifList');
+        list.innerHTML = '<div style="padding:20px;text-align:center;color:#94a3b8;">Loading...</div>';
+        API.get('/notifications', teacherToken).then(function(res) {
+            var notifs = res.notifications || [];
+            if (notifs.length === 0) {
+                list.innerHTML = '<div style="padding:30px;text-align:center;color:#94a3b8;"><i class="fa-regular fa-bell" style="font-size:24px;display:block;margin-bottom:8px;"></i>No notifications</div>';
+                if (notifDot) notifDot.style.display = 'none';
+                return;
+            }
+            var unread = notifs.filter(function(n){ return !n.read; }).length;
+            if (notifDot) notifDot.style.display = unread > 0 ? 'block' : 'none';
+            var html = '';
+            notifs.forEach(function(n) {
+                var icons = { info: 'fa-circle-info', warning: 'fa-triangle-exclamation', success: 'fa-circle-check', system: 'fa-gear' };
+                var colors = { info: '#6366f1', warning: '#f59e0b', success: '#22c55e', system: '#64748b' };
+                var icon = icons[n.type] || icons.info;
+                var color = colors[n.type] || colors.info;
+                html += '<div style="padding:12px 20px;border-bottom:1px solid #f8fafc;display:flex;gap:12px;align-items:flex-start;' + (!n.read ? 'background:#f8fafc;' : '') + '">';
+                html += '<i class="fa-solid ' + icon + '" style="color:' + color + ';font-size:16px;margin-top:2px;"></i>';
+                html += '<div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#1e293b;">' + n.title + '</div><div style="font-size:12px;color:#64748b;margin-top:2px;">' + n.message + '</div><div style="font-size:11px;color:#94a3b8;margin-top:4px;">' + n.time + '</div></div></div>';
+            });
+            list.innerHTML = html;
+        }).catch(function() {
+            list.innerHTML = '<div style="padding:20px;text-align:center;color:#ef4444;">Failed to load</div>';
+        });
+    }
+
+    // Auto-check for notifications on load
+    API.get('/notifications', teacherToken).then(function(res) {
+        var unread = (res.notifications || []).filter(function(n){ return !n.read; }).length;
+        if (notifDot) notifDot.style.display = unread > 0 ? 'block' : 'none';
+    }).catch(function(){});
+})();
+
+// --- Messages Panel ---
+(function() {
+    var msgBtn = document.getElementById('msgBtn');
+    var msgDot = document.getElementById('msgDot');
+    if (!msgBtn) return;
+
+    var panel = document.createElement('div');
+    panel.id = 'msgPanel';
+    panel.style.cssText = 'display:none;position:fixed;top:60px;right:120px;width:380px;max-height:480px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.12);z-index:200;overflow:hidden;';
+    panel.innerHTML = '<div style="padding:16px 20px;border-bottom:1px solid #e2e8f0;font-weight:700;font-size:15px;color:#1e293b;display:flex;justify-content:space-between;align-items:center;">Messages <button id="msgClose" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:18px;">✕</button></div><div id="msgList" style="overflow-y:auto;max-height:400px;padding:8px 0;"></div>';
+    document.body.appendChild(panel);
+
+    msgBtn.addEventListener('click', function() {
+        if (panel.style.display === 'none') {
+            panel.style.display = 'block';
+            loadMessages();
+        } else {
+            panel.style.display = 'none';
+        }
+    });
+
+    document.getElementById('msgClose').addEventListener('click', function() {
+        panel.style.display = 'none';
+    });
+
+    function loadMessages() {
+        var list = document.getElementById('msgList');
+        list.innerHTML = '<div style="padding:20px;text-align:center;color:#94a3b8;">Loading...</div>';
+        API.get('/messages', teacherToken).then(function(res) {
+            var msgs = res.messages || [];
+            if (msgs.length === 0) {
+                list.innerHTML = '<div style="padding:30px;text-align:center;color:#94a3b8;"><i class="fa-regular fa-comment" style="font-size:24px;display:block;margin-bottom:8px;"></i>No messages yet<br><span style="font-size:12px;">Students can message you from their dashboard</span></div>';
+                if (msgDot) msgDot.style.display = 'none';
+                return;
+            }
+            var unread = msgs.filter(function(m){ return !m.read; }).length;
+            if (msgDot) msgDot.style.display = unread > 0 ? 'block' : 'none';
+            var html = '';
+            msgs.forEach(function(m) {
+                html += '<div style="padding:12px 20px;border-bottom:1px solid #f8fafc;cursor:pointer;' + (!m.read ? 'background:#f0f9ff;' : '') + '" onclick="markMsgRead(\'' + m.id + '\', this)">';
+                html += '<div style="display:flex;justify-content:space-between;align-items:center;"><div style="font-size:13px;font-weight:600;color:#1e293b;">' + m.fromName + ' <span style="font-size:11px;font-weight:400;color:#94a3b8;">(' + (m.fromRole || 'Student') + ')</span></div>';
+                html += '<span style="font-size:11px;color:#94a3b8;">' + formatTime(m.timestamp) + '</span></div>';
+                html += '<div style="font-size:13px;font-weight:500;color:#475569;margin-top:4px;">' + (m.subject || 'No subject') + '</div>';
+                html += '<div style="font-size:12px;color:#64748b;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + m.body + '</div></div>';
+            });
+            list.innerHTML = html;
+        }).catch(function() {
+            list.innerHTML = '<div style="padding:20px;text-align:center;color:#ef4444;">Failed to load messages</div>';
+        });
+    }
+
+    window.markMsgRead = function(id, el) {
+        API.patch('/messages/' + id + '/read', {}, teacherToken).then(function() {
+            if (el) el.style.background = '#fff';
+        }).catch(function(){});
+    };
+
+    // Auto-check for unread messages on load
+    API.get('/messages', teacherToken).then(function(res) {
+        var unread = (res.messages || []).filter(function(m){ return !m.read; }).length;
+        if (msgDot) msgDot.style.display = unread > 0 ? 'block' : 'none';
+    }).catch(function(){});
 })();
