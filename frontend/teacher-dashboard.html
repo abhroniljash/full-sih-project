@@ -396,30 +396,21 @@
                                 <h3><i class="fa-solid fa-palette" style="margin-right:8px;color:#8b5cf6;"></i>Theme & Display</h3>
                             </div>
                             <div class="card-body" style="padding:20px;">
-                                <div class="form-group" style="margin-bottom:12px;">
-                                    <label class="form-label">Color Theme</label>
-                                    <select class="form-input" id="setTheme">
-                                        <option value="light">Light (Default)</option>
-                                        <option value="dark">Dark Mode</option>
-                                        <option value="blue">Ocean Blue</option>
-                                    </select>
+                                <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #e2e8f0;">
+                                    <div>
+                                        <div style="font-weight:600;font-size:15px;">Dark Mode</div>
+                                        <div style="font-size:12px;color:#94a3b8;">Switch between light and dark theme</div>
+                                    </div>
+                                    <label style="position:relative;display:inline-block;width:52px;height:28px;cursor:pointer;">
+                                        <input type="checkbox" id="darkModeToggle" style="opacity:0;width:0;height:0;">
+                                        <span id="toggleTrack" style="position:absolute;top:0;left:0;right:0;bottom:0;background:#cbd5e1;border-radius:28px;transition:0.3s;"></span>
+                                        <span id="toggleDot" style="position:absolute;top:3px;left:3px;width:22px;height:22px;background:#fff;border-radius:50%;transition:0.3s;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></span>
+                                    </label>
                                 </div>
-                                <div class="form-group" style="margin-bottom:12px;">
-                                    <label class="form-label">Font Size</label>
-                                    <select class="form-input" id="setFontSize">
-                                        <option value="normal">Normal</option>
-                                        <option value="large">Large</option>
-                                        <option value="compact">Compact</option>
-                                    </select>
+                                <div style="margin-top:16px;padding:12px;border-radius:8px;background:#f8fafc;text-align:center;" id="themeStatusBox">
+                                    <i class="fa-solid fa-sun" style="color:#f59e0b;font-size:20px;margin-right:8px;"></i>
+                                    <span style="font-weight:600;" id="themeStatusText">Light Mode Active</span>
                                 </div>
-                                <div class="form-group" style="margin-bottom:16px;">
-                                    <label class="form-label">Sidebar Position</label>
-                                    <select class="form-input">
-                                        <option value="left">Left (Default)</option>
-                                        <option value="right">Right</option>
-                                    </select>
-                                </div>
-                                <button class="btn btn-primary btn-sm" onclick="showToast('Theme preferences saved!','success')" style="width:100%;background:#8b5cf6;border-color:#8b5cf6;">Apply Theme</button>
                             </div>
                         </div>
 

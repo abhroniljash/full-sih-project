@@ -29,6 +29,47 @@ if(setNameEl) setNameEl.value = teacher.name || '';
 var setDeptEl = document.getElementById('setDept');
 if(setDeptEl) setDeptEl.value = teacher.department || '';
 
+// --- Dark/Light Theme Toggle ---
+(function() {
+    var toggle = document.getElementById('darkModeToggle');
+    var track = document.getElementById('toggleTrack');
+    var dot = document.getElementById('toggleDot');
+    var statusBox = document.getElementById('themeStatusBox');
+    var statusText = document.getElementById('themeStatusText');
+
+    function applyDark(isDark) {
+        if (isDark) {
+            document.body.classList.add('dark-theme');
+            if(track) track.style.background = '#6366f1';
+            if(dot) dot.style.left = '27px';
+            if(statusBox) statusBox.style.background = '#312e81';
+            if(statusText) statusText.innerHTML = '<i class="fa-solid fa-moon" style="color:#a5b4fc;font-size:20px;margin-right:8px;"></i>Dark Mode Active';
+        } else {
+            document.body.classList.remove('dark-theme');
+            if(track) track.style.background = '#cbd5e1';
+            if(dot) dot.style.left = '3px';
+            if(statusBox) statusBox.style.background = '#f8fafc';
+            if(statusText) statusText.innerHTML = '<i class="fa-solid fa-sun" style="color:#f59e0b;font-size:20px;margin-right:8px;"></i>Light Mode Active';
+        }
+    }
+
+    // Load saved preference
+    var saved = localStorage.getItem('sa_theme');
+    if (saved === 'dark') {
+        if(toggle) toggle.checked = true;
+        applyDark(true);
+    }
+
+    if(toggle) {
+        toggle.addEventListener('change', function() {
+            var isDark = this.checked;
+            applyDark(isDark);
+            localStorage.setItem('sa_theme', isDark ? 'dark' : 'light');
+            showToast(isDark ? 'Dark Mode enabled' : 'Light Mode enabled', 'success');
+        });
+    }
+})();
+
 var currentLiveSessionId = null;
 var faceDetectInterval = null;
 var knownFaces = [];  
