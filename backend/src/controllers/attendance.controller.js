@@ -87,6 +87,36 @@ const listByStudent = asyncHandler(async (req, res) => {
   res.json({ success: true, count: records.length, records });
 });
 
+const myRecords = asyncHandler(async (req, res) => {
+  if (req.user.role !== 'student') {
+    throw new ApiError(403, 'Only students can view their own records');
+  }
+  const roll = req.user.rollNumber;
+  const records = repo.findMany('attendance', (a) => a.rollNumber === roll);
+  
+  // Calculate total sessions per subject
+  const sessions = repo.all('sessions') || [];
+  const subjectTotals = {};
+  sessions.forEach(s => {
+    subjectTotals[s.subject] = (subjectTotals[s.subject] || 0) + 1;
+  });
+
+  const studentTotals = {};
+  records.forEach(r => {
+    studentTotals[r.subject] = (studentTotals[r.subject] || 0) + 1;
+  });
+
+  const aggregates = [];
+  for (const subject in subjectTotals) {
+    const total = subjectTotals[subject];
+    const attended = studentTotals[subject] || 0;
+    const percentage = total > 0 ? Math.round((attended / total) * 100) : 0;
+    aggregates.push({ subject, total, attended, percentage });
+  }
+
+  res.json({ success: true, records, aggregates });
+});
+
 
 const classReport = asyncHandler(async (req, res) => {
   const { subject } = req.query;
@@ -132,4 +162,4 @@ const dateReport = asyncHandler(async (req, res) => {
   res.json({ success: true, subject, date, totalPresent: present.length, records: present });
 });
 
-module.exports = { markSelf, markManual, listBySession, listByStudent, classReport, dateReport };
+module.exports = { markSelf, markManual, listBySession, listByStudent, myRecords, classReport, dateReport };

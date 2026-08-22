@@ -1,7 +1,7 @@
 // --- Auth & Setup ---
 var admin = Auth.getUser('admin');
 var adminToken = Auth.getToken('admin');
-if (!admin || !adminToken) goTo('secure-admin-portal.html');
+if (!admin || !adminToken) goTo('/secure-admin-portal');
 
 var elHUName = document.getElementById('hUName');
 if(elHUName) elHUName.textContent = admin.name;

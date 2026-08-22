@@ -20,7 +20,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         .then(function(res) {
             Auth.setSession('teacher', res.token, res.user);
             showToast('Login successful!', 'success');
-            setTimeout(function(){ goTo('teacher-dashboard.html'); }, 800);
+            setTimeout(function(){ goTo('/teacher-dashboard'); }, 800);
         })
         .catch(function(err) {
             showToast(err.message || 'Invalid credentials', 'danger');

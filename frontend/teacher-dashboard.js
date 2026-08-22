@@ -1,7 +1,7 @@
 // --- Auth & Setup ---
 var teacher = Auth.getUser('teacher');
 var teacherToken = Auth.getToken('teacher');
-if (!teacher || !teacherToken) goTo('teacher-login.html');
+if (!teacher || !teacherToken) goTo('/teacher-login');
 
 var elUName = document.getElementById('uName');
 if(elUName) elUName.textContent = teacher.name;

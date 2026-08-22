@@ -152,12 +152,12 @@ function confirmLogout(role) {
         if (role === 'teacher') {
             API.post('/auth/teacher/logout', {}, Auth.getToken('teacher')).finally(() => {
                 Auth.clearSession(role);
-                goTo('index.html');
+                goTo('/');
             });
         } else {
             Auth.clearSession(role);
-            if (role === 'admin') goTo('secure-admin-portal.html');
-            else goTo('index.html');
+            if (role === 'admin') goTo('/secure-admin-portal');
+            else goTo('/');
         }
     };
 }

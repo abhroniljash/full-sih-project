@@ -51,7 +51,7 @@ app.use('/api/admin', adminRoutes);
 // --- Serve Frontend Static Files ---
 const path = require('path');
 const frontendPath = path.join(__dirname, '../../frontend');
-app.use(express.static(frontendPath));
+app.use(express.static(frontendPath, { extensions: ['html'] }));
 app.get('*', (req, res, next) => {
   // If it starts with /api, let the 404 handler catch it
   if (req.url.startsWith('/api')) {

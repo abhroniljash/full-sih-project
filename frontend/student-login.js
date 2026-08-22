@@ -31,7 +31,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         .then(function(res) {
             Auth.setSession('student', res.token, res.user);
             showToast('Login successful!', 'success');
-            setTimeout(function(){ goTo('student-dashboard.html'); }, 800);
+            setTimeout(function(){ goTo('/student-dashboard'); }, 800);
         })
         .catch(function(loginErr) {
             // If login failed, try registering (first-time user)
@@ -39,7 +39,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
                 .then(function(res) {
                     Auth.setSession('student', res.token, res.user);
                     showToast('Account created & logged in!', 'success');
-                    setTimeout(function(){ goTo('student-dashboard.html'); }, 800);
+                    setTimeout(function(){ goTo('/student-dashboard'); }, 800);
                 })
                 .catch(function(regErr) {
                     // Both login and register failed — show the login error

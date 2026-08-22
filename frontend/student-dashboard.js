@@ -1,7 +1,7 @@
 // --- Auth & Setup ---
 var student = Auth.getUser('student');
 var studentToken = Auth.getToken('student');
-if (!student || !studentToken) goTo('student-login.html');
+if (!student || !studentToken) goTo('/student-login');
 
 document.getElementById('uName').textContent = student.name;
 document.getElementById('welcomeName').textContent = student.name.split(' ')[0];
@@ -72,5 +72,8 @@ function loadDashboard() {
         showToast(err.message || 'Failed to load dashboard', 'danger');
     });
 }
+
+// Initialize Dashboard
+loadDashboard();
 
 

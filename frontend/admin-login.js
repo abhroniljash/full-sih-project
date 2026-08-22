@@ -12,7 +12,7 @@ document.getElementById('adminLoginForm').addEventListener('submit', function(e)
         .then(function(res) {
             Auth.setSession('admin', res.token, res.user);
             showToast('Login successful!', 'success');
-            setTimeout(function(){ goTo('secure-admin-dashboard.html'); }, 800);
+            setTimeout(function(){ goTo('/secure-admin-dashboard'); }, 800);
         })
         .catch(function(err) {
             showToast(err.message || 'Invalid credentials', 'danger');

@@ -5,6 +5,7 @@ const { authenticate, requireRole } = require('../middleware/auth');
 
 router.post('/mark', authenticate, requireRole('student'), ctrl.markSelf);
 router.post('/mark-manual', authenticate, requireRole('teacher'), ctrl.markManual);
+router.get('/my-records', authenticate, requireRole('student'), ctrl.myRecords);
 router.get('/session/:sessionId', authenticate, ctrl.listBySession);
 router.get('/student/:rollNumber', authenticate, ctrl.listByStudent);
 router.get('/reports/class', authenticate, requireRole('teacher'), ctrl.classReport);
