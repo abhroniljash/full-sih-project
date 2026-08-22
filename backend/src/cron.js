@@ -5,16 +5,24 @@ const { generateSessionId } = require('./utils/helpers');
 // Run every minute
 cron.schedule('* * * * *', async () => {
   console.log('[CRON] Checking for scheduled sessions...');
+  
+  // Get current time in IST (Asia/Kolkata)
   const now = new Date();
-  // We'll format current date as YYYY-MM-DD and time as HH:MM
-  // Note: local time comparison
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
+  const options = { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false };
+  const formatter = new Intl.DateTimeFormat('en-IN', options);
+  
+  // parts will look like: 22/08/2026, 19:05
+  // en-IN format usually puts DD/MM/YYYY. Let's parse it safely.
+  const dateString = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
+  const istDate = new Date(dateString);
+  
+  const year = istDate.getFullYear();
+  const month = String(istDate.getMonth() + 1).padStart(2, '0');
+  const day = String(istDate.getDate()).padStart(2, '0');
   const currentDate = `${year}-${month}-${day}`;
   
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const hours = String(istDate.getHours()).padStart(2, '0');
+  const minutes = String(istDate.getMinutes()).padStart(2, '0');
   const currentTime = `${hours}:${minutes}`;
 
   // Find pending scheduled sessions that are due
