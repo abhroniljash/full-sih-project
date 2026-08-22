@@ -22,11 +22,13 @@ const DbSchema = new mongoose.Schema({
 }, { strict: false });
 
 let DbModel;
+let lastError = null;
 
 async function init() {
   const uri = process.env.DATABASE_URL || process.env.MONGO_URI;
   if (!uri) {
-    console.warn('[db] WARNING: No DATABASE_URL or MONGO_URI found in env. Falling back to in-memory (data will wipe on restart).');
+    lastError = 'No DATABASE_URL or MONGO_URI found in env variables.';
+    console.warn('[db] WARNING: ' + lastError);
     return;
   }
   
@@ -34,6 +36,7 @@ async function init() {
     // Connect without destructive syncs (no drop, no force: true)
     await mongoose.connect(uri);
     isConnected = true;
+    lastError = null;
     DbModel = mongoose.model('Database', DbSchema);
     
     let doc = await DbModel.findOne();
@@ -47,6 +50,7 @@ async function init() {
     // Load into memory for fast synchronous reads
     memoryDb = { ...DEFAULT_DATA, ...doc.data };
   } catch (err) {
+    lastError = err.message || err.toString();
     console.error('[db] Cloud Database connection failed:', err);
     console.warn('[db] Falling back to in-memory storage.');
   }
@@ -54,6 +58,10 @@ async function init() {
 
 function read() {
   return memoryDb;
+}
+
+function getLastError() {
+  return lastError;
 }
 
 let writeQueue = Promise.resolve();
@@ -75,4 +83,10 @@ function write(data) {
   return writeQueue;
 }
 
-module.exports = { init, read, write };
+module.exports = {
+  init,
+  read,
+  write,
+  isCloudConnected: () => isConnected,
+  getLastError
+};
