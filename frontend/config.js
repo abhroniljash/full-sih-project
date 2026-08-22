@@ -1,8 +1,8 @@
 // --- Backend API configuration ---
 // Use the current origin if deployed, otherwise fallback to localhost:5000 for local dev
-var API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' && window.location.port === '5500' 
+var API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
   ? 'http://localhost:5000/api' 
-  : '/api';
+  : 'https://olivedrab-owl-859967.hostingersite.com/api';
 
 // --- face-api.js model configuration ---
 // Models are fetched from a public CDN at runtime (~6MB total, cached by the
