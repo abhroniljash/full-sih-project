@@ -399,7 +399,7 @@
 <h1 class="font-headline-lg text-headline-lg text-on-background relative z-10">Attendance Points System (Internal Marks)</h1>
 <p class="font-body-md text-body-md text-on-surface-variant relative z-10">Consistent attendance directly impacts your internal assessment scores. Maintain regular presence to secure your Internal Marks points and ensure academic eligibility.</p>
 </div>
-<button class="bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary px-6 py-3 rounded-full font-label-sm flex items-center gap-2 transition-all shadow-md hover:shadow-lg">
+<button id="btn-detailed-log" class="bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary px-6 py-3 rounded-full font-label-sm flex items-center gap-2 transition-all shadow-md hover:shadow-lg">
 <span class="material-symbols-outlined text-[20px]">calculate</span>
             View Detailed Log
         </button>
@@ -414,11 +414,11 @@
 <span class="material-symbols-outlined text-secondary">analytics</span>
 </div>
 <div class="flex items-end gap-2 relative z-10">
-<span class="font-stat-display text-stat-display text-primary">88<span class="text-headline-md">%</span></span>
+<span id="internal-current-percentage" class="font-stat-display text-stat-display text-primary">88<span class="text-headline-md">%</span></span>
 <span class="font-body-md text-body-md text-on-surface-variant mb-1">Overall</span>
 </div>
 <div class="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden mt-2">
-<div class="h-full bg-primary rounded-full" style="width: 88%"></div>
+<div id="internal-progress-bar" class="h-full bg-primary rounded-full" style="width: 88%"></div>
 </div>
 </div>
 <!-- Projected CA3 Points -->
@@ -429,12 +429,12 @@
 <span class="material-symbols-outlined text-primary-fixed-dim">stars</span>
 </div>
 <div class="flex items-end gap-2 relative z-10">
-<span class="font-stat-display text-stat-display">3.0</span>
+<span id="internal-current-points" class="font-stat-display text-stat-display">3.0</span>
 <span class="font-headline-md text-headline-md text-primary-fixed-dim mb-1">/ 5.0</span>
 </div>
 <div class="flex items-center gap-2 mt-2 font-label-sm text-label-sm text-primary-fixed">
 <span class="material-symbols-outlined text-[16px]">trending_up</span>
-<span class="">On track for next tier</span>
+<span id="internal-tier-message" class="">On track for next tier</span>
 </div>
 </div>
 <!-- Days to Next Point -->
@@ -444,11 +444,11 @@
 <span class="material-symbols-outlined text-tertiary">calendar_clock</span>
 </div>
 <div class="flex items-end gap-2 relative z-10">
-<span class="font-stat-display text-stat-display text-on-surface">3</span>
+<span id="internal-next-tier-classes" class="font-stat-display text-stat-display text-on-surface">3</span>
 <span class="font-body-md text-body-md text-on-surface-variant mb-1">Classes</span>
 </div>
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-2">
-                Reach 90% for 4 CA3 Points
+                <span id="internal-next-tier-target">Reach 90% for 4 CA3 Points</span>
             </p>
 </div>
 </section>
@@ -547,20 +547,20 @@
 <svg class="w-full h-full transform -rotate-90 absolute" viewBox="0 0 100 100">
 <circle class="text-surface-container-highest" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-width="8"></circle>
 <!-- Progress Circle (88%) -->
-<circle class="text-primary transition-all duration-1000 ease-out drop-shadow-md" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="30.14" stroke-linecap="round" stroke-width="8"></circle>
+<circle id="internal-radial-circle" class="text-primary transition-all duration-1000 ease-out drop-shadow-md" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="30.14" stroke-linecap="round" stroke-width="8"></circle>
 <!-- Next Tier Marker (90%) -->
 <circle class="text-tertiary" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="1 250" stroke-dashoffset="-226" stroke-width="2"></circle>
 </svg>
 <div class="flex flex-col items-center justify-center z-10 text-center">
-<span class="font-stat-display text-[40px] leading-none text-on-surface">88<span class="text-[20px]">%</span></span>
+<span id="internal-radial-percentage" class="font-stat-display text-[40px] leading-none text-on-surface">88<span class="text-[20px]">%</span></span>
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase mt-1">Current</span>
 </div>
 </div>
 <div class="w-full mt-6 bg-surface p-4 rounded-xl flex items-start gap-3 border border-surface-container-highest">
 <span class="material-symbols-outlined text-tertiary shrink-0">flag</span>
 <div class="flex flex-col">
-<span class="font-label-sm text-label-sm text-on-surface">Next Milestone: 90%</span>
-<span class="font-body-md text-[13px] text-on-surface-variant mt-1">Attend 3 more consecutive classes to reach Tier 4 (4 Points).</span>
+<span id="internal-milestone-label" class="font-label-sm text-label-sm text-on-surface">Next Milestone: 90%</span>
+<span class="font-body-md text-[13px] text-on-surface-variant mt-1"><span id="internal-milestone-desc">Attend 3 more consecutive classes to reach Tier 4 (4 Points).</span></span>
 </div>
 </div>
 </div>
@@ -733,5 +733,5 @@
     <script src="common.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script src="face.js?v=2"></script>
-    <script src="student-dashboard.js?v=1787498800685"></script>
+    <script src="student-dashboard.js?v=1787501209297"></script>
 </body></html>

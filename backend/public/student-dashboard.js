@@ -934,3 +934,171 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load semester view immediately
     fetchAttendanceStats('semester');
 })();
+
+
+// ==========================================
+// INTERNAL MARKS SECTION — RUNS IMMEDIATELY (IIFE)
+// ==========================================
+(function initInternalMarks() {
+    var elPercentage      = document.getElementById('internal-current-percentage');
+    var elProgressBar     = document.getElementById('internal-progress-bar');
+    var elPoints          = document.getElementById('internal-current-points');
+    var elTierMessage     = document.getElementById('internal-tier-message');
+    var elNextClasses     = document.getElementById('internal-next-tier-classes');
+    var elNextTarget      = document.getElementById('internal-next-tier-target');
+    var elRadialPct       = document.getElementById('internal-radial-percentage');
+    var elRadialCircle    = document.getElementById('internal-radial-circle');
+    var elMilestoneLabel  = document.getElementById('internal-milestone-label');
+    var elMilestoneDesc   = document.getElementById('internal-milestone-desc');
+    var btnDetailedLog    = document.getElementById('btn-detailed-log');
+
+    if (!elPercentage || !elPoints || !elNextClasses) {
+        console.error('Internal Marks: Missing DOM elements.',
+            'percentage:', !!elPercentage,
+            'points:', !!elPoints,
+            'nextClasses:', !!elNextClasses);
+        return;
+    }
+
+    // ---- Tier Matrix (STRICT EXAM RULES) ----
+    function getPointsAndNextTier(percentage) {
+        if (percentage >= 95) return { points: 5, nextTierPct: null,   tierName: 'Tier 5', tierLabel: 'Excellent',  nextTierPoints: null };
+        if (percentage >= 90) return { points: 4, nextTierPct: 95,     tierName: 'Tier 4', tierLabel: 'Good',       nextTierPoints: 5 };
+        if (percentage >= 85) return { points: 3, nextTierPct: 90,     tierName: 'Tier 3', tierLabel: 'Average',    nextTierPoints: 4 };
+        if (percentage >= 80) return { points: 2, nextTierPct: 85,     tierName: 'Tier 2', tierLabel: 'Warning',    nextTierPoints: 3 };
+        if (percentage >= 75) return { points: 1, nextTierPct: 80,     tierName: 'Tier 1', tierLabel: 'Critical',   nextTierPoints: 2 };
+        return                       { points: 0, nextTierPct: 75,     tierName: 'Tier 0', tierLabel: 'Debarment',  nextTierPoints: 1 };
+    }
+
+    // ---- Fetch real data and update DOM ----
+    function updateInternalMarksSection() {
+        fetch('/api/dashboard/student', {
+            headers: { 'Authorization': 'Bearer ' + studentToken }
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(res) {
+            var totalClasses    = res.totalClasses || 0;
+            var attendedClasses = res.totalAttended || 0;
+            var percentage      = totalClasses > 0 ? Math.round((attendedClasses / totalClasses) * 100) : 0;
+
+            var tier = getPointsAndNextTier(percentage);
+
+            // --- Calculate consecutive classes needed ---
+            var classesNeeded = 0;
+            if (tier.nextTierPct !== null && totalClasses > 0) {
+                var P = tier.nextTierPct;
+                classesNeeded = Math.ceil(((P * totalClasses) - (100 * attendedClasses)) / (100 - P));
+                if (classesNeeded < 0) classesNeeded = 0;
+            }
+
+            // --- 1. Current Attendance card ---
+            elPercentage.innerHTML = percentage + '<span class="text-headline-md">%</span>';
+            if (elProgressBar) elProgressBar.style.width = percentage + '%';
+
+            // --- 2. Projected CA3 Points card ---
+            elPoints.textContent = tier.points + '.0';
+            if (elTierMessage) {
+                if (tier.nextTierPct === null) {
+                    elTierMessage.textContent = 'Maximum tier reached!';
+                } else {
+                    elTierMessage.textContent = 'On track for next tier';
+                }
+            }
+
+            // --- 3. Days to Next Tier card ---
+            if (tier.nextTierPct === null) {
+                elNextClasses.textContent = '0';
+                if (elNextTarget) elNextTarget.textContent = 'Maximum tier reached';
+            } else {
+                elNextClasses.textContent = classesNeeded.toString();
+                if (elNextTarget) elNextTarget.textContent = 'Reach ' + tier.nextTierPct + '% for ' + tier.nextTierPoints + ' CA3 Points';
+            }
+
+            // --- 4. Radial chart ---
+            if (elRadialPct) {
+                elRadialPct.innerHTML = percentage + '<span class="text-[20px]">%</span>';
+            }
+            if (elRadialCircle) {
+                // circumference = 2 * PI * r = 2 * 3.14159 * 40 = 251.2
+                var circumference = 251.2;
+                var offset = circumference - (circumference * percentage / 100);
+                elRadialCircle.setAttribute('stroke-dashoffset', offset.toFixed(2));
+            }
+
+            // --- 5. Milestone box ---
+            if (elMilestoneLabel) {
+                if (tier.nextTierPct === null) {
+                    elMilestoneLabel.textContent = 'Maximum Tier Reached!';
+                } else {
+                    elMilestoneLabel.textContent = 'Next Milestone: ' + tier.nextTierPct + '%';
+                }
+            }
+            if (elMilestoneDesc) {
+                if (tier.nextTierPct === null) {
+                    elMilestoneDesc.textContent = 'Congratulations! You are at the highest tier (5 Points).';
+                } else {
+                    elMilestoneDesc.textContent = 'Attend ' + classesNeeded + ' more consecutive classes to reach ' + tier.tierName.replace('Tier ', 'Tier ') + ' (' + tier.nextTierPoints + ' Points).';
+                }
+            }
+
+            // --- 6. Highlight current tier row in the Points Allocation Matrix ---
+            var tierRows = document.querySelectorAll('#section-internal-marks .grid.grid-cols-4');
+            // Tier rows: index 1=Tier5(>=95), 2=Tier4(90-94), 3=Tier3(85-89), 4=Tier2(80-84), 5=Tier1(75-79), 6=Tier0(<75)
+            // Map points to row index: 5->1, 4->2, 3->3, 2->4, 1->5, 0->6
+            var tierRowIndex = 5 - tier.points + 1;
+            tierRows.forEach(function(row, i) {
+                if (i === 0) return; // skip header
+                // Remove any existing highlight
+                row.classList.remove('bg-primary/5');
+                row.classList.remove('hover:bg-primary/10');
+                var indicator = row.querySelector('.absolute.left-0');
+                if (indicator) indicator.remove();
+                var badge = row.querySelector('[class*="Current Tier"]');
+                // We won't remove text badges to keep it simpler — just reset background
+                if (i === tierRowIndex) {
+                    row.classList.add('bg-primary/5');
+                    row.classList.add('hover:bg-primary/10');
+                    row.style.position = 'relative';
+                    row.style.overflow = 'hidden';
+                    if (!row.querySelector('.tier-indicator')) {
+                        var div = document.createElement('div');
+                        div.className = 'absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-l-xl tier-indicator';
+                        row.appendChild(div);
+                    }
+                }
+            });
+
+            // --- 7. Store for button alert ---
+            if (btnDetailedLog) {
+                btnDetailedLog._data = {
+                    attended: attendedClasses,
+                    total: totalClasses,
+                    percentage: percentage,
+                    points: tier.points,
+                    classesNeeded: classesNeeded,
+                    nextTierPct: tier.nextTierPct
+                };
+            }
+        })
+        .catch(function(err) {
+            console.error('Internal Marks fetch failed:', err);
+        });
+    }
+
+    // ---- Button binding ----
+    if (btnDetailedLog) {
+        btnDetailedLog.addEventListener('click', function() {
+            var d = btnDetailedLog._data || {};
+            alert(
+                'Classes Attended: ' + (d.attended || 0)
+                + '\nTotal Classes: ' + (d.total || 0)
+                + '\nCurrent Attendance: ' + (d.percentage || 0) + '%'
+                + '\nCurrent CA Points: ' + (d.points !== undefined ? d.points : '?') + ' / 5'
+                + '\nClasses needed for next tier: ' + (d.classesNeeded !== undefined ? d.classesNeeded : '?')
+            );
+        });
+    }
+
+    // Fire immediately
+    updateInternalMarksSection();
+})();
