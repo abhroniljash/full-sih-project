@@ -20,6 +20,8 @@
 .toast.success { background: #16a34a; }
 .toast.danger { background: #dc2626; }
 </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head><body class="bg-background font-body-md text-on-surface"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest z-50 flex flex-col border-r border-surface-variant/30 shadow-[4px_0_24px_rgba(0,0,0,0.02)]"><div class="px-8 h-20 flex items-center mb-6"><div class="flex items-center gap-3"><div class="logo"></div></div></div><nav class="flex-1 px-4 space-y-2" data-active-classes="bg-secondary-container text-on-secondary-container font-semibold"><a href="#" class="nav-link flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all bg-secondary-container text-on-secondary-container font-semibold" data-target="dashboard"><span class="material-symbols-outlined">grid_view</span><span class="font-label-sm text-label-sm">Dashboard</span></a><a href="#" class="nav-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all" data-target="schedule"><span class="material-symbols-outlined">calendar_today</span><span class="font-label-sm text-label-sm">My Schedule</span></a><a href="#" class="nav-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all" data-target="attendance"><span class="material-symbols-outlined">rule</span><span class="font-label-sm text-label-sm">Attendance</span></a><a href="#" class="nav-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all" data-target="internal-marks">
     <span class="material-symbols-outlined">menu_book</span>
     <span class="font-label-sm text-label-sm">Internal Marks</span>
@@ -171,7 +173,7 @@
 </div>
 </div>
 <!-- Date Strip -->
-<div class="grid grid-cols-7 gap-card-gap">
+  <div id="weeklyCalendarContainer" class="grid grid-cols-7 gap-card-gap">
 <!-- Mon -->
 <button class="flex flex-col items-center justify-center p-4 rounded-2xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-transform hover:-translate-y-1 shadow-sm group">
 <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant group-hover:text-on-surface transition-colors">Mon</span>
@@ -358,16 +360,8 @@
           Next Location
         </h3>
 <p class="font-body-md text-body-md text-on-surface-variant mb-4">Science Wing, Room 101 <br><span class="text-[13px]">5 min walk from current location</span></p>
-<div class="flex-grow w-full min-h-[200px] rounded-2xl overflow-hidden shadow-sm border-2 border-surface-container-highest relative">
-<div class="absolute inset-0 bg-cover bg-center" data-location="University Science Building" style="background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuBbtcQ82pvWt2ckfCU8XAwiqwfaKEvT0zt2iFCbrP2DtHZZ4piFbAkMPeQDVCduP77f0JbgCCHpTXXZJ88VOEw_8KLA2V95TpB6-caioDNhVr9EjQ1iK-Vi5SW593Tm5nKKLpMV4FB5NxH_JPy-nQLOQ4z9p4hf_ZLdgUifPijwF3qvxPNkFJoeyYhlXNxkRYFUHI1M9kzQcv902qVPyZM9o0yjQlqIq-dHhEDyn2npph-e2rYmj2E&quot;);"></div>
-<!-- Simulated Map Pin Overlay -->
-<div class="absolute inset-0 bg-primary/10 mix-blend-multiply pointer-events-none"></div>
-<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center animate-bounce">
-<span class="material-symbols-outlined text-primary text-[32px] drop-shadow-md" style="font-variation-settings: &quot;FILL&quot; 1;">location_on</span>
-<div class="w-3 h-1 bg-black/20 blur-[2px] rounded-full mt-1"></div>
-</div>
-</div>
-<button class="mt-4 w-full py-3 bg-surface-container text-on-surface font-label-sm text-label-sm rounded-xl hover:bg-surface-container-high transition-colors flex items-center justify-center gap-2">
+<div id="studentMap" class="flex-grow w-full min-h-[200px] rounded-2xl overflow-hidden shadow-sm border-2 border-surface-container-highest relative z-0"></div>
+  <button class="mt-4 w-full py-3 bg-surface-container text-on-surface font-label-sm text-label-sm rounded-xl hover:bg-surface-container-high transition-colors flex items-center justify-center gap-2">
 <span class="material-symbols-outlined text-[18px]">directions_walk</span>
           Get Directions
         </button>
@@ -739,5 +733,5 @@
     <script src="common.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script src="face.js?v=2"></script>
-    <script src="student-dashboard.js?v=1787482572144"></script>
+    <script src="student-dashboard.js?v=1787491370181"></script>
 </body></html>

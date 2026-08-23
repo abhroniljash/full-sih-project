@@ -81,8 +81,26 @@ const studentDashboard = asyncHandler(async (req, res) => {
       };
     });
 
+  
+  // Calculate specific missed/absent sessions
+  const absences = [];
+  relevantSessions.forEach(session => {
+    // only count completed sessions
+    if (session.status !== 'completed') return;
+    const attendedThisSession = myAttendance.some(a => a.sessionId === session.sessionId);
+    if (!attendedThisSession) {
+      absences.push({
+        sessionId: session.sessionId,
+        subject: session.subject,
+        timestamp: session.date + 'T' + (session.startTime || '00:00:00'), // approximate timestamp
+        status: 'Absent'
+      });
+    }
+  });
+
   res.json({
     success: true,
+    absences: absences,
     totalClasses,
     totalAttended,
     overallPercentage,
