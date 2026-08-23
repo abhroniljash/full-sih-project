@@ -32,6 +32,18 @@ const studentDashboard = asyncHandler(async (req, res) => {
     relevantSessions = allSessions.filter((s) => subjectKeys.includes(s.subject));
   }
 
+  const timeframe = req.query.timeframe; // 'monthly' or 'semester'
+  if (timeframe === 'monthly') {
+      const currentMonth = new Date().getMonth();
+      const currentYear = new Date().getFullYear();
+      relevantSessions = relevantSessions.filter(s => {
+          if (!s.date) return false;
+          const sDate = new Date(s.date);
+          return sDate.getMonth() === currentMonth && sDate.getFullYear() === currentYear;
+      });
+  }
+
+
   const totalClasses = relevantSessions.length;
   const totalAttended = myAttendance.length;
   const overallPercentage = totalClasses > 0 ? Math.round((totalAttended / totalClasses) * 100) : 0;
