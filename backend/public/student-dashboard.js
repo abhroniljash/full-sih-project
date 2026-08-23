@@ -1,4 +1,10 @@
-// --- Auth & Setup ---
+function localDateStr(d) {
+    d = d || new Date();
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, '0');
+    var day = String(d.getDate()).padStart(2, '0');
+    return y + '-' + m + '-' + day;
+}
 var student = Auth.getUser('student');
 var studentToken = Auth.getToken('student');
 if (!student || !studentToken) goTo('/student-login');
@@ -549,7 +555,7 @@ loadDashboard = function() {
         updateExtendedDashboard(res);
 
         // Also update today at a glance counts based on today's attendance history
-        const todayStr = new Date().toISOString().split('T')[0];
+        const todayStr = localDateStr();
         const todayAttended = res.history.filter(h => h.timestamp.startsWith(todayStr)).length;
         const todayAttendedEl = document.getElementById('todayAttendedCount');
         if (todayAttendedEl) todayAttendedEl.textContent = todayAttended;
@@ -618,7 +624,7 @@ loadDashboard();
 
 
 // --- Dynamic Calendar, Absences & Location Patch ---
-window.selectedScheduleDate = new Date().toISOString().split('T')[0];
+window.selectedScheduleDate = localDateStr();
 window.cachedSchedule = [];
 window.cachedAbsences = [];
 window.cachedHistory = [];
@@ -640,10 +646,10 @@ function renderWeeklyCalendar() {
     for (let i = 0; i < 7; i++) {
         const d = new Date(monday);
         d.setDate(monday.getDate() + i);
-        const dateStr = d.toISOString().split('T')[0];
+        const dateStr = localDateStr(d);
         const dateNum = d.getDate();
         const isSelected = dateStr === window.selectedScheduleDate;
-        const isToday = dateStr === new Date().toISOString().split('T')[0];
+        const isToday = dateStr === localDateStr();
         
         if (isSelected) {
             html += `
@@ -824,7 +830,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- 1. STATE MANAGEMENT ---
     let calendarState = {
         weekOffset: 0,
-                selectedDate: new Date().toISOString().split('T')[0], // Today's date (System)
+                selectedDate: localDateStr(),
         attendanceHistory: [],
         absencesHistory: []
     };
@@ -911,7 +917,7 @@ document.addEventListener('DOMContentLoaded', function() {
         for (let i = 0; i < 7; i++) {
             const d = new Date(startOfWeek);
             d.setDate(startOfWeek.getDate() + i);
-            const dStr = d.toISOString().split('T')[0];
+            const dStr = localDateStr(d);
             weekDates.push(dStr);
             if (dStr === calendarState.selectedDate) {
                 selectedInWeek = true;
