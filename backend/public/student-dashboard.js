@@ -35,19 +35,18 @@ function loadDashboard() {
         var trackerHtml = '';
         var trackerContainer = document.getElementById('trackerList');
         if (res.tracker.length === 0) {
-            trackerHtml = '<div class="empty" style="padding:24px 0;"><p>No classes found.</p></div>';
-            trackerContainer.innerHTML = trackerHtml;
+            trackerContainer.innerHTML = '<div style="padding:24px 0; color: var(--text-muted);">No classes found.</div>';
         } else {
-            trackerHtml += '<div class="absolute left-0 right-0 bottom-8 border-b border-dashed border-error/40 z-0"><span class="absolute -top-6 left-0 font-label-sm text-label-sm text-error/80">75% Minimum</span></div>';
+            trackerHtml += '<div class="tracker-min-line"></div><div class="tracker-min-label">75% Minimum</div>';
             res.tracker.forEach(function(t) {
                 var isSafe = t.percentage >= 75;
-                var bgClass = isSafe ? 'bg-primary' : 'bg-error/80';
+                var dangerClass = isSafe ? '' : 'danger';
                 var htmlPercentage = Math.max(10, t.percentage); // Minimum 10% height to be visible
                 var subjectAbbr = t.subject.substring(0, 3).toUpperCase();
                 
-                trackerHtml += '<div class="w-8 ' + bgClass + ' rounded-t-sm relative group transition-all hover:opacity-80 z-10" style="height:' + htmlPercentage + '%">' +
-                    '<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-inverse-surface text-inverse-on-surface font-label-sm text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">' + t.percentage + '% - ' + t.subject + '</div>' +
-                    '<div class="absolute -bottom-6 left-1/2 -translate-x-1/2 font-label-sm text-[10px] text-on-surface-variant">' + subjectAbbr + '</div>' +
+                trackerHtml += '<div class="tracker-bar ' + dangerClass + '" style="height:' + htmlPercentage + '%">' +
+                    '<div class="tracker-tooltip">' + t.percentage + '% - ' + t.subject + '</div>' +
+                    '<div class="tracker-label">' + subjectAbbr + '</div>' +
                 '</div>';
             });
             trackerContainer.innerHTML = trackerHtml;
@@ -56,15 +55,15 @@ function loadDashboard() {
         // Render History Table
         var tHtml = '';
         if (res.history.length === 0) {
-            tHtml = '<div style="text-align:center;padding:24px;">No attendance records found.</div>';
+            tHtml = '<div style="text-align:center;padding:24px;color:var(--text-muted);">No attendance records found.</div>';
         } else {
             res.history.forEach(function(h) {
-                tHtml += '<div class="flex items-center justify-between py-3 border-b border-surface-variant/40">' +
+                tHtml += '<div class="history-item">' +
                     '<div>' +
-                    '<p class="font-body-md text-label-sm text-on-surface font-medium">' + h.subject + '</p>' +
-                    '<p class="font-label-sm text-[12px] text-on-surface-variant mt-0.5">' + formatDateTime(h.timestamp) + '</p>' +
+                    '<div class="history-subj">' + h.subject + '</div>' +
+                    '<div class="history-time">' + formatDateTime(h.timestamp) + '</div>' +
                     '</div>' +
-                    '<div class="px-2.5 py-1 bg-secondary-container/50 text-primary font-label-sm text-[11px] rounded-full font-semibold">Present</div>' +
+                    '<div class="history-badge">Present</div>' +
                     '</div>';
             });
         }
