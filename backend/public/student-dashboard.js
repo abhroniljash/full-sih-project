@@ -318,71 +318,50 @@ setTimeout(loadSchedule, 500); // load after a short delay
     }
 
     // --- 4. Recent Requests with Status Badges ---
-    function loadRecentConcerns() {
-        if (!recentRequestsList) return;
-        recentRequestsList.innerHTML = '<div style="padding:20px;text-align:center;color:#64748b;font-size:13px;">Loading requests...</div>';
+    async function loadStudentConcerns() {
+        const listContainer = document.getElementById('recent-requests-list');
+        if (!listContainer) return console.error("CRITICAL: recent-requests-list ID not found in DOM");
 
-        API.get('/messages', studentToken).then(function(res) {
-            var msgs = res.messages || [];
-            if (msgs.length === 0) {
-                recentRequestsList.innerHTML = '<div style="padding:20px;text-align:center;color:#64748b;font-size:13px;">No recent requests found.</div>';
+        console.log("Fetching student concerns...");
+        
+        try {
+            // Using existing API helper which attaches studentToken
+            const res = await API.get('/messages', studentToken);
+            const data = res.messages || [];
+            
+            console.log("Concerns fetched:", data); // Debugging line
+
+            if (!data || data.length === 0) {
+                listContainer.innerHTML = '<p class="text-sm text-gray-500 text-center">No recent requests found.</p>';
                 return;
             }
 
-            var html = '';
-            msgs.forEach(function(m) {
-                var dateStr = new Date(m.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase();
-                var subjectLabel = m.subject || 'Concern';
-
-                // Determine status badge
-                var borderColor, badgeBg, badgeText, badgeTextColor, badgeRing, badgeIcon;
-                var status = (m.status || '').toLowerCase();
-
-                if (status === 'resolved') {
-                    borderColor = 'border-l-green-500';
-                    badgeBg = 'bg-green-50';
-                    badgeTextColor = 'text-green-700';
-                    badgeRing = 'ring-green-600/20';
-                    badgeText = 'RESOLVED';
-                    badgeIcon = '<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>';
-                } else if (status === 'denied') {
-                    borderColor = 'border-l-red-500';
-                    badgeBg = 'bg-red-50';
-                    badgeTextColor = 'text-red-700';
-                    badgeRing = 'ring-red-600/10';
-                    badgeText = 'DENIED';
-                    badgeIcon = '<path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>';
-                } else {
-                    // Default: pending / in review
-                    borderColor = 'border-l-amber-500';
-                    badgeBg = 'bg-amber-50';
-                    badgeTextColor = 'text-amber-700';
-                    badgeRing = 'ring-amber-600/20';
-                    badgeText = 'PENDING';
-                    badgeIcon = '<path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>';
-                }
-
-                html += '<div class="p-4 rounded-custom ' + borderColor + ' border-l-4 bg-surface flex flex-col gap-2 relative">'
-                    + '<div class="flex justify-between items-start">'
-                    + '<div class="text-xs font-semibold text-onSurface-variant tracking-wide">' + dateStr + '</div>'
-                    + '<span class="inline-flex items-center gap-1.5 rounded-md ' + badgeBg + ' px-2 py-1 text-xs font-medium ' + badgeTextColor + ' ring-1 ring-inset ' + badgeRing + '">'
-                    + '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' + badgeIcon + '</svg>'
-                    + badgeText
-                    + '</span>'
-                    + '</div>'
-                    + '<div class="font-bold text-sm text-onSurface">' + subjectLabel + '</div>'
-                    + '<div class="text-xs text-onSurface-variant truncate">' + (m.body || '') + '</div>'
-                    + '</div>';
+            let htmlString = '';
+            data.forEach(item => {
+                const isResolved = item.status && item.status.toLowerCase() === 'resolved';
+                const badgeClass = isResolved ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700';
+                const badgeText = isResolved ? 'Issue Resolved' : 'Pending';
+                
+                htmlString += `
+                <div class="p-3 border rounded shadow-sm bg-white mb-2">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-semibold text-sm">${item.subject || 'Attendance Concern'}</span>
+                        <span class="text-xs px-2 py-1 rounded-full ${badgeClass}">${badgeText}</span>
+                    </div>
+                    <p class="text-xs text-gray-500">${item.timestamp ? new Date(item.timestamp).toLocaleDateString() : new Date().toLocaleDateString()}</p>
+                </div>`;
             });
-            recentRequestsList.innerHTML = html;
-        }).catch(function(err) {
-            console.error('Failed to load recent concerns:', err);
-            recentRequestsList.innerHTML = '<div style="padding:20px;text-align:center;color:#64748b;font-size:13px;">Failed to load requests.</div>';
-        });
+
+            listContainer.innerHTML = htmlString;
+        } catch (error) {
+            console.error("Failed to load concerns:", error);
+            listContainer.innerHTML = '<p class="text-sm text-red-500 text-center">Error loading requests.</p>';
+        }
     }
     // Expose globally so navigation can trigger refresh when Communication tab is opened
-    window._loadRecentConcerns = loadRecentConcerns;
-    loadRecentConcerns();
+    window.loadStudentConcerns = loadStudentConcerns;
+    window._loadRecentConcerns = loadStudentConcerns; // Alias for safety
+    loadStudentConcerns();
 })();
 
 
