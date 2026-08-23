@@ -1,263 +1,277 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Schedule</title>
-    <!-- Use dashboard css for sidebar/header, schedule css for layout -->
-    <link rel="stylesheet" href="student-dashboard.css?v=2">
-    <link rel="stylesheet" href="student-schedule.css?v=2">
-</head>
-<body>
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <div class="logo"></div>
-        </div>
-        <nav class="sidebar-nav">
-            <a href="student-dashboard.html" class="nav-item"><span class="material-symbols-outlined icon">grid_view</span> Dashboard</a>
-            <a href="#" class="nav-item active"><span class="material-symbols-outlined icon">calendar_today</span> My Schedule</a>
-            <a href="#" class="nav-item"><span class="material-symbols-outlined icon">rule</span> Attendance</a>
-            <a href="#" class="nav-item"><span class="material-symbols-outlined icon">book_4</span> Courses</a>
-        </nav>
-        <div class="sidebar-footer">
-            <div class="user-profile">
-                <div class="avatar" id="uAvatar"><span class="material-symbols-outlined">person</span></div>
-                <div class="user-info">
-                    <div class="name" id="uName">Student</div>
-                    <div class="roll" id="rollTag">ID: ---</div>
-                </div>
-                <button class="logout-btn" id="logoutBtn" title="Logout"><span class="material-symbols-outlined icon">logout</span></button>
-            </div>
-        </div>
-    </aside>
+<!DOCTYPE html><html lang="en" style=""><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={theme:{extend:{"colors":{"surface-dim":"#d8dadc","on-tertiary":"#ffffff","on-secondary-container":"#5c647a","error-container":"#ffdad6","secondary-fixed":"#dae2fd","secondary-fixed-dim":"#bec6e0","on-secondary-fixed":"#131b2e","inverse-primary":"#c3c0ff","on-tertiary-fixed":"#351000","background":"#f7f9fb","primary":"#3525cd","tertiary-fixed-dim":"#ffb695","on-primary-fixed-variant":"#3323cc","error":"#ba1a1a","on-secondary-fixed-variant":"#3f465c","on-primary-container":"#dad7ff","on-secondary":"#ffffff","surface-container-low":"#f2f4f6","surface-variant":"#e0e3e5","secondary-container":"#dae2fd","outline":"#777587","on-error":"#ffffff","inverse-surface":"#2d3133","surface-tint":"#4d44e3","on-primary-fixed":"#0f0069","primary-fixed-dim":"#c3c0ff","tertiary":"#7e3000","primary-container":"#4f46e5","tertiary-fixed":"#ffdbcc","on-surface-variant":"#464555","tertiary-container":"#a44100","on-tertiary-fixed-variant":"#7b2f00","surface-container-highest":"#e0e3e5","on-tertiary-container":"#ffd2be","surface-bright":"#f7f9fb","primary-fixed":"#e2dfff","surface-container-high":"#e6e8ea","on-background":"#191c1e","on-surface":"#191c1e","on-error-container":"#93000a","surface":"#f7f9fb","inverse-on-surface":"#eff1f3","outline-variant":"#c7c4d8","surface-container-lowest":"#ffffff","secondary":"#565e74","on-primary":"#ffffff","surface-container":"#eceef0"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"container-padding":"24px","stack-md":"16px","section-margin":"32px","base":"4px","stack-sm":"8px","card-gap":"20px"},"fontFamily":{"headline-md":["Manrope"],"headline-lg-mobile":["Manrope"],"stat-display":["Manrope"],"headline-lg":["Manrope"],"body-md":["Manrope"],"label-sm":["Manrope"]},"fontSize":{"headline-md":["18px",{"lineHeight":"24px","fontWeight":"600"}],"headline-lg-mobile":["22px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"700"}],"stat-display":["32px",{"lineHeight":"40px","fontWeight":"800"}],"headline-lg":["28px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-sm":["13px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"600"}]}}}}</script><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>
+.logo {
+    width: 220px;
+    height: 50px;
+    background-image: url('logo.jpeg');
+    background-size: contain; 
+    background-repeat: no-repeat;
+    background-position: left center;
+    animation: changeLogo 4s infinite;
+}
+@keyframes changeLogo {
+    0%, 49.9% { background-image: url('logo.jpeg'); }
+    50%, 100% { background-image: url('logo2.jpeg'); }
+}
+</style>
+</head><body class="bg-background font-body-md text-on-surface"><aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-lowest z-50 flex flex-col border-r border-surface-variant/30 shadow-[4px_0_24px_rgba(0,0,0,0.02)]"><div class="px-8 h-20 flex items-center mb-6"><div class="flex items-center gap-3"><div class="logo"></div></div></div><nav class="flex-1 px-4 space-y-2" data-active-classes="bg-secondary-container text-on-secondary-container font-semibold"><a class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all" href="student-dashboard.html"><span class="material-symbols-outlined">grid_view</span><span class="font-label-sm text-label-sm">Dashboard</span></a><a aria-current="page" class="flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all bg-secondary-container text-on-secondary-container font-semibold" href="student-schedule.html"><span class="material-symbols-outlined">calendar_today</span><span class="font-label-sm text-label-sm">My Schedule</span></a><a class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all" data-path="attendance" href="#"><span class="material-symbols-outlined">rule</span><span class="font-label-sm text-label-sm">Attendance</span></a><a class="flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all" data-path="courses" href="#"><span class="material-symbols-outlined">book_4</span><span class="font-label-sm text-label-sm">Courses</span></a></nav><div class="p-6 border-t border-surface-variant/20"><div class="bg-surface-container-low p-4 rounded-xl flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center overflow-hidden" id="uAvatar"><span class="material-symbols-outlined text-on-primary text-[20px]">person</span></div><div class="overflow-hidden"><p class="text-label-sm font-semibold truncate" id="uName">Student</p><p class="text-[11px] text-on-surface-variant truncate" id="rollTag">ID: ---</p></div><button class="ml-auto w-8 h-8 rounded-full flex items-center justify-center text-error hover:bg-error/10 transition-colors" id="logoutBtn" title="Logout"><span class="material-symbols-outlined text-[18px]">logout</span></button></div></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-20 bg-background/80 backdrop-blur-xl z-40 flex items-center justify-between px-container-padding border-b border-surface-variant/20"><div class="relative w-96"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span><input class="w-full bg-surface-container-low border border-outline-variant rounded-full py-2 pl-10 pr-4 text-label-sm focus:outline-none focus:border-primary transition-colors" placeholder="Search grades, courses..." type="text"></div><div class="flex items-center gap-stack-md"><button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container rounded-full transition-colors relative"><span class="material-symbols-outlined">notifications</span><span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span></button><button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container rounded-full transition-colors"><span class="material-symbols-outlined">settings</span></button><div class="h-8 w-[1px] bg-outline-variant mx-2"></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-20 px-container-padding pb-section-margin bg-background min-h-screen"><div class="flex flex-col w-full relative">
+<!-- Subtle Background Decor -->
+<div class="absolute top-0 right-0 w-2/3 h-96 bg-gradient-to-bl from-primary/5 to-transparent blur-3xl -z-10 pointer-events-none rounded-bl-full"></div>
+<!-- Weekly Strip Section -->
+<section class="mb-section-margin w-full">
+<div class="flex items-center justify-between mb-stack-md">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">August 2026</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Week 3 · Summer Semester</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 rounded-full flex items-center justify-center bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Date Strip -->
+<div class="grid grid-cols-7 gap-card-gap">
+<!-- Mon -->
+<button class="flex flex-col items-center justify-center p-4 rounded-2xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-transform hover:-translate-y-1 shadow-sm group">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant group-hover:text-on-surface transition-colors">Mon</span>
+<span class="font-headline-lg text-headline-lg mt-1">17</span>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant mt-2"></div>
+</button>
+<!-- Tue -->
+<button class="flex flex-col items-center justify-center p-4 rounded-2xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-transform hover:-translate-y-1 shadow-sm group">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant group-hover:text-on-surface transition-colors">Tue</span>
+<span class="font-headline-lg text-headline-lg mt-1">18</span>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant mt-2"></div>
+</button>
+<!-- Wed (Active) -->
+<button class="flex flex-col items-center justify-center p-4 rounded-2xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-transform hover:-translate-y-1 shadow-sm group"><span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant group-hover:text-on-surface transition-colors">Wed</span><span class="font-headline-lg text-headline-lg mt-1">19</span><div class="w-1.5 h-1.5 rounded-full bg-outline-variant mt-2"></div></button>
+<!-- Thu -->
+<button class="flex flex-col items-center justify-center p-4 rounded-2xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-transform hover:-translate-y-1 shadow-sm group">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant group-hover:text-on-surface transition-colors">Thu</span>
+<span class="font-headline-lg text-headline-lg mt-1">20</span>
+<div class="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
+</button>
+<!-- Fri -->
+<button class="flex flex-col items-center justify-center p-4 rounded-2xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-transform hover:-translate-y-1 shadow-sm group">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant group-hover:text-on-surface transition-colors">Fri</span>
+<span class="font-headline-lg text-headline-lg mt-1">21</span>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant mt-2"></div>
+</button>
+<!-- Sat -->
+<button class="flex flex-col items-center justify-center p-4 rounded-2xl bg-primary text-on-primary shadow-lg transform -translate-y-1 scale-105 relative overflow-hidden"><div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div><span class="font-label-sm text-label-sm uppercase tracking-wider text-on-primary-container relative z-10">Sat</span><span class="font-headline-lg text-headline-lg mt-1 relative z-10">22</span><div class="w-1.5 h-1.5 rounded-full bg-on-primary mt-2 relative z-10"></div></button>
+<!-- Sun -->
+<button class="flex flex-col items-center justify-center p-4 rounded-2xl bg-surface-container-lowest text-on-surface-variant opacity-70 cursor-not-allowed">
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Sun</span>
+<span class="font-headline-lg text-headline-lg mt-1">23</span>
+</button>
+</div>
+</section>
+<!-- Main Layout: Timeline (Left) & Summary (Right) -->
+<div class="flex flex-col lg:flex-row gap-section-margin w-full items-start">
+<!-- Left Column: Daily Timeline -->
+<section class="flex-grow w-full lg:w-2/3 bg-surface-container-lowest rounded-3xl p-8 shadow-md relative overflow-hidden">
+<!-- Decorative geometric element -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-secondary-container rounded-bl-[100px] -z-0 opacity-50"></div>
+<div class="flex items-center justify-between mb-8 relative z-10">
+<h3 class="font-headline-md text-headline-md text-on-surface flex items-center gap-3">
+<span class="material-symbols-outlined text-primary bg-primary-container/10 p-2 rounded-lg">schedule</span>
+          Today's Schedule
+        </h3>
+<span class="px-4 py-1.5 bg-tertiary-container/10 text-tertiary font-label-sm text-label-sm rounded-full">3 Classes · 4.5 Hours</span>
+</div>
+<div class="relative z-10 mt-4">
+<!-- Timeline Line -->
+<div class="absolute left-[52px] top-4 bottom-8 w-0.5 bg-surface-variant"></div>
+<!-- Current Time Indicator -->
+<div class="absolute left-[47px] top-[35%] w-3 h-3 rounded-full bg-error z-20 shadow-[0_0_0_4px_rgba(255,255,255,1)]"></div>
+<div class="absolute left-[64px] top-[35%] right-0 h-px bg-error/30 z-20 -translate-y-1/2 border-t border-dashed border-error/50"></div>
+<div class="absolute left-0 top-[35%] -translate-y-1/2 -mt-0.5">
+<span class="font-label-sm text-[11px] text-error font-bold tracking-wider">NOW</span>
+</div>
+<!-- 09:00 AM Slot -->
+<div class="flex items-start mb-12 group relative">
+<div class="w-12 pt-5 text-right pr-4 font-label-sm text-label-sm text-on-surface-variant flex-shrink-0">
+            09:00
+          </div>
+<!-- Node -->
+<div class="w-3 h-3 rounded-full bg-outline-variant mt-6 -ml-[7px] mr-6 z-10 ring-4 ring-surface-container-lowest group-hover:bg-primary transition-colors"></div>
+<!-- Card -->
+<div class="flex-grow bg-surface-container-low rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group-hover:-translate-y-1 relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-secondary"></div>
+<div class="flex justify-between items-start mb-3 pl-2">
+<div>
+<span class="inline-block px-2.5 py-1 bg-surface-variant text-on-surface-variant font-label-sm text-[11px] uppercase tracking-wider rounded mb-2">CS-301</span>
+<h4 class="font-headline-md text-headline-md text-on-surface">Data Structures</h4>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface rounded-lg px-3 py-1 shadow-sm">09:00 - 10:30 AM</span>
+</div>
+<div class="flex items-center gap-6 mt-4 pl-2">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">person</span>
+<span class="font-body-md text-label-sm">Dr. Alan Turing</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span class="font-body-md text-label-sm">Turing Hall, Room 402</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 11:30 AM Slot -->
+<div class="flex items-start mb-12 group relative">
+<div class="w-12 pt-5 text-right pr-4 font-label-sm text-label-sm text-on-surface-variant flex-shrink-0">
+            11:30
+          </div>
+<!-- Node -->
+<div class="w-3 h-3 rounded-full bg-outline-variant mt-6 -ml-[7px] mr-6 z-10 ring-4 ring-surface-container-lowest group-hover:bg-primary transition-colors"></div>
+<!-- Card -->
+<div class="flex-grow bg-primary-container rounded-2xl p-6 shadow-md hover:shadow-lg transition-all group-hover:-translate-y-1 relative overflow-hidden text-on-primary-container">
+<!-- decorative background icon -->
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-[120px] text-white/10 rotate-12 pointer-events-none">functions</span>
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary"></div>
+<div class="flex justify-between items-start mb-3 pl-2 relative z-10">
+<div>
+<span class="inline-block px-2.5 py-1 bg-white/20 text-on-primary-container font-label-sm text-[11px] uppercase tracking-wider rounded mb-2 backdrop-blur-sm">MATH-210</span>
+<h4 class="font-headline-md text-headline-md">Linear Algebra</h4>
+</div>
+<span class="font-label-sm text-label-sm text-primary bg-white rounded-lg px-3 py-1 shadow-sm">11:30 - 13:00 PM</span>
+</div>
+<div class="flex items-center gap-6 mt-4 pl-2 relative z-10">
+<div class="flex items-center gap-2 text-on-primary-container/80">
+<span class="material-symbols-outlined text-[18px]">person</span>
+<span class="font-body-md text-label-sm">Prof. Ada Lovelace</span>
+</div>
+<div class="flex items-center gap-2 text-on-primary-container/80">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span class="font-body-md text-label-sm">Science Wing, Room 101</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 14:00 PM Slot -->
+<div class="flex items-start group relative">
+<div class="w-12 pt-5 text-right pr-4 font-label-sm text-label-sm text-on-surface-variant flex-shrink-0">
+            14:00
+          </div>
+<!-- Node -->
+<div class="w-3 h-3 rounded-full bg-outline-variant mt-6 -ml-[7px] mr-6 z-10 ring-4 ring-surface-container-lowest group-hover:bg-primary transition-colors"></div>
+<!-- Card -->
+<div class="flex-grow bg-surface-container-low rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group-hover:-translate-y-1 relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-tertiary"></div>
+<div class="flex justify-between items-start mb-3 pl-2">
+<div>
+<span class="inline-block px-2.5 py-1 bg-surface-variant text-on-surface-variant font-label-sm text-[11px] uppercase tracking-wider rounded mb-2">PHYS-405</span>
+<h4 class="font-headline-md text-headline-md text-on-surface">Quantum Mechanics</h4>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface rounded-lg px-3 py-1 shadow-sm">14:00 - 15:30 PM</span>
+</div>
+<div class="flex items-center gap-6 mt-4 pl-2">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">person</span>
+<span class="font-body-md text-label-sm">Dr. Richard Feynman</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span class="font-body-md text-label-sm">Feynman Lab, Room 22</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Column: At a glance & Map -->
+<aside class="w-full lg:w-1/3 flex flex-col gap-stack-md">
+<!-- At a glance card -->
+<div class="bg-surface-container-lowest rounded-3xl p-6 shadow-md relative overflow-hidden">
+<div class="absolute top-0 right-0 w-full h-1 bg-gradient-to-r from-primary to-secondary"></div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6">Today at a Glance</h3>
+<div class="grid grid-cols-2 gap-4 mb-6">
+  <div class="bg-primary-container/10 p-3 rounded-2xl text-center border border-primary/10">
+    <span class="material-symbols-outlined text-primary mb-1 text-[24px]">check_circle</span>
+    <div class="font-headline-md text-[18px] text-on-surface">2</div>
+    <div class="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant">Attended</div>
+  </div>
+  <div class="bg-error-container/30 p-3 rounded-2xl text-center border border-error/10">
+    <span class="material-symbols-outlined text-error mb-1 text-[24px]">cancel</span>
+    <div class="font-headline-md text-[18px] text-on-surface">1</div>
+    <div class="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant">Skipped</div>
+  </div>
+</div>
+<div class="space-y-4"><div class="flex items-center gap-4 p-3 bg-error-container/30 rounded-xl"><div class="w-10 h-10 rounded-full bg-error-container text-on-error-container flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-[20px]">cancel</span></div><div><p class="font-label-sm text-label-sm text-on-surface font-bold">Data Structures skipped</p><p class="font-body-md text-[13px] text-on-surface-variant">in class 09:00 AM</p></div></div>
+<div class="flex items-center gap-4 p-3 bg-error-container/30 rounded-xl">
+<div class="w-10 h-10 rounded-full bg-error-container text-on-error-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface font-bold">Physics Lab Assignment</p>
+<p class="font-body-md text-[13px] text-on-surface-variant">Due at 23:59 PM</p>
+</div>
+</div>
 
-    <div class="main-layout">
-        <header class="top-header">
-            <div class="search-bar">
-                <span class="material-symbols-outlined icon">search</span>
-                <input type="text" placeholder="Search schedule, courses...">
-            </div>
-            <div class="header-actions">
-                <button class="action-btn">
-                    <span class="material-symbols-outlined">notifications</span>
-                    <span class="badge"></span>
-                </button>
-                <button class="action-btn">
-                    <span class="material-symbols-outlined">settings</span>
-                </button>
-            </div>
-        </header>
+</div>
+</div>
+<!-- Campus Map Context -->
+<div class="bg-surface-container-lowest rounded-3xl p-6 shadow-md flex flex-col h-full">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant">map</span>
+          Next Location
+        </h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">Science Wing, Room 101 <br><span class="text-[13px]">5 min walk from current location</span></p>
+<div class="flex-grow w-full min-h-[200px] rounded-2xl overflow-hidden shadow-sm border-2 border-surface-container-highest relative">
+<div class="absolute inset-0 bg-cover bg-center" data-location="University Science Building" style="background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuBbtcQ82pvWt2ckfCU8XAwiqwfaKEvT0zt2iFCbrP2DtHZZ4piFbAkMPeQDVCduP77f0JbgCCHpTXXZJ88VOEw_8KLA2V95TpB6-caioDNhVr9EjQ1iK-Vi5SW593Tm5nKKLpMV4FB5NxH_JPy-nQLOQ4z9p4hf_ZLdgUifPijwF3qvxPNkFJoeyYhlXNxkRYFUHI1M9kzQcv902qVPyZM9o0yjQlqIq-dHhEDyn2npph-e2rYmj2E&quot;);"></div>
+<!-- Simulated Map Pin Overlay -->
+<div class="absolute inset-0 bg-primary/10 mix-blend-multiply pointer-events-none"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center animate-bounce">
+<span class="material-symbols-outlined text-primary text-[32px] drop-shadow-md" style="font-variation-settings: &quot;FILL&quot; 1;">location_on</span>
+<div class="w-3 h-1 bg-black/20 blur-[2px] rounded-full mt-1"></div>
+</div>
+</div>
+<button class="mt-4 w-full py-3 bg-surface-container text-on-surface font-label-sm text-label-sm rounded-xl hover:bg-surface-container-high transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">directions_walk</span>
+          Get Directions
+        </button>
+</div>
+</aside>
+</div>
+</div></main></div>
 
-        <main class="dashboard-content">
-            
-            <section class="weekly-strip">
-                <div class="weekly-header">
-                    <div>
-                        <h2>August 2026</h2>
-                        <p>Week 3 • Summer Semester</p>
-                    </div>
-                    <div class="nav-buttons">
-                        <button class="nav-btn"><span class="material-symbols-outlined">chevron_left</span></button>
-                        <button class="nav-btn"><span class="material-symbols-outlined">chevron_right</span></button>
-                    </div>
-                </div>
 
-                <div class="date-strip">
-                    <button class="date-card">
-                        <span class="day">Mon</span>
-                        <span class="date">17</span>
-                        <div class="dot"></div>
-                    </button>
-                    <button class="date-card">
-                        <span class="day">Tue</span>
-                        <span class="date">18</span>
-                        <div class="dot"></div>
-                    </button>
-                    <button class="date-card active">
-                        <span class="day">Wed</span>
-                        <span class="date">19</span>
-                        <div class="dot"></div>
-                    </button>
-                    <button class="date-card">
-                        <span class="day">Thu</span>
-                        <span class="date">20</span>
-                        <div class="dot has-class"></div>
-                    </button>
-                    <button class="date-card">
-                        <span class="day">Fri</span>
-                        <span class="date">21</span>
-                        <div class="dot"></div>
-                    </button>
-                    <button class="date-card" style="background: var(--primary); color: white;">
-                        <span class="day" style="color: rgba(255,255,255,0.8);">Sat</span>
-                        <span class="date">22</span>
-                        <div class="dot" style="background: white;"></div>
-                    </button>
-                    <button class="date-card disabled">
-                        <span class="day">Sun</span>
-                        <span class="date">23</span>
-                    </button>
-                </div>
-            </section>
 
-            <div class="schedule-layout">
-                <section class="timeline-col">
-                    <div class="timeline-header">
-                        <h3>
-                            <span class="material-symbols-outlined icon">schedule</span>
-                            Today's Schedule
-                        </h3>
-                        <span class="timeline-badge">3 Classes • 4.5 Hours</span>
-                    </div>
-
-                    <div class="timeline-container">
-                        <div class="timeline-line"></div>
-                        
-                        <div class="current-time-indicator"></div>
-                        <div class="current-time-line"></div>
-                        <div class="current-time-label">NOW</div>
-
-                        <!-- Slot 1 -->
-                        <div class="time-slot">
-                            <div class="slot-time">09:00</div>
-                            <div class="slot-node"></div>
-                            <div class="slot-card blue">
-                                <div class="slot-indicator"></div>
-                                <div class="slot-title">
-                                    <div>
-                                        <span class="slot-code">CS-301</span>
-                                        <h4>Data Structures</h4>
-                                    </div>
-                                    <span class="slot-duration">09:00 - 10:30 AM</span>
-                                </div>
-                                <div class="slot-details">
-                                    <div class="slot-detail-item">
-                                        <span class="material-symbols-outlined icon">person</span>
-                                        <span>Dr. Alan Turing</span>
-                                    </div>
-                                    <div class="slot-detail-item">
-                                        <span class="material-symbols-outlined icon">location_on</span>
-                                        <span>Turing Hall, Room 402</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Slot 2 -->
-                        <div class="time-slot">
-                            <div class="slot-time">11:30</div>
-                            <div class="slot-node"></div>
-                            <div class="slot-card primary">
-                                <div class="slot-indicator"></div>
-                                <div class="slot-title">
-                                    <div>
-                                        <span class="slot-code" style="background: white; color: var(--primary);">MATH-210</span>
-                                        <h4>Linear Algebra</h4>
-                                    </div>
-                                    <span class="slot-duration" style="background: white; color: var(--primary);">11:30 - 13:00 PM</span>
-                                </div>
-                                <div class="slot-details">
-                                    <div class="slot-detail-item">
-                                        <span class="material-symbols-outlined icon">person</span>
-                                        <span>Prof. Ada Lovelace</span>
-                                    </div>
-                                    <div class="slot-detail-item">
-                                        <span class="material-symbols-outlined icon">location_on</span>
-                                        <span>Science Wing, Room 101</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Slot 3 -->
-                        <div class="time-slot">
-                            <div class="slot-time">14:00</div>
-                            <div class="slot-node"></div>
-                            <div class="slot-card orange">
-                                <div class="slot-indicator"></div>
-                                <div class="slot-title">
-                                    <div>
-                                        <span class="slot-code">PHYS-405</span>
-                                        <h4>Quantum Mechanics</h4>
-                                    </div>
-                                    <span class="slot-duration">14:00 - 15:30 PM</span>
-                                </div>
-                                <div class="slot-details">
-                                    <div class="slot-detail-item">
-                                        <span class="material-symbols-outlined icon">person</span>
-                                        <span>Dr. Richard Feynman</span>
-                                    </div>
-                                    <div class="slot-detail-item">
-                                        <span class="material-symbols-outlined icon">location_on</span>
-                                        <span>Feynman Lab, Room 22</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </section>
-
-                <aside class="summary-col">
-                    <div class="glance-card">
-                        <div class="top-border"></div>
-                        <h3>Today at a Glance</h3>
-                        <div class="glance-stats">
-                            <div class="glance-stat attended">
-                                <span class="material-symbols-outlined icon">check_circle</span>
-                                <div class="num">2</div>
-                                <div class="label">Attended</div>
-                            </div>
-                            <div class="glance-stat skipped">
-                                <span class="material-symbols-outlined icon">cancel</span>
-                                <div class="num">1</div>
-                                <div class="label">Skipped</div>
-                            </div>
-                        </div>
-                        <div class="glance-alerts">
-                            <div class="alert-item danger">
-                                <div class="icon-wrapper"><span class="material-symbols-outlined">cancel</span></div>
-                                <div>
-                                    <h5>Data Structures skipped</h5>
-                                    <p>in class 09:00 AM</p>
-                                </div>
-                            </div>
-                            <div class="alert-item danger">
-                                <div class="icon-wrapper"><span class="material-symbols-outlined">warning</span></div>
-                                <div>
-                                    <h5>Physics Lab Assignment</h5>
-                                    <p>Due at 23:59 PM</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </aside>
-            </div>
-            
-        </main>
-    </div>
 
     <script src="config.js"></script>
     <script src="common.js"></script>
     <script>
-        // Use existing common functionality to load student profile if needed
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const res = await apiCall('/student/dashboard');
-                if (res.student) {
-                    document.getElementById('uName').textContent = res.student.name;
-                    document.getElementById('rollTag').textContent = 'ID: ' + res.student.rollNumber;
+    document.addEventListener('DOMContentLoaded', function() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'student-login.html';
+            return;
+        }
+        fetch(API_BASE + '/student/dashboard', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('uName').textContent = data.student.name;
+                document.getElementById('rollTag').textContent = 'ID: ' + data.student.rollNumber;
+                if (data.student.faceIdPhoto) {
+                    document.getElementById('uAvatar').innerHTML = '<img src="' + data.student.faceIdPhoto + '" style="width:100%;height:100%;object-fit:cover;">';
                 }
-            } catch (e) {
-                console.error(e);
             }
-
-            document.getElementById('logoutBtn').addEventListener('click', () => {
-                localStorage.removeItem('token');
-                localStorage.removeItem('role');
-                window.location.href = 'student-login.html';
-            });
+        })
+        .catch(err => console.error(err));
+        
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            window.location.href = 'student-login.html';
         });
+    });
     </script>
 </body>
 </html>
