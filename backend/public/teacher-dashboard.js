@@ -456,6 +456,10 @@ if(createForm) {
 
                 showToast('Session created! Starting live attendance...', 'success');
                 createForm.reset();
+                var elCSubject = document.getElementById('cSubject');
+                if (elCSubject && typeof teacher !== 'undefined') {
+                    elCSubject.value = teacher.subject || 'General';
+                }
                 loadLiveSession();
                 switchSec('live');
             })
