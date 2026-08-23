@@ -171,67 +171,201 @@ function loadSchedule() {
 }
 setTimeout(loadSchedule, 500); // load after a short delay
 
-// --- Concern Form ---
-document.addEventListener('DOMContentLoaded', function() {
-    const concernForm = document.getElementById('concernForm');
+// ==========================================
+// CONCERN SECTION — RUNS IMMEDIATELY (IIFE)
+// ==========================================
+(function initConcernSection() {
+    var subjectDropdown   = document.getElementById('subject-dropdown');
+    var issueType         = document.getElementById('issue-type');
+    var concernForm       = document.getElementById('concern-form');
+    var fileUploadInput   = document.getElementById('file-upload');
+    var fileNameDisplay   = document.getElementById('file-name-display');
+    var recentRequestsList = document.getElementById('recentRequestsList');
+
+    // --- 1. Populate Subjects Dynamically ---
+    function populateSubjects() {
+        // Try fetching from dashboard tracker (already has subjects)
+        fetch('/api/dashboard/student', {
+            headers: { 'Authorization': 'Bearer ' + studentToken }
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+            if (!subjectDropdown) return;
+            var tracker = res.tracker || [];
+            if (tracker.length === 0) return;
+            // Clear existing options except placeholder
+            while (subjectDropdown.options.length > 1) {
+                subjectDropdown.remove(1);
+            }
+            tracker.forEach(function(t) {
+                var opt = document.createElement('option');
+                opt.value = t.subject;
+                opt.textContent = t.subject;
+                subjectDropdown.appendChild(opt);
+            });
+        })
+        .catch(function(err) {
+            console.warn('Could not populate subjects:', err);
+        });
+    }
+    populateSubjects();
+
+    // --- 2. File Upload Handling ---
+    if (fileUploadInput && fileNameDisplay) {
+        // Click on the dashed upload zone triggers file input
+        var uploadZone = fileUploadInput.closest('.border-dashed');
+        if (uploadZone) {
+            uploadZone.addEventListener('click', function() {
+                fileUploadInput.click();
+            });
+
+            // Drag and drop
+            uploadZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadZone.classList.add('bg-primary/5');
+            });
+            uploadZone.addEventListener('dragleave', function() {
+                uploadZone.classList.remove('bg-primary/5');
+            });
+            uploadZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadZone.classList.remove('bg-primary/5');
+                if (e.dataTransfer.files.length > 0) {
+                    fileUploadInput.files = e.dataTransfer.files;
+                    showFileName(e.dataTransfer.files[0].name);
+                }
+            });
+        }
+
+        fileUploadInput.addEventListener('change', function() {
+            if (fileUploadInput.files.length > 0) {
+                showFileName(fileUploadInput.files[0].name);
+            }
+        });
+
+        function showFileName(name) {
+            fileNameDisplay.textContent = 'Selected: ' + name;
+            fileNameDisplay.classList.remove('hidden');
+        }
+    }
+
+    // --- 3. Form Submission ---
     if (concernForm) {
         concernForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            // Just get the inputs
-            const courseSelect = document.getElementById('concern_227'); // based on offset injection, fallback below
-            const course = courseSelect ? courseSelect.value : document.querySelectorAll('select')[0].value;
-            const typeSelect = document.getElementById('concern_341');
-            const type = typeSelect ? typeSelect.value : document.querySelectorAll('select')[1].value;
-            const desc = document.getElementById('concernDescription').value;
 
-            if (!desc) {
-                showToast('Please provide a description.', 'danger');
+            var subject = subjectDropdown ? subjectDropdown.value : '';
+            var type    = issueType ? issueType.value : '';
+            var dateEl  = document.getElementById('date');
+            var dateVal = dateEl ? dateEl.value : '';
+            var desc    = document.getElementById('concernDescription');
+            var descVal = desc ? desc.value : '';
+
+            if (!subject || !type || !descVal) {
+                if (typeof showToast === 'function') {
+                    showToast('Please fill in all required fields.', 'danger');
+                } else {
+                    alert('Please fill in all required fields.');
+                }
                 return;
             }
 
+            var messageBody = descVal;
+            if (dateVal) messageBody = '[Date: ' + dateVal + '] ' + messageBody;
+
             API.post('/messages', {
-                to: 'teacher', // backend logic handles this or teacher sees all messages to 'teacher'
-                subject: `[${course}] Concern: ${type}`,
-                body: desc
-            }, studentToken).then(res => {
-                showToast('Concern submitted successfully!', 'success');
+                to: 'teacher',
+                subject: '[' + subject + '] Concern: ' + type,
+                body: messageBody
+            }, studentToken).then(function(res) {
+                if (typeof showToast === 'function') {
+                    showToast('Concern submitted successfully!', 'success');
+                } else {
+                    alert('Concern submitted successfully!');
+                }
                 concernForm.reset();
-            }).catch(err => {
-                showToast(err.message || 'Failed to submit concern', 'danger');
+                if (fileNameDisplay) {
+                    fileNameDisplay.textContent = '';
+                    fileNameDisplay.classList.add('hidden');
+                }
+                // Refresh recent requests
+                loadRecentConcerns();
+            }).catch(function(err) {
+                if (typeof showToast === 'function') {
+                    showToast(err.message || 'Failed to submit concern', 'danger');
+                } else {
+                    alert('Failed to submit concern');
+                }
             });
         });
     }
-});
 
-function loadRecentRequests() {
-    API.get('/messages', studentToken).then(res => {
-        const list = document.getElementById('recentRequestsList');
-        if (!list) return;
-        const msgs = res.messages || [];
-        if (msgs.length === 0) {
-            list.innerHTML = '<div style="padding:20px;text-align:center;color:#64748b;font-size:13px;">No recent requests found.</div>';
-            return;
-        }
-        
-        let html = '';
-        msgs.forEach(m => {
-            const date = new Date(m.timestamp).toLocaleDateString();
-            html += `
-            <div class="p-4 rounded-custom border-l-4 border-l-primary bg-surface flex flex-col gap-2 relative">
-              <div class="flex justify-between items-start">
-                <div class="text-xs font-semibold text-onSurface-variant tracking-wide">${date}</div>
-                <span class="inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">
-                  FROM: ${m.fromName || m.from}
-                </span>
-              </div>
-              <div class="font-bold text-sm text-onSurface">${m.subject}</div>
-              <div class="text-xs text-onSurface-variant">${m.body}</div>
-            </div>`;
+    // --- 4. Recent Requests with Status Badges ---
+    function loadRecentConcerns() {
+        if (!recentRequestsList) return;
+        recentRequestsList.innerHTML = '<div style="padding:20px;text-align:center;color:#64748b;font-size:13px;">Loading requests...</div>';
+
+        API.get('/messages', studentToken).then(function(res) {
+            var msgs = res.messages || [];
+            if (msgs.length === 0) {
+                recentRequestsList.innerHTML = '<div style="padding:20px;text-align:center;color:#64748b;font-size:13px;">No recent requests found.</div>';
+                return;
+            }
+
+            var html = '';
+            msgs.forEach(function(m) {
+                var dateStr = new Date(m.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase();
+                var subjectLabel = m.subject || 'Concern';
+
+                // Determine status badge
+                var borderColor, badgeBg, badgeText, badgeTextColor, badgeRing, badgeIcon;
+                var status = (m.status || '').toLowerCase();
+
+                if (status === 'resolved') {
+                    borderColor = 'border-l-green-500';
+                    badgeBg = 'bg-green-50';
+                    badgeTextColor = 'text-green-700';
+                    badgeRing = 'ring-green-600/20';
+                    badgeText = 'RESOLVED';
+                    badgeIcon = '<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>';
+                } else if (status === 'denied') {
+                    borderColor = 'border-l-red-500';
+                    badgeBg = 'bg-red-50';
+                    badgeTextColor = 'text-red-700';
+                    badgeRing = 'ring-red-600/10';
+                    badgeText = 'DENIED';
+                    badgeIcon = '<path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>';
+                } else {
+                    // Default: pending / in review
+                    borderColor = 'border-l-amber-500';
+                    badgeBg = 'bg-amber-50';
+                    badgeTextColor = 'text-amber-700';
+                    badgeRing = 'ring-amber-600/20';
+                    badgeText = 'PENDING';
+                    badgeIcon = '<path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>';
+                }
+
+                html += '<div class="p-4 rounded-custom ' + borderColor + ' border-l-4 bg-surface flex flex-col gap-2 relative">'
+                    + '<div class="flex justify-between items-start">'
+                    + '<div class="text-xs font-semibold text-onSurface-variant tracking-wide">' + dateStr + '</div>'
+                    + '<span class="inline-flex items-center gap-1.5 rounded-md ' + badgeBg + ' px-2 py-1 text-xs font-medium ' + badgeTextColor + ' ring-1 ring-inset ' + badgeRing + '">'
+                    + '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' + badgeIcon + '</svg>'
+                    + badgeText
+                    + '</span>'
+                    + '</div>'
+                    + '<div class="font-bold text-sm text-onSurface">' + subjectLabel + '</div>'
+                    + '<div class="text-xs text-onSurface-variant truncate">' + (m.body || '') + '</div>'
+                    + '</div>';
+            });
+            recentRequestsList.innerHTML = html;
+        }).catch(function(err) {
+            console.error('Failed to load recent concerns:', err);
+            recentRequestsList.innerHTML = '<div style="padding:20px;text-align:center;color:#64748b;font-size:13px;">Failed to load requests.</div>';
         });
-        list.innerHTML = html;
-    }).catch(err => console.error(err));
-}
-setTimeout(loadRecentRequests, 600);
+    }
+    loadRecentConcerns();
+})();
+
 
 // --- Extracted logic to update all new UI components dynamically ---
 function updateExtendedDashboard(res) {
