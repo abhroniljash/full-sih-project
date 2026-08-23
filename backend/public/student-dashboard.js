@@ -833,57 +833,30 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+
+
 // ==========================================
-// USER REQUESTED ATTENDANCE OVERVIEW (TABLE & TIMEFRAME)
+// USER REQUESTED ATTENDANCE OVERVIEW (EXACT DOM LOGIC)
 // ==========================================
 document.addEventListener('DOMContentLoaded', function() {
-    const sectionAttendance = document.querySelector('#section-attendance');
-    if (!sectionAttendance) return;
+    const btnSemester = document.getElementById('btn-semester');
+    const btnMonthly = document.getElementById('btn-monthly');
+    const attendanceTableBody = document.getElementById('attendance-table-body');
+    
+    if (!btnSemester || !btnMonthly || !attendanceTableBody) return;
 
-    const buttons = sectionAttendance.querySelectorAll('button.rounded-full');
-    let btnSemester, btnMonthly;
-    buttons.forEach(btn => {
-        if (btn.textContent.trim() === 'Semester') btnSemester = btn;
-        if (btn.textContent.trim() === 'Monthly') btnMonthly = btn;
-    });
-
-    const tableHeaders = sectionAttendance.querySelectorAll('th');
-    let tbody = null;
-    if (tableHeaders.length > 0) {
-        tbody = tableHeaders[0].closest('table').querySelector('tbody');
-    }
-
-    if (!btnSemester || !btnMonthly || !tbody) return;
-
-    let currentTimeframe = 'semester'; 
-
+    // Helper classes
     const activeClasses = ['bg-primary', 'text-on-primary', 'shadow-sm'];
     const inactiveClasses = ['text-on-surface-variant', 'hover:bg-surface-container'];
 
-    function updateToggles() {
-        if (currentTimeframe === 'semester') {
-            inactiveClasses.forEach(c => btnSemester.classList.remove(c));
-            activeClasses.forEach(c => btnSemester.classList.add(c));
-            
-            activeClasses.forEach(c => btnMonthly.classList.remove(c));
-            inactiveClasses.forEach(c => btnMonthly.classList.add(c));
-        } else {
-            inactiveClasses.forEach(c => btnMonthly.classList.remove(c));
-            activeClasses.forEach(c => btnMonthly.classList.add(c));
-            
-            activeClasses.forEach(c => btnSemester.classList.remove(c));
-            inactiveClasses.forEach(c => btnSemester.classList.add(c));
-        }
-    }
-
-    function fetchAttendanceStats(timeframe) {
-        tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-on-surface-variant font-semibold">Loading data...</td></tr>';
+    function fetchAttendanceData(timeframe) {
+        document.getElementById('attendance-table-body').innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-on-surface-variant font-semibold">Loading real data...</td></tr>';
         
         if (typeof API !== 'undefined' && typeof studentToken !== 'undefined') {
             API.get(`/dashboard/student?timeframe=${timeframe}`, studentToken)
             .then(res => {
                 if (!res.tracker || res.tracker.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-on-surface-variant font-semibold">No attendance records found.</td></tr>';
+                    document.getElementById('attendance-table-body').innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-on-surface-variant font-semibold">No data found for this period</td></tr>';
                     return;
                 }
 
@@ -921,31 +894,40 @@ document.addEventListener('DOMContentLoaded', function() {
                     </tr>`;
                 });
                 
-                tbody.innerHTML = html;
+                document.getElementById('attendance-table-body').innerHTML = html;
             })
             .catch(err => {
-                tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-error font-semibold">Failed to fetch data</td></tr>';
+                document.getElementById('attendance-table-body').innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-error font-semibold">Failed to fetch data</td></tr>';
             });
         }
     }
 
-    btnSemester.addEventListener('click', () => {
-        if (currentTimeframe !== 'semester') {
-            currentTimeframe = 'semester';
-            updateToggles();
-            fetchAttendanceStats('semester');
-        }
+    btnSemester.addEventListener('click', function() {
+        // Remove active styling from monthly
+        activeClasses.forEach(c => btnMonthly.classList.remove(c));
+        inactiveClasses.forEach(c => btnMonthly.classList.add(c));
+        
+        // Add active styling to semester
+        inactiveClasses.forEach(c => btnSemester.classList.remove(c));
+        activeClasses.forEach(c => btnSemester.classList.add(c));
+        
+        // Fetch data
+        fetchAttendanceData('semester');
     });
 
-    btnMonthly.addEventListener('click', () => {
-        if (currentTimeframe !== 'monthly') {
-            currentTimeframe = 'monthly';
-            updateToggles();
-            fetchAttendanceStats('monthly');
-        }
+    btnMonthly.addEventListener('click', function() {
+        // Remove active styling from semester
+        activeClasses.forEach(c => btnSemester.classList.remove(c));
+        inactiveClasses.forEach(c => btnSemester.classList.add(c));
+        
+        // Add active styling to monthly
+        inactiveClasses.forEach(c => btnMonthly.classList.remove(c));
+        activeClasses.forEach(c => btnMonthly.classList.add(c));
+        
+        // Fetch data
+        fetchAttendanceData('monthly');
     });
 
-    // Ensure it loads if the section is ever shown or immediately if already active
-    updateToggles();
-    fetchAttendanceStats(currentTimeframe);
+    // Automatically load default view
+    fetchAttendanceData('semester');
 });
