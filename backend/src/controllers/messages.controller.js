@@ -4,12 +4,28 @@ const { asyncHandler, ApiError } = require('../utils/helpers');
 const getMessages = asyncHandler(async (req, res) => {
   const allMessages = repo.all('messages') || [];
   // For teachers, they might match on ID or username. We include messages to them.
-  const messages = allMessages.filter(m => m.toId === req.user.id || m.to === req.user.username || (req.user.role === 'teacher' && m.to === 'teacher'));
+  let messages = allMessages.filter(m => m.toId === req.user.id || m.to === req.user.username || (req.user.role === 'teacher' && m.to === 'teacher'));
+  
+  // Populate real name
+  messages = messages.map(m => {
+    let realName = m.fromName;
+    if (!realName || realName === 'Unknown') {
+      if (m.fromRole === 'student') {
+        const student = repo.findOne('students', s => s.username === m.from || s.id === m.from);
+        if (student) realName = student.name;
+      } else if (m.fromRole === 'teacher') {
+        const teacher = repo.findOne('teachers', t => t.employeeId === m.from || t.id === m.from);
+        if (teacher) realName = teacher.name;
+      }
+    }
+    return { ...m, fromName: realName || m.fromName };
+  });
+
   res.json({ success: true, messages });
 });
 
 const sendMessage = asyncHandler(async (req, res) => {
-  const { to, toId, subject, body } = req.body;
+  const { to, toId, subject, body, replyTo } = req.body;
   if (!body) throw new ApiError(400, 'Message body is required');
 
   const newMessage = await repo.insert('messages', {
@@ -23,6 +39,11 @@ const sendMessage = asyncHandler(async (req, res) => {
     timestamp: new Date().toISOString(),
     read: false
   });
+
+  // If this is a reply to an existing concern, mark the original as resolved
+  if (replyTo) {
+    await repo.update('messages', m => m.id === replyTo, { status: 'resolved' });
+  }
 
   res.json({ success: true, message: newMessage });
 });

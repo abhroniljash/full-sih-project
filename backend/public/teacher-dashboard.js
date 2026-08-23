@@ -1188,6 +1188,8 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
         document.getElementById('replyBody').value = '';
     });
     
+    var currentReplyMsgId = null;
+    
     document.getElementById('sendReply').addEventListener('click', function() {
         var body = document.getElementById('replyBody').value;
         if(!body.trim()) return showToast('Please type a reply', 'warning');
@@ -1196,18 +1198,35 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
         API.post('/messages', {
             to: currentReplyTo,
             subject: 'Re: Your Concern',
-            body: body
+            body: body,
+            replyTo: currentReplyMsgId
         }, teacherToken).then(function() {
             showToast('Reply sent successfully!', 'success');
             replyModal.style.display = 'none';
             document.getElementById('replyBody').value = '';
+            
+            // Dynamically update the specific message card
+            if (currentReplyMsgId) {
+                var card = document.getElementById('msg-card-' + currentReplyMsgId);
+                if (card) {
+                    card.style.background = '#fff'; // Remove unread background
+                }
+                var btn = document.getElementById('reply-btn-' + currentReplyMsgId);
+                if (btn) {
+                    btn.textContent = 'Resolved';
+                    btn.style.background = '#dcfce7'; // green-100
+                    btn.style.color = '#166534'; // green-800
+                    btn.disabled = true;
+                }
+            }
         }).catch(function(e) {
             showToast(e.message || 'Failed to send reply', 'danger');
         });
     });
 
-    window.openReply = function(studentUsername) {
+    window.openReply = function(studentUsername, msgId) {
         currentReplyTo = studentUsername;
+        currentReplyMsgId = msgId;
         replyModal.style.display = 'flex';
         document.getElementById('replyBody').focus();
     };
@@ -1239,16 +1258,27 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
             msgs.forEach(function(m) {
                 var isUnread = !m.read;
                 var bg = isUnread ? '#f0f9ff' : '#fff';
-                html += '<div style="padding:12px 20px;border-bottom:1px solid #f1f5f9;background:' + bg + ';" onclick="markMsgRead(\'' + m.id + '\', this)">';
+                var isResolved = (m.status === 'resolved');
+                
+                html += '<div id="msg-card-' + m.id + '" style="padding:12px 20px;border-bottom:1px solid #f1f5f9;background:' + bg + ';" onclick="markMsgRead(\'' + m.id + '\', this)">';
                 html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;">';
-                html += '<div style="font-weight:600;font-size:13px;color:#0f172a;">' + (m.fromName || m.from) + '</div>';
+                // Remove the unread dot indicator if read (or we just use the background)
+                html += '<div style="font-weight:600;font-size:13px;color:#0f172a;display:flex;align-items:center;">';
+                if (isUnread) {
+                    html += '<span id="msg-dot-' + m.id + '" style="width:8px;height:8px;border-radius:50%;background:#ef4444;display:inline-block;margin-right:6px;"></span>';
+                }
+                html += (m.fromName || m.from) + '</div>';
                 html += '<div style="font-size:11px;color:#94a3b8;">' + new Date(m.timestamp).toLocaleString() + '</div>';
                 html += '</div>';
                 html += '<div style="font-weight:500;font-size:12px;color:#334155;margin-top:2px;">' + m.subject + '</div>';
                 html += '<div style="font-size:12px;color:#475569;margin-top:4px;line-height:1.4;">' + m.body + '</div>';
                 
                 if (m.fromRole === 'student') {
-                    html += '<button onclick="openReply(\'' + m.from + '\'); event.stopPropagation();" style="margin-top:8px;padding:4px 10px;font-size:11px;background:#e0e7ff;color:#4338ca;border:none;border-radius:4px;cursor:pointer;font-weight:600;">Reply</button>';
+                    if (isResolved) {
+                        html += '<button id="reply-btn-' + m.id + '" disabled style="margin-top:8px;padding:4px 10px;font-size:11px;background:#dcfce7;color:#166534;border:none;border-radius:4px;font-weight:600;">Resolved</button>';
+                    } else {
+                        html += '<button id="reply-btn-' + m.id + '" onclick="openReply(\'' + m.from + '\', \'' + m.id + '\'); event.stopPropagation();" style="margin-top:8px;padding:4px 10px;font-size:11px;background:#e0e7ff;color:#4338ca;border:none;border-radius:4px;cursor:pointer;font-weight:600;">Reply</button>';
+                    }
                 }
                 
                 html += '</div>';
@@ -1264,6 +1294,8 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
     window.markMsgRead = function(id, el) {
         API.patch('/messages/' + id + '/read', {}, teacherToken).then(function() {
             if (el) el.style.background = '#fff';
+            var dot = document.getElementById('msg-dot-' + id);
+            if (dot) dot.style.display = 'none';
         }).catch(function(){});
     };
 
