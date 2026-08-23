@@ -126,11 +126,11 @@ var livenessCheckInterval = null;
 var livenessChallenges = [];
 var currentLivenessIdx = 0;
 var livenessActionPool = [
-    { id: 'blink', text: 'Blink your eyes' },
-    { id: 'smile', text: 'Smile' },
-    { id: 'left', text: 'Turn head left' },
-    { id: 'right', text: 'Turn head right' },
-    { id: 'mouth', text: 'Open your mouth' }
+    { id: 'look_up', text: 'Look Up' },
+    { id: 'look_down', text: 'Look Down' },
+    { id: 'turn_left', text: 'Turn head Left' },
+    { id: 'turn_right', text: 'Turn head Right' },
+    { id: 'smile', text: 'Smile widely' }
 ];
 
 function resetLivenessUI() {
@@ -227,11 +227,11 @@ function startLivenessSequence(roll, name) {
             FaceEngine.detectWithLandmarks(vid).then(function(result) {
                 if (!result) return;
                 var passed = false;
-                if (ch.id === 'blink') passed = FaceEngine.detectBlink(result.landmarks);
-                else if (ch.id === 'left') passed = FaceEngine.detectHeadTurn(result.landmarks, 'left');
-                else if (ch.id === 'right') passed = FaceEngine.detectHeadTurn(result.landmarks, 'right');
+                if (ch.id === 'look_up') passed = FaceEngine.detectLookUp(result.landmarks);
+                else if (ch.id === 'look_down') passed = FaceEngine.detectLookDown(result.landmarks);
+                else if (ch.id === 'turn_left') passed = FaceEngine.detectHeadTurn(result.landmarks, 'left');
+                else if (ch.id === 'turn_right') passed = FaceEngine.detectHeadTurn(result.landmarks, 'right');
                 else if (ch.id === 'smile') passed = FaceEngine.detectSmile(result.landmarks);
-                else if (ch.id === 'mouth') passed = FaceEngine.detectOpenMouth(result.landmarks);
                 
                 if (passed) {
                     clearInterval(livenessCheckInterval);

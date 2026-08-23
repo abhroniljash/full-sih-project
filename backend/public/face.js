@@ -91,8 +91,8 @@ var FaceEngine = (function () {
         var noseToRight = landmarkDist(noseTip, rightJaw);
         var ratio = noseToLeft / noseToRight;
         // Swapped: user sees "turn left" but face-api sees right, and vice versa
-        if (direction === 'left')  return ratio > 1.35;
-        if (direction === 'right') return ratio < 0.74;
+        if (direction === 'left')  return ratio > 1.25; // More sensible
+        if (direction === 'right') return ratio < 0.80; // More sensible
         return false;
     }
 
@@ -103,7 +103,19 @@ var FaceEngine = (function () {
         var chin       = p[8];
         var noseLen = landmarkDist(noseBridge, noseTip);
         var chinLen = landmarkDist(noseTip, chin);
-        return (noseLen / chinLen) > 0.70;
+        // Look up: chin moves down/away, nose is foreshortened. Ratio becomes small.
+        return (noseLen / chinLen) < 0.75; // More sensible
+    }
+
+    function detectLookDown(landmarks) {
+        var p = landmarks.positions;
+        var noseBridge = p[27];
+        var noseTip    = p[30];
+        var chin       = p[8];
+        var noseLen = landmarkDist(noseBridge, noseTip);
+        var chinLen = landmarkDist(noseTip, chin);
+        // Look down: chin tucks in, nose appears longer relative to chin. Ratio becomes large.
+        return (noseLen / chinLen) > 1.25; // More sensible
     }
 
     function detectOpenMouth(landmarks) {
@@ -126,7 +138,7 @@ var FaceEngine = (function () {
         // Also check width ratio to ensure it's stretching.
         var width = landmarkDist(leftCorner, rightCorner);
         var jawWidth = landmarkDist(p[3], p[13]);
-        return (width / jawWidth) > 0.42; 
+        return (width / jawWidth) > 0.38; 
     }
 
     // Full detection pass: returns { landmarks, descriptor? } or null
@@ -149,6 +161,7 @@ var FaceEngine = (function () {
         detectBlink: detectBlink,
         detectHeadTurn: detectHeadTurn,
         detectLookUp: detectLookUp,
+        detectLookDown: detectLookDown,
         detectOpenMouth: detectOpenMouth,
         detectSmile: detectSmile,
         detectWithLandmarks: detectWithLandmarks
