@@ -344,3 +344,14 @@ a:hover { color: #4338ca; }
 @media (max-width: 480px) {
     .features-grid { grid-template-columns: 1fr; }
 }
+
+
+#1{
+    background: #FFA500;
+}
+#2{
+    background: #06038D;
+}
+#3{
+    background: #046A38;
+}
