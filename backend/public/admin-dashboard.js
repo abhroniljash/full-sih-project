@@ -157,14 +157,17 @@ window.fetchTeachers = function() {
         }
         var html = '';
         allTeachersData.forEach(function(t) {
-            html += '<tr>';
+            html += '<tr id="teacher-row-' + t.id + '">';
             html += '<td><strong>' + (t.employeeId || '-') + '</strong></td>';
             html += '<td>' + (t.name || '-') + '</td>';
             html += '<td>' + (t.email || '-') + '</td>';
             html += '<td>' + (t.department || '-') + '</td>';
             html += '<td>' + (t.subject || '-') + '</td>';
             html += '<td>' + (t.createdAt ? formatDate(t.createdAt) : '-') + '</td>';
-            html += '<td><button class="btn btn-sm" style="background:#fee2e2;color:#ef4444;padding:4px 8px;font-size:12px;" onclick="deleteTeacher(\'' + t.id + '\')"><i class="fa-solid fa-trash"></i></button></td>';
+            html += '<td style="white-space:nowrap;">';
+            html += '<button class="btn btn-sm" style="background:#dbeafe;color:#3b82f6;padding:4px 8px;font-size:12px;margin-right:4px;" onclick="editTeacher(\'' + t.id + '\')" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>';
+            html += '<button class="btn btn-sm" style="background:#fee2e2;color:#ef4444;padding:4px 8px;font-size:12px;" onclick="deleteTeacher(\'' + t.id + '\')" title="Delete"><i class="fa-solid fa-trash"></i></button>';
+            html += '</td>';
             html += '</tr>';
         });
         tbody.innerHTML = html;
@@ -176,13 +179,69 @@ window.fetchTeachers = function() {
 
 window.deleteTeacher = function(id) {
     if (!confirm('Are you sure you want to delete this teacher?')) return;
-    API.request('DELETE', '/admin/teachers/' + id, null, adminToken)
+    API.del('/admin/teachers/' + id, adminToken)
     .then(function() {
         showToast('Teacher deleted successfully', 'success');
-        fetchTeachers();
+        var row = document.getElementById('teacher-row-' + id);
+        if (row) row.remove();
+        allTeachersData = allTeachersData.filter(function(t) { return t.id !== id; });
+        if (allTeachersData.length === 0) {
+            var tbody = document.getElementById('teachersTbody');
+            if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No teachers registered yet.</td></tr>';
+        }
     })
     .catch(function(err) {
         showToast(err.message || 'Failed to delete teacher', 'danger');
+    });
+};
+
+window.editTeacher = function(id) {
+    var teacher = allTeachersData.find(function(t) { return t.id === id; });
+    if (!teacher) {
+        showToast('Teacher data not found', 'danger');
+        return;
+    }
+
+    var newName = prompt('Edit Name:', teacher.name || '');
+    if (newName === null) return; // cancelled
+
+    var newDept = prompt('Edit Department:', teacher.department || '');
+    if (newDept === null) return;
+
+    var newSubj = prompt('Edit Subject:', teacher.subject || '');
+    if (newSubj === null) return;
+
+    newName = newName.trim();
+    newDept = newDept.trim();
+    newSubj = newSubj.trim();
+
+    if (!newName) {
+        showToast('Name cannot be empty', 'warning');
+        return;
+    }
+
+    API.put('/admin/teachers/' + id, {
+        name: newName,
+        department: newDept,
+        subject: newSubj
+    }, adminToken)
+    .then(function(res) {
+        showToast('Teacher updated successfully', 'success');
+        // Update local data
+        teacher.name = newName;
+        teacher.department = newDept;
+        teacher.subject = newSubj;
+        // Update the row in DOM without full reload
+        var row = document.getElementById('teacher-row-' + id);
+        if (row) {
+            var cells = row.querySelectorAll('td');
+            if (cells[1]) cells[1].textContent = newName;
+            if (cells[3]) cells[3].textContent = newDept;
+            if (cells[4]) cells[4].textContent = newSubj;
+        }
+    })
+    .catch(function(err) {
+        showToast(err.message || 'Failed to update teacher', 'danger');
     });
 };
 

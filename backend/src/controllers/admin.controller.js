@@ -18,4 +18,17 @@ const deleteTeacher = asyncHandler(async (req, res) => {
   res.json({ success: true, message: 'Teacher deleted successfully' });
 });
 
-module.exports = { getTeachers, getTeacherActivity, deleteTeacher };
+const updateTeacher = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { name, department, subject } = req.body;
+  const teacher = repo.findOne('teachers', (t) => t.id === id);
+  if (!teacher) throw new ApiError(404, 'Teacher not found');
+  const updates = {};
+  if (name !== undefined) updates.name = name;
+  if (department !== undefined) updates.department = department;
+  if (subject !== undefined) updates.subject = subject;
+  await repo.update('teachers', (t) => t.id === id, updates);
+  res.json({ success: true, message: 'Teacher updated successfully' });
+});
+
+module.exports = { getTeachers, getTeacherActivity, deleteTeacher, updateTeacher };
