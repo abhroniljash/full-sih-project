@@ -52,7 +52,9 @@ const sendMessage = asyncHandler(async (req, res) => {
     await repo.update('messages', m => m.id === replyTo, { status: updateStatus });
   }
 
-  res.json({ success: true, message: newMessage });
+  messages = messages.slice().sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+  res.json({ success: true, messages });
 });
 
 const markRead = asyncHandler(async (req, res) => {
