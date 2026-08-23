@@ -1,19 +1,8 @@
 const fs = require('fs');
 let html = fs.readFileSync('backend/public/teacher-dashboard.html', 'utf8');
 
-// The block starts exactly at <!-- Schedule Auto-Session -->
-const startIdx = html.indexOf('<!-- Schedule Auto-Session -->');
-const searchStr = '<button class="btn btn-primary" id="btnSchedule"';
-const btnIdx = html.indexOf(searchStr, startIdx);
-// Find the end of the card. The button is inside a <div class="card-body"> and then the <div class="card"> closes.
-// Let's just find the exact string to extract by splitting or regex.
 const regex = /<!-- Schedule Auto-Session -->[\s\S]*?<button class="btn btn-primary" id="btnSchedule"[\s\S]*?<\/button>\s*<\/div>\s*<\/div>/;
 const match = html.match(regex);
-if (!match) {
-    console.log("Regex failed to match schedule block.");
-    process.exit(1);
-}
-
 const scheduleCard = match[0];
 html = html.replace(scheduleCard, '');
 
@@ -29,17 +18,13 @@ const newSection = `
         </div>
 `;
 
-// Insert after <div id="sec-create"... 
-// Let's just find the end of sec-create and insert it there.
-const secCreateEndStr = `</form>
-                    </div>
-                </div>
-            </div>
-        </div>`;
-html = html.replace(secCreateEndStr, secCreateEndStr + '\n\n' + newSection);
+const settingsIdx = html.indexOf('<div id="sec-settings"');
+html = html.substring(0, settingsIdx) + newSection + '\n' + html.substring(settingsIdx);
 
 const navItem = `<button class="nav-item" data-sec="schedule"><span class="icon"><i class="fa-regular fa-calendar-plus"></i></span> Schedule Session</button>`;
 html = html.replace('<button class="nav-item" data-sec="create">', navItem + '\n                <button class="nav-item" data-sec="create">');
 
+html = html.replace(/teacher-dashboard\.js\?v=\d+/, 'teacher-dashboard.js?v=' + Date.now());
+
 fs.writeFileSync('backend/public/teacher-dashboard.html', html);
-console.log("Successfully moved.");
+console.log('Has sec-schedule:', html.includes('sec-schedule'));
