@@ -90,14 +90,22 @@ document.addEventListener('DOMContentLoaded', function() {
     links.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
-            const target = this.getAttribute('data-target');
+            
+            // Allow clicked link to work even if clicked on a child element
+            const anchor = e.target.closest('a');
+            if (!anchor) return;
+            const target = anchor.getAttribute('data-target');
+            
+            if (!target) return;
+            console.log("Switching to tab: " + target);
 
             // 1. Hide all sections, show target
             sections.forEach(sec => {
                 if (sec.id === 'section-' + target) {
-                    sec.style.display = 'block';
+                    sec.classList.remove('hidden');
+                    sec.style.display = ''; // Clear inline styles just in case
                 } else {
-                    sec.style.display = 'none';
+                    sec.classList.add('hidden');
                 }
             });
 
