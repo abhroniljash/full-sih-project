@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Schedule</title>
+    <!-- Use dashboard css for sidebar/header, schedule css for layout -->
+    <link rel="stylesheet" href="student-dashboard.css?v=2">
+    <link rel="stylesheet" href="student-schedule.css?v=2">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo"></div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="student-dashboard.html" class="nav-item"><span class="material-symbols-outlined icon">grid_view</span> Dashboard</a>
+            <a href="#" class="nav-item active"><span class="material-symbols-outlined icon">calendar_today</span> My Schedule</a>
+            <a href="#" class="nav-item"><span class="material-symbols-outlined icon">rule</span> Attendance</a>
+            <a href="#" class="nav-item"><span class="material-symbols-outlined icon">book_4</span> Courses</a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="avatar" id="uAvatar"><span class="material-symbols-outlined">person</span></div>
+                <div class="user-info">
+                    <div class="name" id="uName">Student</div>
+                    <div class="roll" id="rollTag">ID: ---</div>
+                </div>
+                <button class="logout-btn" id="logoutBtn" title="Logout"><span class="material-symbols-outlined icon">logout</span></button>
+            </div>
+        </div>
+    </aside>
+
+    <div class="main-layout">
+        <header class="top-header">
+            <div class="search-bar">
+                <span class="material-symbols-outlined icon">search</span>
+                <input type="text" placeholder="Search schedule, courses...">
+            </div>
+            <div class="header-actions">
+                <button class="action-btn">
+                    <span class="material-symbols-outlined">notifications</span>
+                    <span class="badge"></span>
+                </button>
+                <button class="action-btn">
+                    <span class="material-symbols-outlined">settings</span>
+                </button>
+            </div>
+        </header>
+
+        <main class="dashboard-content">
+            
+            <section class="weekly-strip">
+                <div class="weekly-header">
+                    <div>
+                        <h2>August 2026</h2>
+                        <p>Week 3 • Summer Semester</p>
+                    </div>
+                    <div class="nav-buttons">
+                        <button class="nav-btn"><span class="material-symbols-outlined">chevron_left</span></button>
+                        <button class="nav-btn"><span class="material-symbols-outlined">chevron_right</span></button>
+                    </div>
+                </div>
+
+                <div class="date-strip">
+                    <button class="date-card">
+                        <span class="day">Mon</span>
+                        <span class="date">17</span>
+                        <div class="dot"></div>
+                    </button>
+                    <button class="date-card">
+                        <span class="day">Tue</span>
+                        <span class="date">18</span>
+                        <div class="dot"></div>
+                    </button>
+                    <button class="date-card active">
+                        <span class="day">Wed</span>
+                        <span class="date">19</span>
+                        <div class="dot"></div>
+                    </button>
+                    <button class="date-card">
+                        <span class="day">Thu</span>
+                        <span class="date">20</span>
+                        <div class="dot has-class"></div>
+                    </button>
+                    <button class="date-card">
+                        <span class="day">Fri</span>
+                        <span class="date">21</span>
+                        <div class="dot"></div>
+                    </button>
+                    <button class="date-card" style="background: var(--primary); color: white;">
+                        <span class="day" style="color: rgba(255,255,255,0.8);">Sat</span>
+                        <span class="date">22</span>
+                        <div class="dot" style="background: white;"></div>
+                    </button>
+                    <button class="date-card disabled">
+                        <span class="day">Sun</span>
+                        <span class="date">23</span>
+                    </button>
+                </div>
+            </section>
+
+            <div class="schedule-layout">
+                <section class="timeline-col">
+                    <div class="timeline-header">
+                        <h3>
+                            <span class="material-symbols-outlined icon">schedule</span>
+                            Today's Schedule
+                        </h3>
+                        <span class="timeline-badge">3 Classes • 4.5 Hours</span>
+                    </div>
+
+                    <div class="timeline-container">
+                        <div class="timeline-line"></div>
+                        
+                        <div class="current-time-indicator"></div>
+                        <div class="current-time-line"></div>
+                        <div class="current-time-label">NOW</div>
+
+                        <!-- Slot 1 -->
+                        <div class="time-slot">
+                            <div class="slot-time">09:00</div>
+                            <div class="slot-node"></div>
+                            <div class="slot-card blue">
+                                <div class="slot-indicator"></div>
+                                <div class="slot-title">
+                                    <div>
+                                        <span class="slot-code">CS-301</span>
+                                        <h4>Data Structures</h4>
+                                    </div>
+                                    <span class="slot-duration">09:00 - 10:30 AM</span>
+                                </div>
+                                <div class="slot-details">
+                                    <div class="slot-detail-item">
+                                        <span class="material-symbols-outlined icon">person</span>
+                                        <span>Dr. Alan Turing</span>
+                                    </div>
+                                    <div class="slot-detail-item">
+                                        <span class="material-symbols-outlined icon">location_on</span>
+                                        <span>Turing Hall, Room 402</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slot 2 -->
+                        <div class="time-slot">
+                            <div class="slot-time">11:30</div>
+                            <div class="slot-node"></div>
+                            <div class="slot-card primary">
+                                <div class="slot-indicator"></div>
+                                <div class="slot-title">
+                                    <div>
+                                        <span class="slot-code" style="background: white; color: var(--primary);">MATH-210</span>
+                                        <h4>Linear Algebra</h4>
+                                    </div>
+                                    <span class="slot-duration" style="background: white; color: var(--primary);">11:30 - 13:00 PM</span>
+                                </div>
+                                <div class="slot-details">
+                                    <div class="slot-detail-item">
+                                        <span class="material-symbols-outlined icon">person</span>
+                                        <span>Prof. Ada Lovelace</span>
+                                    </div>
+                                    <div class="slot-detail-item">
+                                        <span class="material-symbols-outlined icon">location_on</span>
+                                        <span>Science Wing, Room 101</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slot 3 -->
+                        <div class="time-slot">
+                            <div class="slot-time">14:00</div>
+                            <div class="slot-node"></div>
+                            <div class="slot-card orange">
+                                <div class="slot-indicator"></div>
+                                <div class="slot-title">
+                                    <div>
+                                        <span class="slot-code">PHYS-405</span>
+                                        <h4>Quantum Mechanics</h4>
+                                    </div>
+                                    <span class="slot-duration">14:00 - 15:30 PM</span>
+                                </div>
+                                <div class="slot-details">
+                                    <div class="slot-detail-item">
+                                        <span class="material-symbols-outlined icon">person</span>
+                                        <span>Dr. Richard Feynman</span>
+                                    </div>
+                                    <div class="slot-detail-item">
+                                        <span class="material-symbols-outlined icon">location_on</span>
+                                        <span>Feynman Lab, Room 22</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <aside class="summary-col">
+                    <div class="glance-card">
+                        <div class="top-border"></div>
+                        <h3>Today at a Glance</h3>
+                        <div class="glance-stats">
+                            <div class="glance-stat attended">
+                                <span class="material-symbols-outlined icon">check_circle</span>
+                                <div class="num">2</div>
+                                <div class="label">Attended</div>
+                            </div>
+                            <div class="glance-stat skipped">
+                                <span class="material-symbols-outlined icon">cancel</span>
+                                <div class="num">1</div>
+                                <div class="label">Skipped</div>
+                            </div>
+                        </div>
+                        <div class="glance-alerts">
+                            <div class="alert-item danger">
+                                <div class="icon-wrapper"><span class="material-symbols-outlined">cancel</span></div>
+                                <div>
+                                    <h5>Data Structures skipped</h5>
+                                    <p>in class 09:00 AM</p>
+                                </div>
+                            </div>
+                            <div class="alert-item danger">
+                                <div class="icon-wrapper"><span class="material-symbols-outlined">warning</span></div>
+                                <div>
+                                    <h5>Physics Lab Assignment</h5>
+                                    <p>Due at 23:59 PM</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+            
+        </main>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="common.js"></script>
+    <script>
+        // Use existing common functionality to load student profile if needed
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await apiCall('/student/dashboard');
+                if (res.student) {
+                    document.getElementById('uName').textContent = res.student.name;
+                    document.getElementById('rollTag').textContent = 'ID: ' + res.student.rollNumber;
+                }
+            } catch (e) {
+                console.error(e);
+            }
+
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                localStorage.removeItem('token');
+                localStorage.removeItem('role');
+                window.location.href = 'student-login.html';
+            });
+        });
+    </script>
+</body>
+</html>
