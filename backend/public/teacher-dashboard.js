@@ -1199,7 +1199,8 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
             to: currentReplyTo,
             subject: 'Re: Your Concern',
             body: body,
-            replyTo: currentReplyMsgId
+            replyTo: currentReplyMsgId,
+            status: 'resolved' // Explicitly send resolved status per user override
         }, teacherToken).then(function() {
             showToast('Reply sent successfully!', 'success');
             replyModal.style.display = 'none';

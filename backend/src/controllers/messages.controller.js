@@ -31,7 +31,7 @@ const getMessages = asyncHandler(async (req, res) => {
 });
 
 const sendMessage = asyncHandler(async (req, res) => {
-  const { to, toId, subject, body, replyTo } = req.body;
+  const { to, toId, subject, body, replyTo, status } = req.body;
   if (!body) throw new ApiError(400, 'Message body is required');
 
   const newMessage = await repo.insert('messages', {
@@ -46,9 +46,10 @@ const sendMessage = asyncHandler(async (req, res) => {
     read: false
   });
 
-  // If this is a reply to an existing concern, mark the original as resolved
+  // If this is a reply to an existing concern, mark the original with the provided status (or 'resolved')
   if (replyTo) {
-    await repo.update('messages', m => m.id === replyTo, { status: 'resolved' });
+    const updateStatus = status || 'resolved';
+    await repo.update('messages', m => m.id === replyTo, { status: updateStatus });
   }
 
   res.json({ success: true, message: newMessage });
