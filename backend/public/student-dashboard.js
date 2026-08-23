@@ -97,6 +97,11 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (!target) return;
             console.log("Switching to tab: " + target);
+            if (target === 'communication') {
+                if (typeof window.fetchStudentConcerns === 'function') {
+                    window.fetchStudentConcerns();
+                }
+            }
 
             // Save active tab to sessionStorage for persistence across refreshes
             sessionStorage.setItem('activeStudentTab', target);
@@ -118,11 +123,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             this.classList.remove(...inactiveClasses);
             this.classList.add(...activeClasses);
-
-            // 3. If communication tab is opened, refresh recent requests
-            if (target === 'communication' && typeof window._loadRecentConcerns === 'function') {
-                window._loadRecentConcerns();
-            }
         });
     });
 
@@ -306,7 +306,9 @@ setTimeout(loadSchedule, 500); // load after a short delay
                     fileNameDisplay.classList.add('hidden');
                 }
                 // Refresh recent requests
-                loadRecentConcerns();
+                if (typeof window.fetchStudentConcerns === 'function') {
+                    window.fetchStudentConcerns();
+                }
             }).catch(function(err) {
                 if (typeof showToast === 'function') {
                     showToast(err.message || 'Failed to submit concern', 'danger');
@@ -318,24 +320,33 @@ setTimeout(loadSchedule, 500); // load after a short delay
     }
 
     // --- 4. Recent Requests with Status Badges ---
-    async function loadStudentConcerns() {
-        const listContainer = document.getElementById('recent-requests-list');
-        if (!listContainer) return console.error("CRITICAL: recent-requests-list ID not found in DOM");
+    window.fetchStudentConcerns = async function() {
+        // Target the container
+        const container = document.querySelector('.recent-requests-container') || document.getElementById('recent-requests-list');
+        if (!container) return console.error("Recent requests container not found");
 
-        console.log("Fetching student concerns...");
-        
+        container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Loading your requests...</p>';
+
         try {
-            // Using existing API helper which attaches studentToken
-            const res = await API.get('/messages', studentToken);
-            const data = res.messages || [];
+            // Fetch data from backend (adjusting to correct /messages endpoint with auth)
+            const response = await fetch('/api/messages', {
+                headers: { 'Authorization': 'Bearer ' + studentToken }
+            });
             
+            if (!response.ok) throw new Error('API response was not ok');
+            
+            const rawData = await response.json();
+            const data = rawData.messages || [];
+
             console.log("Concerns fetched:", data); // Debugging line
 
+            // Handle Empty State
             if (!data || data.length === 0) {
-                listContainer.innerHTML = '<p class="text-sm text-gray-500 text-center">No recent requests found.</p>';
+                container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">No recent requests found.</p>';
                 return;
             }
 
+            // Render Data
             let htmlString = '';
             data.forEach(item => {
                 const isResolved = item.status && item.status.toLowerCase() === 'resolved';
@@ -343,25 +354,25 @@ setTimeout(loadSchedule, 500); // load after a short delay
                 const badgeText = isResolved ? 'Issue Resolved' : 'Pending';
                 
                 htmlString += `
-                <div class="p-3 border rounded shadow-sm bg-white mb-2">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="font-semibold text-sm">${item.subject || 'Attendance Concern'}</span>
-                        <span class="text-xs px-2 py-1 rounded-full ${badgeClass}">${badgeText}</span>
+                <div class="p-3 border rounded-lg shadow-sm bg-white mb-3">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-semibold text-sm text-gray-800">${item.subject || 'Attendance Concern'}</span>
+                        <span class="text-xs px-2 py-1 rounded-full ${badgeClass} font-medium">${badgeText}</span>
                     </div>
-                    <p class="text-xs text-gray-500">${item.timestamp ? new Date(item.timestamp).toLocaleDateString() : new Date().toLocaleDateString()}</p>
+                    <p class="text-xs text-gray-500">Date: ${item.timestamp ? new Date(item.timestamp).toLocaleDateString() : new Date().toLocaleDateString()}</p>
                 </div>`;
             });
 
-            listContainer.innerHTML = htmlString;
+            container.innerHTML = htmlString;
+
         } catch (error) {
-            console.error("Failed to load concerns:", error);
-            listContainer.innerHTML = '<p class="text-sm text-red-500 text-center">Error loading requests.</p>';
+            console.error("Fetch Student Concerns Error:", error);
+            container.innerHTML = '<p class="text-sm text-red-500 text-center py-4">Failed to load requests. Please try again.</p>';
         }
-    }
-    // Expose globally so navigation can trigger refresh when Communication tab is opened
-    window.loadStudentConcerns = loadStudentConcerns;
-    window._loadRecentConcerns = loadStudentConcerns; // Alias for safety
-    loadStudentConcerns();
+    };
+    
+    // Call initially
+    window.fetchStudentConcerns();
 })();
 
 
