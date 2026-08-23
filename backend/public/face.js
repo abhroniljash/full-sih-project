@@ -104,7 +104,7 @@ var FaceEngine = (function () {
         var noseLen = landmarkDist(noseBridge, noseTip);
         var chinLen = landmarkDist(noseTip, chin);
         // Look up: chin moves down/away, nose is foreshortened. Ratio becomes small.
-        return (noseLen / chinLen) < 0.75; // More sensible
+        return (noseLen / chinLen) < 0.90; // Extremely sensitive
     }
 
     function detectLookDown(landmarks) {
@@ -115,7 +115,7 @@ var FaceEngine = (function () {
         var noseLen = landmarkDist(noseBridge, noseTip);
         var chinLen = landmarkDist(noseTip, chin);
         // Look down: chin tucks in, nose appears longer relative to chin. Ratio becomes large.
-        return (noseLen / chinLen) > 1.25; // More sensible
+        return (noseLen / chinLen) > 1.15; // Extremely sensitive
     }
 
     function detectOpenMouth(landmarks) {
