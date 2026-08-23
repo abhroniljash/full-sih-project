@@ -456,7 +456,7 @@ if(createForm) {
 
                 showToast('Session created! Starting live attendance...', 'success');
                 createForm.reset();
-                // Switch to live section immediately instead of showing result panel
+                loadLiveSession();
                 switchSec('live');
             })
             .catch(function(err) {
