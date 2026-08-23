@@ -27,6 +27,8 @@ const getMessages = asyncHandler(async (req, res) => {
     return { ...m, fromName: realName || m.fromName };
   });
 
+  messages = messages.slice().sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
   res.json({ success: true, messages });
 });
 
