@@ -841,11 +841,36 @@ document.addEventListener('DOMContentLoaded', function() {
 // USER REQUESTED ATTENDANCE OVERVIEW (CRITICAL FIX)
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-    const btnSemester = document.getElementById('btn-semester');
-    const btnMonthly = document.getElementById('btn-monthly');
-    const tableBody = document.getElementById('attendance-table-body');
+    let btnSemester = document.getElementById('btn-semester');
+    if (!btnSemester) {
+        const btns = document.querySelectorAll('#section-attendance button.rounded-full');
+        if (btns) btnSemester = Array.from(btns).find(b => b.textContent.trim() === 'Semester');
+    }
+
+    let btnMonthly = document.getElementById('btn-monthly');
+    if (!btnMonthly) {
+        const btns = document.querySelectorAll('#section-attendance button.rounded-full');
+        if (btns) btnMonthly = Array.from(btns).find(b => b.textContent.trim() === 'Monthly');
+    }
+
+    let tableBody = document.getElementById('attendance-table-body');
+    if (!tableBody) {
+        const section = document.querySelector('#section-attendance');
+        if (section) {
+            const headers = section.querySelectorAll('th');
+            if (headers.length > 0) {
+                tableBody = headers[0].closest('table').querySelector('tbody');
+            }
+        }
+    }
     
-    if (!btnSemester || !btnMonthly || !tableBody) return;
+    if (!btnSemester || !btnMonthly || !tableBody) {
+        console.error("CRITICAL DOM ERROR: Missing DOM elements for Attendance Overview.", 
+            "btnSemester:", !!btnSemester, 
+            "btnMonthly:", !!btnMonthly, 
+            "tableBody:", !!tableBody);
+        return;
+    }
 
     // Helper classes
     const activeClasses = ['bg-primary', 'text-on-primary', 'shadow-sm'];
