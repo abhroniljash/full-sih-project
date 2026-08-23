@@ -547,6 +547,8 @@ function stopFaceScanning() {
     if (vid && vid.srcObject) { vid.srcObject.getTracks().forEach(function(t){ t.stop(); }); vid.srcObject = null; }
     if (vid) vid.style.display = 'none';
     var cp = document.getElementById('camPlaceholder');
+    var cl = document.getElementById('camLoading');
+    if (cl) cl.style.display = 'none';
     if (cp) cp.style.display = 'block';
     knownFaces = [];
     markedThisSession = {};
@@ -558,9 +560,16 @@ if(startCamBtn) {
         if (!currentLiveSessionId) { showToast('No active session', 'warning'); return; }
 
         var cp = document.getElementById('camPlaceholder');
+        var cl = document.getElementById('camLoading');
         var vid = document.getElementById('camVideo');
-        var subText = document.getElementById('camSubText');
-        if (subText) subText.textContent = 'Loading face recognition models...';
+        
+        // Hide placeholder and show loading instantly
+        if (cp) cp.style.display = 'none';
+        if (cl) {
+            cl.style.display = 'block';
+            var clSub = document.getElementById('camLoadingSubText');
+            if (clSub) clSub.textContent = 'Loading AI models & students...';
+        }
 
         Promise.all([
             FaceEngine.loadModels(),
@@ -570,12 +579,19 @@ if(startCamBtn) {
             if (knownFaces.length === 0) {
                 showToast('No students have enrolled Face ID yet', 'warning');
             }
+            
+            var clSub = document.getElementById('camLoadingSubText');
+            if (clSub) clSub.textContent = 'Requesting camera access...';
+            
             return navigator.mediaDevices.getUserMedia({ video: true });
         }).then(function(stream) {
-            if (cp) cp.style.display = 'none';
             if (vid) {
-                vid.style.display = 'block';
                 vid.srcObject = stream;
+                // Wait until the video has enough data to display before hiding the loader
+                vid.onloadedmetadata = function() {
+                    if (cl) cl.style.display = 'none';
+                    vid.style.display = 'block';
+                };
             }
 
             // Re-fetch who's already present so we don't re-mark them.
@@ -607,7 +623,9 @@ if(startCamBtn) {
             }
         }).catch(function(err) {
             showToast(err.message || 'Camera not available', 'warning');
-            if (subText) subText.textContent = 'Live face-recognition attendance will run here';
+            // Revert to placeholder on error
+            if (cl) cl.style.display = 'none';
+            if (cp) cp.style.display = 'block';
         });
     });
 }

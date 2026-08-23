@@ -203,6 +203,12 @@
                                           <p class="sub" id="camSubText">Live face-recognition attendance will run here</p>
                                           <button class="btn btn-primary" style="margin-top:16px;" id="startCamBtn">Start Camera</button>
                                       </div>
+                                      <!-- Loading State (hidden by default) -->
+                                      <div class="camera-placeholder" id="camLoading" style="display: none; background: #f8fafc;">
+                                          <div class="cam-icon" style="color: #4f46e5; font-size: 32px;"><i class="fa-solid fa-circle-notch fa-spin"></i></div>
+                                          <p style="margin-top: 12px; font-weight: 600; color: #1e293b;">Initializing Camera Feed...</p>
+                                          <p class="sub" id="camLoadingSubText" style="color: #64748b; font-size: 13px; margin-top: 4px;">Loading AI models and requesting permissions</p>
+                                      </div>
                                       <video id="camVideo" autoplay playsinline style="display:none; width:100%; height:100%; object-fit:cover; transform:scaleX(-1);"></video>
                                       
                                       <div id="liveLivenessOverlay" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); flex-direction:column; justify-content:flex-end; align-items:center; padding-bottom:20px; z-index:10;">
