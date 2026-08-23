@@ -78,3 +78,36 @@ function loadDashboard() {
 loadDashboard();
 
 
+
+// --- Navigation (SPA logic) ---
+document.addEventListener('DOMContentLoaded', function() {
+    const links = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('.nav-section');
+
+    const activeClasses = ['bg-secondary-container', 'text-on-secondary-container', 'font-semibold'];
+    const inactiveClasses = ['text-on-surface-variant', 'hover:bg-surface-container-low'];
+
+    links.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = this.getAttribute('data-target');
+
+            // 1. Hide all sections, show target
+            sections.forEach(sec => {
+                if (sec.id === 'section-' + target) {
+                    sec.style.display = 'block';
+                } else {
+                    sec.style.display = 'none';
+                }
+            });
+
+            // 2. Update link classes
+            links.forEach(l => {
+                l.classList.remove(...activeClasses);
+                l.classList.add(...inactiveClasses);
+            });
+            this.classList.remove(...inactiveClasses);
+            this.classList.add(...activeClasses);
+        });
+    });
+});
