@@ -44,7 +44,7 @@ function loadDashboard() {
             trackerHtml = '<div class="empty" style="padding:24px 0;"><p>No classes found.</p></div>';
             trackerContainer.innerHTML = trackerHtml;
         } else {
-            trackerHtml += '<div class="absolute left-0 right-0 bottom-8 border-b border-dashed border-error/40 z-0"><span class="absolute -top-6 left-0 font-label-sm text-label-sm text-error/80">75% Minimum</span></div>';
+            trackerHtml += '<div class="absolute left-0 right-0 bottom-8 border-b border-dashed border-error/40 z-0"></div>';
             res.tracker.forEach(function(t) {
                 var isSafe = t.percentage >= 75;
                 var bgClass = isSafe ? 'bg-primary' : 'bg-error/80';
@@ -532,7 +532,7 @@ loadDashboard = function() {
             if (res.tracker.length === 0) {
                 trackerContainer.innerHTML = '<div class="empty" style="padding:24px 0;"><p>No classes found.</p></div>';
             } else {
-                trackerHtml += '<div class="absolute left-0 right-0 bottom-8 border-b border-dashed border-error/40 z-0"><span class="absolute -top-6 left-0 font-label-sm text-label-sm text-error/80">75% Minimum</span></div>';
+                trackerHtml += '<div class="absolute left-0 right-0 bottom-8 border-b border-dashed border-error/40 z-0"></div>';
                 res.tracker.forEach(function(t) {
                     var bgClass = t.percentage >= 75 ? 'bg-primary' : 'bg-error/80';
                     trackerHtml += '<div class="w-8 ' + bgClass + ' rounded-t-sm relative group transition-all hover:opacity-80 z-10" style="height:' + Math.max(10, t.percentage) + '%"><div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-inverse-surface text-inverse-on-surface font-label-sm text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">' + t.percentage + '% - ' + t.subject + '</div><div class="absolute -bottom-6 left-1/2 -translate-x-1/2 font-label-sm text-[10px] text-on-surface-variant">' + t.subject.substring(0, 3).toUpperCase() + '</div></div>';
