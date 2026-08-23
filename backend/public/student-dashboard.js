@@ -934,8 +934,8 @@ document.addEventListener('DOMContentLoaded', function() {
         let newHtml = '';
         
         weekDates.forEach((dateStr, i) => {
-            const dObj = new Date(dateStr);
-            const dateNum = dObj.getDate();
+            // Fix timezone parsing shift by extracting date directly from the local string (YYYY-MM-DD)
+            const dateNum = parseInt(dateStr.split('-')[2], 10);
             const isActive = (dateStr === calendarState.selectedDate);
             
             // Check dynamic dot
