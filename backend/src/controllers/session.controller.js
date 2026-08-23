@@ -106,4 +106,14 @@ const scheduleSession = asyncHandler(async (req, res) => {
   res.json({ success: true, scheduledSession: scheduled });
 });
 
-module.exports = { createSession, listSessions, getActiveSession, getSession, endSession, scheduleSession };
+
+// GET /api/sessions/schedule (student and teacher)
+const getScheduledSessions = asyncHandler(async (req, res) => {
+  let scheduled = repo.all('scheduled_sessions');
+  scheduled = scheduled.filter(s => s.status === 'pending');
+  // Sort by date/time
+  scheduled.sort((a, b) => new Date(a.scheduledDate + 'T' + a.scheduledTime) - new Date(b.scheduledDate + 'T' + b.scheduledTime));
+  res.json({ success: true, count: scheduled.length, scheduled });
+});
+
+module.exports = { createSession, listSessions, getActiveSession, getSession, endSession, scheduleSession, getScheduledSessions };

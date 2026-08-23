@@ -220,7 +220,7 @@
         </h3>
 <span class="px-4 py-1.5 bg-tertiary-container/10 text-tertiary font-label-sm text-label-sm rounded-full">3 Classes · 4.5 Hours</span>
 </div>
-<div class="relative z-10 mt-4">
+<div id="scheduleTimelineContainer" class="relative z-10 mt-4">
 <!-- Timeline Line -->
 <div class="absolute left-[52px] top-4 bottom-8 w-0.5 bg-surface-variant"></div>
 <!-- Current Time Indicator -->
@@ -608,7 +608,7 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <div>
 <label class="block text-xs font-semibold text-onSurface-variant uppercase tracking-wider mb-2" for="course">Select Course <span class="text-red-500">*</span></label>
-<select class="block w-full border-outline-variant bg-surface-lowest text-onSurface rounded-custom shadow-sm focus:ring-primary focus:border-primary sm:text-sm h-11 px-3 py-2" id="course">
+<select id="concern_47996" class="block w-full border-outline-variant bg-surface-lowest text-onSurface rounded-custom shadow-sm focus:ring-primary focus:border-primary sm:text-sm h-11 px-3 py-2" id="course">
 <option disabled="" selected="" value="">Choose a course</option>
 <option>CS301 - Data Structures</option>
 <option>EE205 - Circuits</option>
@@ -616,7 +616,7 @@
 </div>
 <div>
 <label class="block text-xs font-semibold text-onSurface-variant uppercase tracking-wider mb-2" for="issue-type">Type of Issue <span class="text-red-500">*</span></label>
-<select class="block w-full border-outline-variant bg-surface-lowest text-onSurface rounded-custom shadow-sm focus:ring-primary focus:border-primary sm:text-sm h-11 px-3 py-2" id="issue-type">
+<select id="concern_48520" class="block w-full border-outline-variant bg-surface-lowest text-onSurface rounded-custom shadow-sm focus:ring-primary focus:border-primary sm:text-sm h-11 px-3 py-2" id="issue-type">
 <option disabled="" selected="" value="">Select issue type</option>
 <option>Marked Absent</option>
 <option>Medical Leave</option>
@@ -629,7 +629,7 @@
 </div>
 <div>
 <label class="block text-xs font-semibold text-onSurface-variant uppercase tracking-wider mb-2" for="description">Detailed Description <span class="text-red-500">*</span></label>
-<textarea class="block w-full border-outline-variant bg-surface-low text-onSurface rounded-custom shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-3 resize-none" id="description" placeholder="Provide specific details about the concern..." rows="4"></textarea>
+<textarea id="concernDescription" name="concernDescription" class="block w-full border-outline-variant bg-surface-low text-onSurface rounded-custom shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-3 resize-none" id="description" placeholder="Provide specific details about the concern..." rows="4"></textarea>
 </div>
 <div>
 <label class="block text-xs font-semibold text-onSurface-variant uppercase tracking-wider mb-2">Supporting Documents (Optional)</label>
@@ -682,7 +682,7 @@
 </div>
 <a class="text-sm font-medium text-primary hover:underline" href="#">View All</a>
 </div>
-<div class="space-y-4 flex-1 overflow-y-auto pr-2">
+<div id="recentRequestsList" class="space-y-4 flex-1 overflow-y-auto pr-2">
 <!-- Request Card 1: In Review -->
 <div class="p-4 rounded-custom border-l-4 border-l-amber-500 bg-surface flex flex-col gap-2 relative">
 <div class="flex justify-between items-start">
@@ -739,5 +739,5 @@
     <script src="common.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script src="face.js?v=2"></script>
-    <script src="student-dashboard.js?v=1787479857765"></script>
+    <script src="student-dashboard.js?v=1787480757228"></script>
 </body></html>
