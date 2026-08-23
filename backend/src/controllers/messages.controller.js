@@ -7,10 +7,10 @@ const getMessages = asyncHandler(async (req, res) => {
   let messages = allMessages.filter(m => 
     m.toId === req.user.id || 
     m.to === req.user.username || 
-    (req.user.role === 'teacher' && m.to === 'teacher') ||
+    (req.user.role === 'teacher' && m.to === 'teacher' && !m.toId) ||
     m.from === req.user.username || 
     m.from === req.user.id
-  );
+  );;
   
   // Populate real name
   messages = messages.map(m => {
