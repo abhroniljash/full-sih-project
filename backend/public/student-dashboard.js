@@ -79,7 +79,7 @@ function loadDashboard() {
 
 
 // --- Navigation (SPA logic) ---
-(function initNavigation() {
+document.addEventListener('DOMContentLoaded', function() {
     const links = document.querySelectorAll('.nav-link');
     const sections = document.querySelectorAll('.nav-section');
 
@@ -98,7 +98,7 @@ function loadDashboard() {
             if (!target) return;
             console.log("Switching to tab: " + target);
 
-            // Store active tab
+            // Save active tab to sessionStorage for persistence across refreshes
             sessionStorage.setItem('activeStudentTab', target);
 
             // 1. Hide all sections, show target
@@ -119,87 +119,22 @@ function loadDashboard() {
             this.classList.remove(...inactiveClasses);
             this.classList.add(...activeClasses);
 
-            // Load specific data based on tab
-            if (target === 'communication' && typeof fetchAndRenderRecentRequests === 'function') {
-                fetchAndRenderRecentRequests();
+            // 3. If communication tab is opened, refresh recent requests
+            if (target === 'communication' && typeof window._loadRecentConcerns === 'function') {
+                window._loadRecentConcerns();
             }
         });
     });
 
-    // Restore active tab on load
-    const savedTab = sessionStorage.getItem('activeStudentTab');
+    // --- Restore saved tab on page load ---
+    var savedTab = sessionStorage.getItem('activeStudentTab');
     if (savedTab) {
-        const targetLink = document.querySelector('.nav-link[data-target="' + savedTab + '"]');
-        if (targetLink) {
-            targetLink.click();
+        var savedLink = document.querySelector('.nav-link[data-target="' + savedTab + '"]');
+        if (savedLink) {
+            savedLink.click();
         }
     }
-})();
-
-// --- Recent Requests ---
-window.fetchAndRenderRecentRequests = function() {
-    const container = document.getElementById('recent-requests-list') || document.getElementById('recentRequestsList');
-    if (!container) return;
-    
-    container.innerHTML = '<div style="padding:20px;text-align:center;color:#64748b;font-size:13px;">Loading your requests...</div>';
-
-    API.get('/messages', studentToken).then(res => {
-        const msgs = res.messages || [];
-        if (msgs.length === 0) {
-            container.innerHTML = '<div style="padding:20px;text-align:center;color:#64748b;font-size:13px;">No recent requests found.</div>';
-            return;
-        }
-
-        let html = '';
-        msgs.forEach(m => {
-            const dateStr = new Date(m.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase();
-            const subjectLabel = m.subject || 'Concern';
-            const status = (m.status || '').toLowerCase();
-            
-            let borderColor, badgeBg, badgeText, badgeTextColor, badgeRing, badgeIcon;
-
-            if (status === 'resolved') {
-                borderColor = 'border-l-green-500';
-                badgeBg = 'bg-green-50';
-                badgeTextColor = 'text-green-700';
-                badgeRing = 'ring-green-600/20';
-                badgeText = 'RESOLVED';
-                badgeIcon = '<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>';
-            } else if (status === 'denied') {
-                borderColor = 'border-l-red-500';
-                badgeBg = 'bg-red-50';
-                badgeTextColor = 'text-red-700';
-                badgeRing = 'ring-red-600/10';
-                badgeText = 'DENIED';
-                badgeIcon = '<path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>';
-            } else {
-                borderColor = 'border-l-amber-500';
-                badgeBg = 'bg-amber-50';
-                badgeTextColor = 'text-amber-700';
-                badgeRing = 'ring-amber-600/20';
-                badgeText = 'PENDING';
-                badgeIcon = '<path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>';
-            }
-
-            html += `
-            <div class="p-4 rounded-custom ${borderColor} border-l-4 bg-surface flex flex-col gap-2 relative">
-                <div class="flex justify-between items-start">
-                    <div class="text-xs font-semibold text-onSurface-variant tracking-wide">${dateStr}</div>
-                    <span class="inline-flex items-center gap-1.5 rounded-md ${badgeBg} px-2 py-1 text-xs font-medium ${badgeTextColor} ring-1 ring-inset ${badgeRing}">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="${badgeIcon}"></path></svg>
-                        ${badgeText}
-                    </span>
-                </div>
-                <div class="font-bold text-sm text-onSurface">${subjectLabel}</div>
-                <div class="text-xs text-onSurface-variant truncate">${m.body || ''}</div>
-            </div>`;
-        });
-        container.innerHTML = html;
-    }).catch(err => {
-        container.innerHTML = '<div style="padding:20px;text-align:center;color:#ef4444;font-size:13px;">Failed to load requests.</div>';
-    });
-};
-
+});
 
 
 // --- Schedule API ---
@@ -371,7 +306,7 @@ setTimeout(loadSchedule, 500); // load after a short delay
                     fileNameDisplay.classList.add('hidden');
                 }
                 // Refresh recent requests
-                if(window.fetchAndRenderRecentRequests) window.fetchAndRenderRecentRequests();
+                loadRecentConcerns();
             }).catch(function(err) {
                 if (typeof showToast === 'function') {
                     showToast(err.message || 'Failed to submit concern', 'danger');
@@ -382,7 +317,73 @@ setTimeout(loadSchedule, 500); // load after a short delay
         });
     }
 
-    })();
+    // --- 4. Recent Requests with Status Badges ---
+    function loadRecentConcerns() {
+        if (!recentRequestsList) return;
+        recentRequestsList.innerHTML = '<div style="padding:20px;text-align:center;color:#64748b;font-size:13px;">Loading requests...</div>';
+
+        API.get('/messages', studentToken).then(function(res) {
+            var msgs = res.messages || [];
+            if (msgs.length === 0) {
+                recentRequestsList.innerHTML = '<div style="padding:20px;text-align:center;color:#64748b;font-size:13px;">No recent requests found.</div>';
+                return;
+            }
+
+            var html = '';
+            msgs.forEach(function(m) {
+                var dateStr = new Date(m.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase();
+                var subjectLabel = m.subject || 'Concern';
+
+                // Determine status badge
+                var borderColor, badgeBg, badgeText, badgeTextColor, badgeRing, badgeIcon;
+                var status = (m.status || '').toLowerCase();
+
+                if (status === 'resolved') {
+                    borderColor = 'border-l-green-500';
+                    badgeBg = 'bg-green-50';
+                    badgeTextColor = 'text-green-700';
+                    badgeRing = 'ring-green-600/20';
+                    badgeText = 'RESOLVED';
+                    badgeIcon = '<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>';
+                } else if (status === 'denied') {
+                    borderColor = 'border-l-red-500';
+                    badgeBg = 'bg-red-50';
+                    badgeTextColor = 'text-red-700';
+                    badgeRing = 'ring-red-600/10';
+                    badgeText = 'DENIED';
+                    badgeIcon = '<path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>';
+                } else {
+                    // Default: pending / in review
+                    borderColor = 'border-l-amber-500';
+                    badgeBg = 'bg-amber-50';
+                    badgeTextColor = 'text-amber-700';
+                    badgeRing = 'ring-amber-600/20';
+                    badgeText = 'PENDING';
+                    badgeIcon = '<path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>';
+                }
+
+                html += '<div class="p-4 rounded-custom ' + borderColor + ' border-l-4 bg-surface flex flex-col gap-2 relative">'
+                    + '<div class="flex justify-between items-start">'
+                    + '<div class="text-xs font-semibold text-onSurface-variant tracking-wide">' + dateStr + '</div>'
+                    + '<span class="inline-flex items-center gap-1.5 rounded-md ' + badgeBg + ' px-2 py-1 text-xs font-medium ' + badgeTextColor + ' ring-1 ring-inset ' + badgeRing + '">'
+                    + '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' + badgeIcon + '</svg>'
+                    + badgeText
+                    + '</span>'
+                    + '</div>'
+                    + '<div class="font-bold text-sm text-onSurface">' + subjectLabel + '</div>'
+                    + '<div class="text-xs text-onSurface-variant truncate">' + (m.body || '') + '</div>'
+                    + '</div>';
+            });
+            recentRequestsList.innerHTML = html;
+        }).catch(function(err) {
+            console.error('Failed to load recent concerns:', err);
+            recentRequestsList.innerHTML = '<div style="padding:20px;text-align:center;color:#64748b;font-size:13px;">Failed to load requests.</div>';
+        });
+    }
+    // Expose globally so navigation can trigger refresh when Communication tab is opened
+    window._loadRecentConcerns = loadRecentConcerns;
+    loadRecentConcerns();
+})();
 
 
 // --- Extracted logic to update all new UI components dynamically ---
