@@ -106,12 +106,36 @@ var FaceEngine = (function () {
         return (noseLen / chinLen) > 0.70;
     }
 
+    function detectOpenMouth(landmarks) {
+        var p = landmarks.positions;
+        var topLip = p[62];
+        var bottomLip = p[66];
+        var leftLip = p[60];
+        var rightLip = p[64];
+        var vert = landmarkDist(topLip, bottomLip);
+        var horiz = landmarkDist(leftLip, rightLip);
+        return (vert / horiz) > 0.55;
+    }
+
+    function detectSmile(landmarks) {
+        var p = landmarks.positions;
+        var leftCorner = p[48];
+        var rightCorner = p[54];
+        var mouthCenter = p[51];
+        // If corners are higher (smaller Y) than mouth center, it's a smile. 
+        // Also check width ratio to ensure it's stretching.
+        var width = landmarkDist(leftCorner, rightCorner);
+        var jawWidth = landmarkDist(p[3], p[13]);
+        return (width / jawWidth) > 0.42; 
+    }
+
     // Full detection pass: returns { landmarks, descriptor? } or null
     function detectWithLandmarks(videoEl) {
         var options = new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 });
         return faceapi
             .detectSingleFace(videoEl, options)
             .withFaceLandmarks()
+            .withFaceDescriptor()
             .then(function (result) {
                 if (!result) return null;
                 return result;
@@ -125,6 +149,8 @@ var FaceEngine = (function () {
         detectBlink: detectBlink,
         detectHeadTurn: detectHeadTurn,
         detectLookUp: detectLookUp,
+        detectOpenMouth: detectOpenMouth,
+        detectSmile: detectSmile,
         detectWithLandmarks: detectWithLandmarks
     };
 })();
