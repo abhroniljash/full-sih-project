@@ -603,8 +603,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- 1. STATE MANAGEMENT ---
     let calendarState = {
         weekOffset: 0,
-        currentWeekNumber: 3, // Default starting week
-        selectedDate: new Date().toISOString().split('T')[0], // Today's date (System)
+                selectedDate: new Date().toISOString().split('T')[0], // Today's date (System)
         attendanceHistory: [],
         absencesHistory: []
     };
@@ -681,7 +680,8 @@ document.addEventListener('DOMContentLoaded', function() {
             monthHeader.textContent = monthNames[startOfWeek.getMonth()] + " " + startOfWeek.getFullYear();
         }
         if (weekSubheader) {
-            weekSubheader.textContent = `Week ${calendarState.currentWeekNumber} • Summer Semester`;
+            const weekOfMonth = Math.ceil(startOfWeek.getDate() / 7);
+            weekSubheader.innerHTML = `Week ${weekOfMonth}`;
         }
 
         // Check if currently selected date falls in this new week
@@ -795,15 +795,13 @@ document.addEventListener('DOMContentLoaded', function() {
     if (leftArrow) {
         leftArrow.addEventListener('click', () => {
             calendarState.weekOffset--;
-            calendarState.currentWeekNumber--;
-            renderCalendar();
+                        renderCalendar();
         });
     }
     if (rightArrow) {
         rightArrow.addEventListener('click', () => {
             calendarState.weekOffset++;
-            calendarState.currentWeekNumber++;
-            renderCalendar();
+                        renderCalendar();
         });
     }
 
