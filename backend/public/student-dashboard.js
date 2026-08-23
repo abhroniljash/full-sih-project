@@ -218,6 +218,8 @@ setTimeout(loadSchedule, 500); // load after a short delay
                 var opt = document.createElement('option');
                 opt.value = t.subject;
                 opt.textContent = t.subject;
+                if (t.teacherId) opt.setAttribute('data-teacher-id', t.teacherId);
+                if (t.teacher) opt.setAttribute('data-teacher-name', t.teacher);
                 subjectDropdown.appendChild(opt);
             });
         })
@@ -290,8 +292,12 @@ setTimeout(loadSchedule, 500); // load after a short delay
             var messageBody = descVal;
             if (dateVal) messageBody = '[Date: ' + dateVal + '] ' + messageBody;
 
+            var selectedOption = subjectDropdown ? subjectDropdown.options[subjectDropdown.selectedIndex] : null;
+            var targetTeacherId = selectedOption ? selectedOption.getAttribute('data-teacher-id') : null;
+
             API.post('/messages', {
                 to: 'teacher',
+                toId: targetTeacherId || undefined,
                 subject: '[' + subject + '] Concern: ' + type,
                 body: messageBody
             }, studentToken).then(function(res) {
