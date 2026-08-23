@@ -24,35 +24,45 @@
         </div>
     </nav>
 
-    <section class="hero">
-       
-        <h1>Anti-Proxy <span id="typing-text" class="hero-highlight"></span> System<br>with Face Recognition</h1>
-        <p>Step into the future of campus administration with our Smart Attendance System.</p>
-        <div class="hero-buttons">
-            <a href="#get-started" class="btn btn-primary">Get Started </a>
-            <a href="#features" class="btn btn-outline">Learn More</a>
+    <!-- Background Wrapper stretching down to Key Features -->
+    <div style="position: relative; overflow: hidden;">
+        <!-- Background Image Layer (spanning both sections) -->
+        <div style="position: absolute; inset: 0; z-index: 0;">
+            <div style="position: absolute; inset: 0; background: url('./college-background.jpeg') no-repeat center center fixed; background-size: cover; filter: blur(1px); transform: scale(1.05);"></div>
+            <!-- Overlay removed as per user request to see the picture fully -->
         </div>
-    </section>
 
-    <section class="roles-section" id="get-started">
-        <h2>Choose Your Role</h2>
-        <p>Select how you want to access the system.</p>
-        <div class="roles-grid">
+        <section class="hero" style="position: relative; z-index: 10;">
+            <div class="hero-content">
+                <h1>Anti-Proxy <span id="typing-text" class="hero-highlight"></span> System<br>with Face Recognition</h1>
+                <p>Step into the future of campus administration with our Smart Attendance System.</p>
+                <div class="hero-buttons">
+                    <a href="#get-started" class="btn btn-primary">Get Started </a>
+                    <a href="#features" class="btn btn-outline">Learn More</a>
+                </div>
+            </div>
+        </section>
 
-            <div class="role-card teacher" onclick="window.location='/teacher-login'">
-                <div class="role-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
-                <h3>Teacher</h3>
-                <p>Create class sessions, generate session IDs, monitor live attendance, and view detailed reports.</p>
-                <a href="/teacher-login" class="btn btn-primary">Login as Teacher </a>
+        <section class="roles-section" id="get-started" style="position: relative; z-index: 10;">
+            <h2>Choose Your Role</h2>
+            <p>Select how you want to access the system.</p>
+            <div class="roles-grid">
+
+                <div class="role-card teacher" onclick="window.location='/teacher-login'">
+                    <div class="role-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+                    <h3>Teacher</h3>
+                    <p>Create class sessions, generate session IDs, monitor live attendance, and view detailed reports.</p>
+                    <a href="/teacher-login" class="btn btn-primary">Login as Teacher </a>
+                </div>
+                <div class="role-card student" onclick="window.location='/student-login'">
+                    <div class="role-icon"><i class="fa-solid fa-user-graduate"></i></div>
+                    <h3>Student</h3>
+                    <p>View your attendance records, track your percentage, and see how many classes you need for 75%.</p>
+                    <a href="/student-login" class="btn btn-primary">Login as Student </a>
+                </div>
             </div>
-            <div class="role-card student" onclick="window.location='/student-login'">
-                <div class="role-icon"><i class="fa-solid fa-user-graduate"></i></div>
-                <h3>Student</h3>
-                <p>View your attendance records, track your percentage, and see how many classes you need for 75%.</p>
-                <a href="/student-login" class="btn btn-primary">Login as Student </a>
-            </div>
-        </div>
-    </section>
+        </section>
+    </div>
 
     <section class="features-section" id="features">
         <h2>Key Features</h2>
