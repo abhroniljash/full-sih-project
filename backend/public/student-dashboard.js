@@ -381,6 +381,78 @@ setTimeout(loadSchedule, 500); // load after a short delay
     window.fetchStudentConcerns();
 })();
 
+// ==========================================
+// NOTIFICATION BELL — resolved concern alerts
+// ==========================================
+(function initNotifications() {
+    var notifBtn  = document.getElementById('notifBtn');
+    var notifDot  = document.getElementById('notifDot');
+    var notifPanel = document.getElementById('notifPanel');
+    var notifList  = document.getElementById('notifList');
+    if (!notifBtn || !notifDot || !notifPanel || !notifList) return;
+
+    var seenKey = 'resolvedConcernsSeen_' + (student.rollNumber || student.id || 'student');
+    var lastResolved = [];
+
+    function getSeenIds() {
+        try { return JSON.parse(localStorage.getItem(seenKey)) || []; }
+        catch (e) { return []; }
+    }
+    function markAllSeen() {
+        var ids = lastResolved.map(function(m) { return m.id; });
+        localStorage.setItem(seenKey, JSON.stringify(ids));
+        notifDot.classList.add('hidden');
+    }
+
+    function checkResolvedConcerns() {
+        fetch('/api/messages', { headers: { 'Authorization': 'Bearer ' + studentToken } })
+            .then(function(r) { return r.json(); })
+            .then(function(res) {
+                var all = res.messages || [];
+                var resolved = all.filter(function(m) {
+                    return m.from === (student.username || student.id) &&
+                           m.status && m.status.toLowerCase() === 'resolved';
+                });
+                lastResolved = resolved;
+
+                var seenIds = getSeenIds();
+                var unseen = resolved.filter(function(m) { return seenIds.indexOf(m.id) === -1; });
+
+                notifDot.classList.toggle('hidden', unseen.length === 0);
+
+                if (resolved.length === 0) {
+                    notifList.innerHTML = '<p class="text-sm text-gray-500 text-center py-6">No notifications yet.</p>';
+                    return;
+                }
+
+                notifList.innerHTML = resolved.map(function(m) {
+                    var isUnseen = seenIds.indexOf(m.id) === -1;
+                    return '<div class="p-3 rounded-lg mb-1 ' + (isUnseen ? 'bg-primary/5' : '') + '">' +
+                        '<p class="text-sm font-medium text-onSurface">Your concern "' + (m.subject || 'Attendance Concern') + '" has been resolved.</p>' +
+                        '<p class="text-xs text-gray-500 mt-1">' + (m.timestamp ? new Date(m.timestamp).toLocaleString() : '') + '</p>' +
+                        '</div>';
+                }).join('');
+            })
+            .catch(function(err) { console.warn('Could not check notifications:', err); });
+    }
+
+    notifBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var isHidden = notifPanel.classList.contains('hidden');
+        notifPanel.classList.toggle('hidden', !isHidden);
+        if (isHidden) markAllSeen();
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!notifPanel.contains(e.target) && e.target !== notifBtn) {
+            notifPanel.classList.add('hidden');
+        }
+    });
+
+    checkResolvedConcerns();
+    setInterval(checkResolvedConcerns, 30000);
+})();
+
 
 // --- Extracted logic to update all new UI components dynamically ---
 function updateExtendedDashboard(res) {
