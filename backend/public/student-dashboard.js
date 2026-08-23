@@ -31,6 +31,28 @@ function loadDashboard() {
         overallEl.textContent = res.overallPercentage + '%';
         overallEl.style.color = res.overallPercentage >= 75 ? '#16a34a' : '#ef4444';
 
+        // Update Tracker Info Box
+        var trackerInfoIcon = document.getElementById('trackerInfoIcon');
+        var trackerInfoTitle = document.getElementById('trackerInfoTitle');
+        var trackerInfoDesc = document.getElementById('trackerInfoDesc');
+        var trackerInfoBox = document.getElementById('trackerInfoBox');
+        
+        if (res.overallPercentage >= 75) {
+            trackerInfoIcon.textContent = 'check_circle';
+            trackerInfoIcon.style.color = 'var(--success)';
+            trackerInfoTitle.textContent = 'On Track';
+            trackerInfoTitle.style.color = 'var(--success)';
+            trackerInfoDesc.textContent = 'You are maintaining an attendance rate well above the required 75% threshold. Keep it up!';
+            trackerInfoBox.style.background = 'rgba(22, 163, 74, 0.1)';
+        } else {
+            trackerInfoIcon.textContent = 'warning';
+            trackerInfoIcon.style.color = 'var(--error)';
+            trackerInfoTitle.textContent = 'Attention Needed';
+            trackerInfoTitle.style.color = 'var(--error)';
+            trackerInfoDesc.textContent = 'Your overall attendance is below 75%. Please attend upcoming classes regularly.';
+            trackerInfoBox.style.background = 'rgba(186, 26, 26, 0.1)';
+        }
+
         // Render 75% Tracker
         var trackerHtml = '';
         var trackerContainer = document.getElementById('trackerList');

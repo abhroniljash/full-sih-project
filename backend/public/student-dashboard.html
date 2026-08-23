@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard</title>
-    <link rel="stylesheet" href="student-dashboard.css">
+    <link rel="stylesheet" href="student-dashboard.css?v=2">
 </head>
 <body>
     <aside class="sidebar">
@@ -94,11 +93,11 @@
                             <!-- JS will generate bars here -->
                         </div>
 
-                        <div class="tracker-info">
-                            <span class="material-symbols-outlined tracker-info-icon">check_circle</span>
+                        <div class="tracker-info" id="trackerInfoBox">
+                            <span class="material-symbols-outlined tracker-info-icon" id="trackerInfoIcon">check_circle</span>
                             <div>
-                                <h4>On Track</h4>
-                                <p>You are maintaining an attendance rate well above the required 75% threshold. Keep it up!</p>
+                                <h4 id="trackerInfoTitle">On Track</h4>
+                                <p id="trackerInfoDesc">You are maintaining an attendance rate well above the required 75% threshold. Keep it up!</p>
                             </div>
                         </div>
                     </div>
@@ -164,6 +163,6 @@
     <script src="common.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script src="face.js"></script>
-    <script src="student-dashboard.js"></script>
+    <script src="student-dashboard.js?v=2"></script>
 </body>
 </html>
