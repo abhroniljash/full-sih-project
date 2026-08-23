@@ -20,7 +20,14 @@
 .toast.success { background: #16a34a; }
 .toast.danger { background: #dc2626; }
 </style>
-</head><body class="bg-background font-body-md text-on-surface"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest z-50 flex flex-col border-r border-surface-variant/30 shadow-[4px_0_24px_rgba(0,0,0,0.02)]"><div class="px-8 h-20 flex items-center mb-6"><div class="flex items-center gap-3"><div class="logo"></div></div></div><nav class="flex-1 px-4 space-y-2" data-active-classes="bg-secondary-container text-on-secondary-container font-semibold"><a href="#" class="nav-link flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all bg-secondary-container text-on-secondary-container font-semibold" data-target="dashboard"><span class="material-symbols-outlined">grid_view</span><span class="font-label-sm text-label-sm">Dashboard</span></a><a href="#" class="nav-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all" data-target="schedule"><span class="material-symbols-outlined">calendar_today</span><span class="font-label-sm text-label-sm">My Schedule</span></a><a href="#" class="nav-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all" data-target="attendance"><span class="material-symbols-outlined">rule</span><span class="font-label-sm text-label-sm">Attendance</span></a><a href="#" class="nav-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all" data-target="courses"><span class="material-symbols-outlined">book_4</span><span class="font-label-sm text-label-sm">Courses</span></a></nav><div class="p-6 border-t border-surface-variant/20"><div class="bg-surface-container-low p-4 rounded-xl flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center overflow-hidden" id="uAvatar"><span class="material-symbols-outlined text-on-primary text-[20px]">person</span></div><div class="overflow-hidden"><p class="text-label-sm font-semibold truncate" id="uName">Student</p><p class="text-[11px] text-on-surface-variant truncate" id="rollTag">ID: ---</p></div><button class="ml-auto w-8 h-8 rounded-full flex items-center justify-center text-error hover:bg-error/10 transition-colors" id="logoutBtn" title="Logout"><span class="material-symbols-outlined text-[18px]">logout</span></button></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-20 bg-background/80 backdrop-blur-xl z-40 flex items-center justify-between px-container-padding border-b border-surface-variant/20"><div class="relative w-96"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span><input class="w-full bg-surface-container-low border border-outline-variant rounded-full py-2 pl-10 pr-4 text-label-sm focus:outline-none focus:border-primary transition-colors" placeholder="Search grades, courses..." type="text"></div><div class="flex items-center gap-stack-md"><button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container rounded-full transition-colors relative"><span class="material-symbols-outlined">notifications</span><span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span></button><button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container rounded-full transition-colors"><span class="material-symbols-outlined">settings</span></button></div></header>
+</head><body class="bg-background font-body-md text-on-surface"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest z-50 flex flex-col border-r border-surface-variant/30 shadow-[4px_0_24px_rgba(0,0,0,0.02)]"><div class="px-8 h-20 flex items-center mb-6"><div class="flex items-center gap-3"><div class="logo"></div></div></div><nav class="flex-1 px-4 space-y-2" data-active-classes="bg-secondary-container text-on-secondary-container font-semibold"><a href="#" class="nav-link flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all bg-secondary-container text-on-secondary-container font-semibold" data-target="dashboard"><span class="material-symbols-outlined">grid_view</span><span class="font-label-sm text-label-sm">Dashboard</span></a><a href="#" class="nav-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all" data-target="schedule"><span class="material-symbols-outlined">calendar_today</span><span class="font-label-sm text-label-sm">My Schedule</span></a><a href="#" class="nav-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all" data-target="attendance"><span class="material-symbols-outlined">rule</span><span class="font-label-sm text-label-sm">Attendance</span></a><a href="#" class="nav-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all" data-target="internal-marks">
+    <span class="material-symbols-outlined">menu_book</span>
+    <span class="font-label-sm text-label-sm">Internal Marks</span>
+</a>
+<a href="#" class="nav-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all" data-target="communication">
+    <span class="material-symbols-outlined">chat_bubble</span>
+    <span class="font-label-sm text-label-sm">Communication</span>
+</a></nav><div class="p-6 border-t border-surface-variant/20"><div class="bg-surface-container-low p-4 rounded-xl flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center overflow-hidden" id="uAvatar"><span class="material-symbols-outlined text-on-primary text-[20px]">person</span></div><div class="overflow-hidden"><p class="text-label-sm font-semibold truncate" id="uName">Student</p><p class="text-[11px] text-on-surface-variant truncate" id="rollTag">ID: ---</p></div><button class="ml-auto w-8 h-8 rounded-full flex items-center justify-center text-error hover:bg-error/10 transition-colors" id="logoutBtn" title="Logout"><span class="material-symbols-outlined text-[18px]">logout</span></button></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-20 bg-background/80 backdrop-blur-xl z-40 flex items-center justify-between px-container-padding border-b border-surface-variant/20"><div class="relative w-96"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span><input class="w-full bg-surface-container-low border border-outline-variant rounded-full py-2 pl-10 pr-4 text-label-sm focus:outline-none focus:border-primary transition-colors" placeholder="Search grades, courses..." type="text"></div><div class="flex items-center gap-stack-md"><button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container rounded-full transition-colors relative"><span class="material-symbols-outlined">notifications</span><span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span></button><button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container rounded-full transition-colors"><span class="material-symbols-outlined">settings</span></button></div></header>
     <div id="section-dashboard" class="nav-section block">
         <main class="relative pt-20 px-container-padding pb-section-margin bg-background min-h-screen">
             <div class="flex flex-col w-full">
@@ -387,187 +394,387 @@
 </div>
         </main>
     </div>
-    <div id="section-courses" class="nav-section hidden">
+    
+    <div id="section-internal-marks" class="nav-section hidden">
         <main class="relative pt-20 px-container-padding pb-section-margin bg-background min-h-screen">
-            <div class="flex flex-col w-full">
-<!-- Header / Top Bar -->
-<div class="flex items-center justify-between mb-8 pb-6 border-b border-surface-variant">
-<div>
-<h1 class="font-headline-lg text-headline-lg text-on-background">Engineering Course Directory</h1>
-<p class="font-body-md text-body-md text-on-surface-variant mt-2">Browse and manage your academic engineering program.</p>
+<div class="flex flex-col w-full gap-section-margin">
+<!-- Hero / Header Section -->
+<section class="flex flex-col md:flex-row justify-between items-start md:items-center gap-card-gap">
+<div class="flex flex-col gap-stack-sm max-w-2xl relative">
+<div class="absolute -left-12 -top-12 w-32 h-32 bg-primary/5 rounded-full blur-2xl z-0"></div>
+<h1 class="font-headline-lg text-headline-lg text-on-background relative z-10">Attendance Points System (Internal Marks)</h1>
+<p class="font-body-md text-body-md text-on-surface-variant relative z-10">Consistent attendance directly impacts your internal assessment scores. Maintain regular presence to secure your Internal Marks points and ensure academic eligibility.</p>
 </div>
-<div class="flex items-center gap-6">
-<!-- Search -->
-<div class="relative w-80">
-<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-<input class="w-full bg-surface-container-low text-on-surface font-body-md text-body-md rounded-full py-3 pl-12 pr-4 border border-outline-variant focus:outline-none focus:border-primary transition-colors" placeholder="Search courses, professors..." type="text">
+<button class="bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary px-6 py-3 rounded-full font-label-sm flex items-center gap-2 transition-all shadow-md hover:shadow-lg">
+<span class="material-symbols-outlined text-[20px]">calculate</span>
+            View Detailed Log
+        </button>
+</section>
+<!-- Summary Cards -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-card-gap">
+<!-- Current Attendance -->
+<div class="bg-surface-container-lowest rounded-2xl p-container-padding flex flex-col gap-stack-md relative overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
+<div class="absolute top-0 right-0 w-24 h-24 bg-secondary-container/30 rounded-bl-full transition-transform group-hover:scale-110"></div>
+<div class="flex justify-between items-start relative z-10">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Current Attendance</span>
+<span class="material-symbols-outlined text-secondary">analytics</span>
 </div>
-<!-- Filters -->
-<div class="flex items-center gap-2 bg-surface-container-lowest p-1 rounded-full border border-surface-variant">
-<button class="px-6 py-2 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm transition-colors">All</button>
-<button class="px-6 py-2 rounded-full hover:bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm transition-colors">Core</button>
-<button class="px-6 py-2 rounded-full hover:bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm transition-colors">Electives</button>
-<button class="px-6 py-2 rounded-full hover:bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm transition-colors">Labs</button>
+<div class="flex items-end gap-2 relative z-10">
+<span class="font-stat-display text-stat-display text-primary">88<span class="text-headline-md">%</span></span>
+<span class="font-body-md text-body-md text-on-surface-variant mb-1">Overall</span>
 </div>
-</div>
-</div>
-<!-- Summary Section -->
-<div class="grid grid-cols-1 md:grid-cols-3 mb-8 gap-8">
-<!-- Summary Card 1 -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex items-center justify-between shadow-sm h-32 px-8">
-<div>
-<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Total Enrolled</p>
-<p class="font-stat-display text-stat-display text-on-surface">5 Courses</p>
-</div>
-<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center">
-<span class="material-symbols-outlined text-on-primary-container">school</span>
+<div class="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden mt-2">
+<div class="h-full bg-primary rounded-full" style="width: 88%"></div>
 </div>
 </div>
-<!-- Summary Card 2 -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex items-center justify-between shadow-sm h-32 px-8">
-<div>
-<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Total Credits</p>
-<p class="font-stat-display text-stat-display text-on-surface">16 CR</p>
+<!-- Projected CA3 Points -->
+<div class="bg-primary rounded-2xl p-container-padding flex flex-col gap-stack-md text-on-primary relative overflow-hidden shadow-md group">
+<div class="absolute -bottom-8 -right-8 w-32 h-32 bg-on-primary/10 rounded-full blur-xl transition-all group-hover:blur-2xl group-hover:scale-125"></div>
+<div class="flex justify-between items-start relative z-10">
+<span class="font-label-sm text-label-sm text-primary-fixed-dim uppercase tracking-wider">Projected CA3 Points</span>
+<span class="material-symbols-outlined text-primary-fixed-dim">stars</span>
 </div>
-<div class="w-12 h-12 rounded-full bg-tertiary-container flex items-center justify-center">
-<span class="material-symbols-outlined text-on-tertiary-container">military_tech</span>
+<div class="flex items-end gap-2 relative z-10">
+<span class="font-stat-display text-stat-display">3.0</span>
+<span class="font-headline-md text-headline-md text-primary-fixed-dim mb-1">/ 5.0</span>
 </div>
-</div>
-<!-- Summary Card 3 -->
-
-</div>
-<!-- Course Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-<!-- Course Card 1 -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group flex flex-col h-full">
-<!-- Colored Header -->
-<div class="h-24 bg-primary relative p-6 flex justify-between items-start">
-<span class="bg-surface-container-lowest/20 backdrop-blur-sm text-on-primary font-label-sm text-label-sm px-3 py-1 rounded-full border border-on-primary/20">CS 301</span>
-<button class="w-8 h-8 flex items-center justify-center rounded-full bg-surface-container-lowest/20 backdrop-blur-sm text-on-primary hover:bg-surface-container-lowest/40 transition-colors">
-<span class="material-symbols-outlined text-[20px]">more_vert</span>
-</button>
-</div>
-<div class="p-6 flex flex-col flex-grow">
-<!-- Course Info -->
-<div class="mb-6 flex-grow">
-<h3 class="font-headline-md text-headline-md text-on-surface mb-2 line-clamp-2">Data Structures &amp; Algorithms</h3>
-<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">Advanced study of fundamental data structures and algorithmic paradigms with rigorous complexity analysis.</p>
-</div>
-<!-- Metadata -->
-<div class="flex items-center gap-4 mb-6">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px] text-on-surface-variant">schedule</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant">M/W 10:00 AM</span>
-</div>
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px] text-on-surface-variant">credit_score</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant">4 Credits</span>
+<div class="flex items-center gap-2 mt-2 font-label-sm text-label-sm text-primary-fixed">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span class="">On track for next tier</span>
 </div>
 </div>
-<!-- Professor -->
-<div class="flex items-center gap-3 mb-6 pt-4 border-t border-surface-variant">
-<img class="w-10 h-10 rounded-full object-cover border border-outline-variant" data-alt="A professional headshot of a distinguished male computer science professor in his 50s, wearing a tweed jacket, soft natural lighting, warm academic setting, high resolution." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwA-iBfOIOhTjd8_IVcy6v18fESMjqGkJxYWCeP9KAW1rrPzQ5Wc0ieN1evv5omAxwRjrdUvbYWsh4TdB0Gzl0bU5RCK_sFqLHEDrl0QMy1L_inbFUSuTU2WgTllMh1ywbRVDA7ED6sUADgmWQGkL7_FH_Sli-hdG5S0sV4Kbh92L08xhSDA3C4No7z6F_2PedJXvywbryCDou5ZA7XWqeJtqS1EjWHEo2cdOIdyns7t24gQ3tvv0">
-<div>
-<p class="font-label-sm text-label-sm text-on-surface">Prof. Sagun Tudu</p>
-<p class="font-body-md text-[12px] text-on-surface-variant">Software Engineering Dept.</p>
+<!-- Days to Next Point -->
+<div class="bg-surface-container-lowest rounded-2xl p-container-padding flex flex-col gap-stack-md relative overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
+<div class="flex justify-between items-start relative z-10">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Days to Next Tier</span>
+<span class="material-symbols-outlined text-tertiary">calendar_clock</span>
+</div>
+<div class="flex items-end gap-2 relative z-10">
+<span class="font-stat-display text-stat-display text-on-surface">3</span>
+<span class="font-body-md text-body-md text-on-surface-variant mb-1">Classes</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-2">
+                Reach 90% for 4 CA3 Points
+            </p>
+</div>
+</section>
+<!-- Split Content: Breakdown & Visual Calculator -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-card-gap">
+<!-- Points Breakdown Table -->
+<div class="lg:col-span-8 bg-surface-container-lowest rounded-2xl shadow-sm flex flex-col overflow-hidden">
+<div class="p-container-padding bg-surface-container-low/50">
+<h2 class="font-headline-md text-headline-md text-on-surface">Points Allocation Matrix</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Standard breakdown of attendance to internal assessment points.</p>
+</div>
+<div class="flex flex-col px-container-padding py-4 gap-2">
+<!-- Header Row -->
+<div class="grid grid-cols-4 px-4 py-2 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
+<div class="col-span-2">Attendance Range</div>
+<div class="col-span-1 text-center">Internal Marks Points</div>
+<div class="col-span-1 text-right">Status</div>
+</div>
+<!-- Tier 5 -->
+<div class="grid grid-cols-4 px-4 py-3 bg-surface hover:bg-surface-container transition-colors rounded-xl items-center">
+<div class="col-span-2 flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="font-headline-md text-body-md text-on-surface">≥ 95%</span>
+</div>
+<div class="col-span-1 text-center font-headline-md text-body-md text-primary">5 Points</div>
+<div class="col-span-1 text-right">
+<span class="inline-flex px-2 py-1 bg-primary-container/20 text-primary rounded-md font-label-sm text-[11px] uppercase">Excellent</span>
 </div>
 </div>
-<!-- Actions -->
-<div class="flex items-center gap-3 mt-auto">
-<button class="flex-1 py-2.5 bg-primary text-on-primary font-label-sm text-label-sm rounded-lg hover:bg-surface-tint transition-colors">Resources</button>
-<button class="flex-1 py-2.5 bg-surface-container-low text-on-surface font-label-sm text-label-sm rounded-lg hover:bg-surface-variant transition-colors border border-outline-variant">Course Info</button>
+<!-- Tier 4 -->
+<div class="grid grid-cols-4 px-4 py-3 bg-surface hover:bg-surface-container transition-colors rounded-xl items-center">
+<div class="col-span-2 flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span class="font-headline-md text-body-md text-on-surface">90% - 94%</span>
+</div>
+<div class="col-span-1 text-center font-headline-md text-body-md text-on-surface">4 Points</div>
+<div class="col-span-1 text-right">
+<span class="inline-flex px-2 py-1 bg-secondary-container/50 text-on-secondary-container rounded-md font-label-sm text-[11px] uppercase">Good</span>
 </div>
 </div>
+<!-- Tier 3 (Current) -->
+<div class="grid grid-cols-4 px-4 py-3 bg-primary/5 hover:bg-primary/10 transition-colors rounded-xl items-center relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-l-xl"></div>
+<div class="col-span-2 flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="font-headline-md text-body-md text-on-surface">85% - 89%</span>
+<span class="text-[10px] uppercase font-bold text-primary tracking-wider ml-2 bg-primary/10 px-2 py-0.5 rounded-full">Current Tier</span>
 </div>
-<!-- Course Card 2 -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group flex flex-col h-full">
-<!-- Colored Header -->
-<div class="h-24 bg-tertiary relative p-6 flex justify-between items-start">
-<span class="bg-surface-container-lowest/20 backdrop-blur-sm text-on-tertiary font-label-sm text-label-sm px-3 py-1 rounded-full border border-on-tertiary/20">CS-402</span>
-<button class="w-8 h-8 flex items-center justify-center rounded-full bg-surface-container-lowest/20 backdrop-blur-sm text-on-tertiary hover:bg-surface-container-lowest/40 transition-colors">
-<span class="material-symbols-outlined text-[20px]">more_vert</span>
-</button>
-</div>
-<div class="p-6 flex flex-col flex-grow">
-<!-- Course Info -->
-<div class="mb-6 flex-grow">
-<h3 class="font-headline-md text-headline-md text-on-surface mb-2 line-clamp-2">Computer Architecture</h3>
-<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">Study of the conceptual design and fundamental operational structure of a computer system, focusing on CPU, memory, and I/O.</p>
-</div>
-<!-- Metadata -->
-<div class="flex items-center gap-4 mb-6">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px] text-on-surface-variant">schedule</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant">T/Th 1:00 PM</span>
-</div>
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px] text-on-surface-variant">credit_score</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant">3 Credits</span>
+<div class="col-span-1 text-center font-headline-md text-body-md text-on-surface">3 Points</div>
+<div class="col-span-1 text-right">
+<span class="inline-flex px-2 py-1 bg-surface-variant text-on-surface-variant rounded-md font-label-sm text-[11px] uppercase">Average</span>
 </div>
 </div>
-<!-- Professor -->
-<div class="flex items-center gap-3 mb-6 pt-4 border-t border-surface-variant">
-<img class="w-10 h-10 rounded-full object-cover border border-outline-variant" data-alt="A professional headshot of a friendly female communications professor in her 40s, wearing modern business casual attire, bright natural lighting, modern office background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_8AQ1NUJU7Hho5RJF3BaRkr2hlbvVBD-SxEfW-Q7iBzlDcN4IXa3SO5cvooGLcRj_BQl19uZJM7CiWECXY65T33wX0HaNmVuXPoBHCPzy2CHsGAkwQQRIggYpF7iixCQO2Tfr8xsWEoli2Ahd3GpkV8KhF4-RYZVEzDm863GHUiNbR-KpvpgCfu_nOOFH1tg2xwve6MkiP8RgF7kwoKqUhyJsPAZarymnUlY6G8Edg8gE04bR0mU">
-<div>
-<p class="font-label-sm text-label-sm text-on-surface">Prof. Dhiman Mondal</p>
-<p class="font-body-md text-[12px] text-on-surface-variant">Computer Science Dept.</p>
+<!-- Tier 2 -->
+<div class="grid grid-cols-4 px-4 py-3 bg-surface hover:bg-surface-container transition-colors rounded-xl items-center">
+<div class="col-span-2 flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+<span class="font-headline-md text-body-md text-on-surface">80% - 84%</span>
+</div>
+<div class="col-span-1 text-center font-headline-md text-body-md text-on-surface">2 Points</div>
+<div class="col-span-1 text-right">
+<span class="inline-flex px-2 py-1 bg-tertiary-container/20 text-tertiary rounded-md font-label-sm text-[11px] uppercase">Warning</span>
 </div>
 </div>
-<!-- Actions -->
-<div class="flex items-center gap-3 mt-auto">
-<button class="flex-1 py-2.5 bg-primary text-on-primary font-label-sm text-label-sm rounded-lg hover:bg-surface-tint transition-colors">Resources</button>
-<button class="flex-1 py-2.5 bg-surface-container-low text-on-surface font-label-sm text-label-sm rounded-lg hover:bg-surface-variant transition-colors border border-outline-variant">Course Info</button>
+<!-- Tier 1 -->
+<div class="grid grid-cols-4 px-4 py-3 bg-surface hover:bg-surface-container transition-colors rounded-xl items-center">
+<div class="col-span-2 flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-error-container"></div>
+<span class="font-headline-md text-body-md text-on-surface">75% - 79%</span>
+</div>
+<div class="col-span-1 text-center font-headline-md text-body-md text-on-surface">1 Point</div>
+<div class="col-span-1 text-right">
+<span class="inline-flex px-2 py-1 bg-error-container text-on-error-container rounded-md font-label-sm text-[11px] uppercase">Critical</span>
 </div>
 </div>
+<!-- Tier 0 (Debarment) -->
+<div class="grid grid-cols-4 px-4 py-3 bg-error/5 hover:bg-error/10 transition-colors rounded-xl items-center">
+<div class="col-span-2 flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-error"></div>
+<span class="font-headline-md text-body-md text-error"> &lt; 75%</span>
 </div>
-<!-- Course Card 3 -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group flex flex-col h-full">
-<!-- Colored Header -->
-<div class="h-24 bg-secondary relative p-6 flex justify-between items-start">
-<span class="bg-surface-container-lowest/20 backdrop-blur-sm text-on-secondary font-label-sm text-label-sm px-3 py-1 rounded-full border border-on-secondary/20">EC-302</span>
-<button class="w-8 h-8 flex items-center justify-center rounded-full bg-surface-container-lowest/20 backdrop-blur-sm text-on-secondary hover:bg-surface-container-lowest/40 transition-colors">
-<span class="material-symbols-outlined text-[20px]">more_vert</span>
-</button>
-</div>
-<div class="p-6 flex flex-col flex-grow">
-<!-- Course Info -->
-<div class="mb-6 flex-grow">
-<h3 class="font-headline-md text-headline-md text-on-surface mb-2 line-clamp-2">Digital Logic Design</h3>
-<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">Principles of digital systems, combinational and sequential logic design, state machines, and hardware description languages.</p>
-</div>
-<!-- Metadata -->
-<div class="flex items-center gap-4 mb-6">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px] text-on-surface-variant">schedule</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant">F 9:00 AM (Lab)</span>
-</div>
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px] text-on-surface-variant">credit_score</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant">4 Credits</span>
-</div>
-</div>
-<!-- Professor -->
-<div class="flex items-center gap-3 mb-6 pt-4 border-t border-surface-variant">
-<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-headline-md border border-outline-variant">
-                        MR
-                    </div>
-<div>
-<p class="font-label-sm text-label-sm text-on-surface">Prof. Mirwaiz Rahman</p>
-<p class="font-body-md text-[12px] text-on-surface-variant">Electronics &amp; Communication Dept.</p>
-</div>
-</div>
-<!-- Actions -->
-<div class="flex items-center gap-3 mt-auto">
-<button class="flex-1 py-2.5 bg-primary text-on-primary font-label-sm text-label-sm rounded-lg hover:bg-surface-tint transition-colors">Resources</button>
-<button class="flex-1 py-2.5 bg-surface-container-low text-on-surface font-label-sm text-label-sm rounded-lg hover:bg-surface-variant transition-colors border border-outline-variant">Course Info</button>
+<div class="col-span-1 text-center font-headline-md text-body-md text-error">0 Points</div>
+<div class="col-span-1 text-right">
+<span class="inline-flex px-2 py-1 bg-error text-on-error rounded-md font-label-sm text-[11px] uppercase">Debarment</span>
 </div>
 </div>
 </div>
 </div>
+<!-- Visual Calculator -->
+<div class="lg:col-span-4 flex flex-col gap-card-gap">
+<div class="bg-surface-container-lowest rounded-2xl p-container-padding shadow-sm flex flex-col items-center justify-center flex-1 relative overflow-hidden">
+<h3 class="font-headline-md text-headline-md text-on-surface self-start mb-6 w-full">Tier Progress</h3>
+<!-- Radial Chart (CSS based) -->
+<div class="relative w-48 h-48 flex items-center justify-center">
+<!-- Background Circle -->
+<svg class="w-full h-full transform -rotate-90 absolute" viewBox="0 0 100 100">
+<circle class="text-surface-container-highest" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-width="8"></circle>
+<!-- Progress Circle (88%) -->
+<circle class="text-primary transition-all duration-1000 ease-out drop-shadow-md" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="30.14" stroke-linecap="round" stroke-width="8"></circle>
+<!-- Next Tier Marker (90%) -->
+<circle class="text-tertiary" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="1 250" stroke-dashoffset="-226" stroke-width="2"></circle>
+</svg>
+<div class="flex flex-col items-center justify-center z-10 text-center">
+<span class="font-stat-display text-[40px] leading-none text-on-surface">88<span class="text-[20px]">%</span></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase mt-1">Current</span>
+</div>
+</div>
+<div class="w-full mt-6 bg-surface p-4 rounded-xl flex items-start gap-3 border border-surface-container-highest">
+<span class="material-symbols-outlined text-tertiary shrink-0">flag</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface">Next Milestone: 90%</span>
+<span class="font-body-md text-[13px] text-on-surface-variant mt-1">Attend 3 more consecutive classes to reach Tier 4 (4 Points).</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Info Section -->
+<section class="rounded-2xl p-container-padding md:p-8 flex flex-col md:flex-row gap-8 items-center shadow-lg relative overflow-hidden bg-surface-container-lowest text-on-surface">
+<div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary via-transparent to-transparent"></div>
+<div class="w-16 h-16 rounded-full flex items-center justify-center shrink-0 relative z-10 bg-primary/10">
+<span class="material-symbols-outlined text-[32px] text-primary">help_center</span>
+</div>
+<div class="flex flex-col gap-2 relative z-10">
+<h3 class="font-headline-lg text-[22px] text-on-surface">How is Internal Marks calculated?</h3>
+<p class="font-body-md text-body-md max-w-3xl text-on-surface-variant">Your Internal Marks points are dynamic and update weekly based on verified attendance logs from your instructors. The final points assigned at the end of the semester correspond to the tier you land in based on your cumulative percentage across all required sessions.</p>
+</div>
+</section>
 </div>
         </main>
     </div>
-
+    
+    <div id="section-communication" class="nav-section hidden">
+        <main class="relative pt-20 px-container-padding pb-section-margin bg-background min-h-screen">
+<div class="p-container-padding"><div class="flex flex-col w-full">
+<!-- Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-section-margin gap-stack-md">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-stack-sm">Communication Center</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage your academic correspondence and announcements.</p>
+</div>
+<button class="bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-label-sm text-label-sm shadow-md hover:shadow-lg transition-shadow flex items-center gap-2 self-start md:self-auto">
+<span class="material-symbols-outlined">edit</span>
+            Compose Message
+        </button>
+</div>
+<!-- Secondary Nav & Content Area Split -->
+<div class="flex flex-col xl:flex-row gap-card-gap">
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col gap-section-margin">
+<!-- Filter Bar -->
+<div class="bg-surface-container rounded-2xl p-2 flex overflow-x-auto shadow-sm">
+<button class="px-6 py-2 rounded-xl bg-surface text-primary-container font-label-sm text-label-sm shadow-sm whitespace-nowrap transition-all">Inbox</button>
+<button class="px-6 py-2 rounded-xl text-on-surface-variant hover:bg-surface hover:text-on-surface font-label-sm text-label-sm whitespace-nowrap transition-all">Sent</button>
+<button class="px-6 py-2 rounded-xl text-on-surface-variant hover:bg-surface hover:text-on-surface font-label-sm text-label-sm whitespace-nowrap transition-all">Drafts</button>
+<button class="px-6 py-2 rounded-xl text-on-surface-variant hover:bg-surface hover:text-on-surface font-label-sm text-label-sm whitespace-nowrap transition-all">Announcements</button>
+<button class="px-6 py-2 rounded-xl text-on-surface-variant hover:bg-surface hover:text-on-surface font-label-sm text-label-sm whitespace-nowrap transition-all">Archive</button>
+</div>
+<!-- Important Announcements Bento Grid -->
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-stack-md flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary">campaign</span>
+                    Important Announcements
+                </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-card-gap">
+<!-- Announcement Card 1 -->
+<div class="bg-surface-container-high p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+<div class="flex items-start justify-between mb-4 relative z-10">
+<span class="bg-error-container text-on-error-container px-3 py-1 rounded-full font-label-sm text-[11px] uppercase tracking-wider">Urgent</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm">Today, 09:00 AM</span>
+</div>
+<h3 class="font-headline-md text-[20px] text-on-surface mb-2 relative z-10">Internal Assessment Schedule</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 relative z-10 line-clamp-2">The schedule for the upcoming mid-semester internal assessments has been finalized. Please review the attached document carefully as room allocations have changed.</p>
+<div class="flex items-center p-3 bg-surface rounded-xl gap-3 relative z-10 cursor-pointer hover:bg-surface-container transition-colors">
+<div class="w-10 h-10 rounded-lg bg-error/10 flex items-center justify-center text-error">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+</div>
+<div class="flex-1">
+<p class="font-label-sm text-label-sm text-on-surface">Fall_2023_Assessments.pdf</p>
+<p class="font-body-md text-[12px] text-on-surface-variant">2.4 MB</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">download</span>
+</div>
+</div>
+<!-- Announcement Card 2 -->
+<div class="bg-surface-container-high p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute inset-0 opacity-20 transition-opacity group-hover:opacity-30" data-alt="A modern university lecture hall bathed in soft, natural morning light, rows of empty seating fading into a shallow depth of field, cool indigo and slate gray color palette, academic calm aesthetic, cinematic lighting." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDFYcTsvnUuwUdOWY8PBwYYgRjZNmIfNO-RuPEDq186f880TXy3n6_RkeLjU8A-TXX0wEep6B1xIy7XIS8upgluVJGovKMITJ5AWB0rU7b0_9qYYYN0ApYXLiHY8WOoaFIdiJYnT2i_GIjkqucELIqygoYxX-omaQbT8FUZoM5KDwdImiiVLh7SFeSB-Fhk00YBLvOxwShiPFxcLgXEFfyuIpkWuQJRBBVgK4XlarjkhembOIA6nh4')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-high via-surface-container-high/90 to-surface-container-high/40"></div>
+<div class="relative z-10 h-full flex flex-col justify-end">
+<div class="flex items-start justify-between mb-4">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-sm text-[11px] uppercase tracking-wider backdrop-blur-md">Event</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm bg-surface-container-high/80 px-2 py-1 rounded-md backdrop-blur-md">Yesterday</span>
+</div>
+<h3 class="font-headline-md text-[20px] text-on-surface mb-2">Resume Building Workshop</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 line-clamp-2">Join career services for an intensive workshop on crafting resumes that pass ATS filters. Mandatory for seniors.</p>
+<button class="text-primary-container font-label-sm text-label-sm flex items-center gap-1 hover:text-primary transition-colors w-fit">
+                                Register Now <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Conversations List -->
+<div>
+<div class="flex items-center justify-between mb-stack-md">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">forum</span>
+                        Recent Conversations
+                    </h2>
+<button class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary transition-colors flex items-center gap-1">
+                        View All <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+<div class="bg-surface-container rounded-2xl shadow-sm overflow-hidden">
+<!-- Convo 1 -->
+<div class="p-4 md:p-6 hover:bg-surface-container-high transition-colors cursor-pointer relative group border-b border-surface/50 last:border-0">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary-container scale-y-0 group-hover:scale-y-100 transition-transform origin-center"></div>
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-headline-md shrink-0">
+                                JD
+                            </div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between mb-1">
+<h4 class="font-label-sm text-[15px] text-on-surface truncate pr-4">Prof. James Davis</h4>
+<span class="font-label-sm text-[12px] text-on-surface-variant shrink-0">10:42 AM</span>
+</div>
+<h5 class="font-label-sm text-label-sm text-on-surface mb-1 truncate">Re: Feedback on Project Proposal</h5>
+<p class="font-body-md text-body-md text-on-surface-variant truncate">I've reviewed your latest draft. The methodology section looks much stronger now, but let's discuss the timeline during office hours tomorrow.</p>
+</div>
+</div>
+</div>
+<!-- Convo 2 -->
+<div class="p-4 md:p-6 bg-surface hover:bg-surface-container-high transition-colors cursor-pointer relative group border-b border-surface-container/50">
+<div class="absolute right-4 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-primary-container"></div>
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a young female university student, warm smile, natural lighting, wearing a casual gray sweater, soft blurred campus background, Indigo color palette integration." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTQiJlEVVzSlyRBg5hwSuphOr2lFIgQAJ-6sCVjRE06OQ8vB4vITUWrCLYls8WvSUsulAb7yHfMhgPQzB0O9VSwWI_a0ioCy2FSAK3Ejhoz7NBtPgxpFXL1Cm_eEWfE9yL3NOC_X-GN9E5X8pDFqDmHamdAQqKzkJvOO7KmybHu_zSZUN3BgOWqa6uOyAaE1rFxE8HwLy4UegBBhEJYxhSBtNajghY0vSPqKl15RnIVHtYL2oWzgg">
+</div>
+<div class="flex-1 min-w-0 pr-8">
+<div class="flex items-center justify-between mb-1">
+<h4 class="font-label-sm text-[15px] text-on-surface truncate pr-4 font-bold">Sarah Jenkins</h4>
+<span class="font-label-sm text-[12px] text-primary shrink-0 font-bold">Yesterday</span>
+</div>
+<h5 class="font-label-sm text-label-sm text-on-surface mb-1 truncate font-bold">Group Study Session - Midterms</h5>
+<p class="font-body-md text-body-md text-on-surface-variant truncate font-medium text-on-surface/80">Are we still on for the library tonight at 7? I booked a study room on the 3rd floor. Let me know if you need the room number.</p>
+</div>
+</div>
+</div>
+<!-- Convo 3 -->
+<div class="p-4 md:p-6 hover:bg-surface-container-high transition-colors cursor-pointer relative group border-b border-surface/50 last:border-0">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined">account_balance</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between mb-1">
+<h4 class="font-label-sm text-[15px] text-on-surface truncate pr-4">Financial Aid Office</h4>
+<span class="font-label-sm text-[12px] text-on-surface-variant shrink-0">Oct 12</span>
+</div>
+<h5 class="font-label-sm text-label-sm text-on-surface mb-1 truncate">Document Verification Status: Complete</h5>
+<p class="font-body-md text-body-md text-on-surface-variant truncate">This is an automated message confirming that we have received and verified all required documentation for your Spring semester disbursement.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sidebar Widgets -->
+<div class="w-full xl:w-80 flex flex-col gap-card-gap shrink-0">
+<!-- Stay Responsive Widget -->
+<div class="bg-primary text-on-primary rounded-3xl p-6 shadow-md relative overflow-hidden">
+<!-- Decorative background elements -->
+<div class="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-white/10 rounded-full blur-2xl"></div>
+<div class="absolute bottom-0 left-0 -ml-8 -mb-8 w-32 h-32 bg-secondary-container/20 rounded-full blur-xl"></div>
+<h3 class="font-label-sm text-[11px] uppercase tracking-widest mb-4 opacity-80 relative z-10">Communication Health</h3>
+<div class="flex items-end gap-3 mb-6 relative z-10">
+<span class="font-stat-display text-[48px] leading-none tracking-tighter">4h</span>
+<span class="font-body-md text-on-primary/80 pb-1">avg response</span>
+</div>
+<div class="space-y-4 relative z-10">
+<div>
+<div class="flex justify-between font-label-sm text-[12px] mb-1">
+<span class="">Response Rate</span>
+<span class="">92%</span>
+</div>
+<div class="w-full h-1.5 bg-on-primary/20 rounded-full overflow-hidden">
+<div class="h-full bg-white rounded-full w-[92%]"></div>
+</div>
+</div>
+<p class="font-body-md text-[13px] text-on-primary/80 leading-snug">
+                        You're faster than 78% of your peers. Maintaining a high response rate ensures smooth project collaborations.
+                    </p>
+</div>
+</div>
+<!-- Quick Contacts -->
+<div class="bg-surface-container-highest rounded-2xl p-6 shadow-sm">
+<h3 class="font-label-sm text-label-sm text-on-surface mb-4">Quick Contacts</h3>
+<div class="flex flex-col gap-3">
+<div class="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-container cursor-pointer transition-colors -mx-2">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container text-xs font-bold">AA</div>
+<div class="flex-1">
+<p class="font-label-sm text-[13px] text-on-surface">Academic Advisor</p>
+</div>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">chat</span>
+</div>
+<div class="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-container cursor-pointer transition-colors -mx-2">
+<div class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container text-xs font-bold">IT</div>
+<div class="flex-1">
+<p class="font-label-sm text-[13px] text-on-surface">IT Helpdesk</p>
+</div>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">chat</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+        </main>
+    </div>
 </div>
 </div>
     
@@ -575,5 +782,5 @@
     <script src="common.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script src="face.js?v=2"></script>
-    <script src="student-dashboard.js?v=6"></script>
+    <script src="student-dashboard.js?v=1787477352538"></script>
 </body></html>
