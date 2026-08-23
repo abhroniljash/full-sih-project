@@ -11,7 +11,11 @@ if (student.faceImage) {
 } else {
     uAvatar.textContent = student.name.charAt(0);
 }
-document.getElementById('rollTag').textContent = 'Roll: ' + student.rollNumber;
+document.getElementById('rollTag').textContent = 'ID: ' + student.rollNumber;
+var rollTagFull = document.getElementById('rollTagFull');
+if (rollTagFull) {
+    rollTagFull.textContent = 'Roll Number: ' + student.rollNumber + ' • Dept: ' + (student.department || 'CSE') + ' • Reg No: ' + (student.registrationNumber || '---');
+}
 
 document.getElementById('logoutBtn').addEventListener('click', function() {
     confirmLogout('student');
@@ -29,44 +33,41 @@ function loadDashboard() {
 
         // Render 75% Tracker
         var trackerHtml = '';
+        var trackerContainer = document.getElementById('trackerList');
         if (res.tracker.length === 0) {
-            trackerHtml = '<div class="empty" style="padding:24px 0;"><p>No classes found in the system yet.</p></div>';
+            trackerHtml = '<div class="empty" style="padding:24px 0;"><p>No classes found.</p></div>';
+            trackerContainer.innerHTML = trackerHtml;
         } else {
+            trackerHtml += '<div class="absolute left-0 right-0 bottom-8 border-b border-dashed border-error/40 z-0"><span class="absolute -top-6 left-0 font-label-sm text-label-sm text-error/80">75% Minimum</span></div>';
             res.tracker.forEach(function(t) {
-                var pColor = t.percentage >= 75 ? 'green' : (t.percentage >= 60 ? 'yellow' : 'red');
-                var nClass = t.safe ? 'needed-ok' : (t.classesNeededFor75 <= 3 ? 'needed-warn' : 'needed-danger');
-                var nText = t.safe ? 'Safe (≥75%)' : 'Need ' + t.classesNeededFor75 + ' more class' + (t.classesNeededFor75 > 1 ? 'es' : '');
-
-                trackerHtml += '<div class="tracker-row">' +
-                    '<div style="width:30%">' +
-                        '<div class="subj">'+t.subject+'</div>' +
-                        '<div class="teacher">by '+t.teacher+'</div>' +
-                    '</div>' +
-                    '<div style="width:40%">' +
-                        '<div style="font-size:12px;color:#64748b;margin-bottom:4px;">Attended '+t.attended+' of '+t.total+'</div>' +
-                        '<div class="pbar-wrap">' +
-                            '<div class="pbar"><div class="pbar-fill '+pColor+'" style="width:'+t.percentage+'%"></div></div>' +
-                            '<div class="pbar-val" style="color:var(--'+pColor+')">'+t.percentage+'%</div>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div style="width:30%;text-align:right;">' +
-                        '<span class="needed '+nClass+'">'+nText+'</span>' +
-                    '</div>' +
+                var isSafe = t.percentage >= 75;
+                var bgClass = isSafe ? 'bg-primary' : 'bg-error/80';
+                var htmlPercentage = Math.max(10, t.percentage); // Minimum 10% height to be visible
+                var subjectAbbr = t.subject.substring(0, 3).toUpperCase();
+                
+                trackerHtml += '<div class="w-8 ' + bgClass + ' rounded-t-sm relative group transition-all hover:opacity-80 z-10" style="height:' + htmlPercentage + '%">' +
+                    '<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-inverse-surface text-inverse-on-surface font-label-sm text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">' + t.percentage + '% - ' + t.subject + '</div>' +
+                    '<div class="absolute -bottom-6 left-1/2 -translate-x-1/2 font-label-sm text-[10px] text-on-surface-variant">' + subjectAbbr + '</div>' +
                 '</div>';
             });
+            trackerContainer.innerHTML = trackerHtml;
         }
-        document.getElementById('trackerList').innerHTML = trackerHtml;
 
         // Render History Table
-        var tHtml = '<table><tr><th>Date & Time</th><th>Subject</th><th>Session ID</th><th>Status</th></tr>';
+        var tHtml = '';
         if (res.history.length === 0) {
-            tHtml += '<tr><td colspan="4" style="text-align:center;">No attendance records found.</td></tr>';
+            tHtml = '<div style="text-align:center;padding:24px;">No attendance records found.</div>';
         } else {
             res.history.forEach(function(h) {
-                tHtml += '<tr><td>'+formatDateTime(h.timestamp)+'</td><td><b>'+h.subject+'</b></td><td class="mono">'+h.sessionId+'</td><td><span class="badge badge-green">Present</span></td></tr>';
+                tHtml += '<div class="flex items-center justify-between py-3 border-b border-surface-variant/40">' +
+                    '<div>' +
+                    '<p class="font-body-md text-label-sm text-on-surface font-medium">' + h.subject + '</p>' +
+                    '<p class="font-label-sm text-[12px] text-on-surface-variant mt-0.5">' + formatDateTime(h.timestamp) + '</p>' +
+                    '</div>' +
+                    '<div class="px-2.5 py-1 bg-secondary-container/50 text-primary font-label-sm text-[11px] rounded-full font-semibold">Present</div>' +
+                    '</div>';
             });
         }
-        tHtml += '</table>';
         document.getElementById('historyTable').innerHTML = tHtml;
     }).catch(function(err) {
         showToast(err.message || 'Failed to load dashboard', 'danger');
