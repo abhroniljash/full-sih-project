@@ -34,19 +34,8 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
             setTimeout(function(){ goTo('/student-dashboard'); }, 800);
         })
         .catch(function(loginErr) {
-            // If login failed, try registering (first-time user)
-            API.post('/auth/student/register', { rollNumber: roll, name: name, password: password })
-                .then(function(res) {
-                    Auth.setSession('student', res.token, res.user);
-                    showToast('Account created & logged in!', 'success');
-                    setTimeout(function(){ goTo('/student-dashboard'); }, 800);
-                })
-                .catch(function(regErr) {
-                    // Both login and register failed — show the login error
-                    showToast(loginErr.message || 'Invalid credentials', 'danger');
-                })
-                .finally(function() {
-                    btn.classList.remove('loading'); btn.disabled = false;
-                });
+            showToast(loginErr.message || 'Invalid credentials or account not found. Please contact your teacher to register.', 'danger');
+            btn.classList.remove('loading'); 
+            btn.disabled = false;
         });
 });
