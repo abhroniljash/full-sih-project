@@ -286,7 +286,7 @@
 </div>
 <div class="flex items-center gap-2 text-on-primary-container/80">
 <span class="material-symbols-outlined text-[18px]">location_on</span>
-<span class="font-body-md text-label-sm">Science Wing, Room 101</span>
+<span class="font-body-md text-label-sm">Main Building, Room 101</span>
 </div>
 </div>
 </div>
@@ -359,9 +359,11 @@
 <span class="material-symbols-outlined text-on-surface-variant">map</span>
           Next Location
         </h3>
-<p class="font-body-md text-body-md text-on-surface-variant mb-4">Science Wing, Room 101 <br><span class="text-[13px]">5 min walk from current location</span></p>
-<div id="studentMap" class="flex-grow w-full min-h-[200px] rounded-2xl overflow-hidden shadow-sm border-2 border-surface-container-highest relative z-0"></div>
-  <button class="mt-4 w-full py-3 bg-surface-container text-on-surface font-label-sm text-label-sm rounded-xl hover:bg-surface-container-high transition-colors flex items-center justify-center gap-2">
+<p class="font-body-md text-body-md text-on-surface-variant mb-4"><span id="nextLocationRoom" class="font-semibold text-on-surface">Main Building, Room 101</span> <br><span class="text-[13px]" id="nextLocationHint">5 min walk from current location</span></p>
+<!-- Fixed height, not flex-grow: Leaflet measures this box when it initialises and
+     paints blank/washed-out tiles if the height is indefinite at that moment. -->
+<div id="studentMap" class="w-full h-[260px] rounded-2xl overflow-hidden shadow-sm border-2 border-surface-container-highest relative z-0 cursor-pointer" style="height:260px;min-height:260px;" title="Open in Google Maps"></div>
+  <button id="getDirectionsBtn" type="button" class="mt-4 w-full py-3 bg-surface-container text-on-surface font-label-sm text-label-sm rounded-xl hover:bg-surface-container-high transition-colors flex items-center justify-center gap-2">
 <span class="material-symbols-outlined text-[18px]">directions_walk</span>
           Get Directions
         </button>
@@ -689,5 +691,5 @@
     <script src="common.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script src="face.js?v=2"></script>
-    <script src="student-dashboard.js?v=5"></script>
+    <script src="student-dashboard.js?v=6"></script>
 </body></html>

@@ -84,7 +84,10 @@ const endSession = asyncHandler(async (req, res) => {
 
 // POST /api/sessions/schedule (teacher only)
 const scheduleSession = asyncHandler(async (req, res) => {
-  const { subject, className, date, time } = req.body;
+  // `room` is optional but must be persisted: the student dashboard's "Next Location"
+  // widget shows the room the teacher entered for the active scheduled class, and it
+  // had nothing to read because only live sessions (createSession) stored a room.
+  const { subject, className, date, time, room } = req.body;
   if (!subject || !className || !date || !time) {
     throw new ApiError(400, 'subject, className, date, and time are required');
   }
@@ -96,6 +99,7 @@ const scheduleSession = asyncHandler(async (req, res) => {
     id: Date.now().toString(),
     subject: subject.trim(),
     className: className.trim(),
+    room: (room || '').trim(),
     teacherId: teacher.id,
     teacher: teacher.name,
     scheduledDate: date,

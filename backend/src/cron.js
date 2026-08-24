@@ -51,7 +51,9 @@ cron.schedule('* * * * *', async () => {
         sessionId,
         subject: s.subject,
         className: s.className,
-        room: 'Auto-Scheduled',
+        // Carry the room the teacher entered when scheduling through to the live
+        // session, so "Next Location" keeps naming the same place once it starts.
+        room: (s.room || '').trim() || 'Auto-Scheduled',
         description: 'Automatically started session',
         teacherId: s.teacherId,
         teacher: s.teacher,

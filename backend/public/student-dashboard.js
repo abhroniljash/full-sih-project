@@ -313,6 +313,12 @@ function renderScheduleTimeline() {
                     '<span class="material-symbols-outlined text-[18px]">person</span>' +
                     '<span class="font-body-md text-label-sm">' + (s.teacher || 'TBA') + '</span>' +
                   '</div>' +
+                  '<div class="flex items-center gap-2 text-on-surface-variant">' +
+                    '<span class="material-symbols-outlined text-[18px]">location_on</span>' +
+                    '<span class="font-body-md text-label-sm">' +
+                      escapeHtmlText(String(s.room || '').trim() || window.NEXT_LOCATION_FALLBACK || 'Main Building, Room 101') +
+                    '</span>' +
+                  '</div>' +
                 '</div>' +
               '</div>' +
             '</div>';
@@ -331,6 +337,8 @@ function loadSchedule() {
         renderScheduleTimeline();
         // Keep the counters/pill that read the same cache in step.
         if (typeof renderScheduleGlance === 'function') renderScheduleGlance();
+        // "Next Location" names the room of the active class in this same cache.
+        if (typeof renderNextLocation === 'function') renderNextLocation();
     }).catch(err => {
         console.error('Failed to load schedule:', err);
         var container = document.getElementById('scheduleTimelineContainer');
@@ -737,6 +745,7 @@ window.cachedSchedule = [];
 window.cachedAbsences = [];
 window.cachedHistory = [];
 let studentMapInstance = null;
+let studentLocationMarker = null;
 
 function renderWeeklyCalendar() {
     const container = document.getElementById('weeklyCalendarContainer');
@@ -785,6 +794,8 @@ window.selectScheduleDate = function(dateStr) {
     renderScheduleGlance();
     // "Today's Schedule" is filtered by this same date, so it must re-render too.
     if (typeof renderScheduleTimeline === 'function') renderScheduleTimeline();
+    // So is the room shown by "Next Location".
+    if (typeof renderNextLocation === 'function') renderNextLocation();
     // renderWeeklyCalendar() and the calendar IIFE's renderCalendar() both own
     // #weeklyCalendarContainer and race on load, so whichever markup wins must still
     // refresh BOTH date-driven widgets. Push the new date into the IIFE's state too.
@@ -937,37 +948,172 @@ function loadUpcomingDashboard() {
         renderWeeklyCalendar();
         renderScheduleGlance();
         if (typeof renderScheduleTimeline === 'function') renderScheduleTimeline();
+        if (typeof renderNextLocation === 'function') renderNextLocation();
         if (typeof window.refreshGlanceFromCache === 'function') window.refreshGlanceFromCache();
     }).catch(e => console.error(e));
 }
 
-// Initialize Leaflet Map with Geolocation
+// ==========================================
+// NEXT LOCATION WIDGET (room + map + Google Maps links)
+// ==========================================
+// The room used to be hardcoded in the markup ("Science Wing, Room 101"). It now
+// comes from the active scheduled class, i.e. whatever the teacher typed into the
+// schedule form. NEXT_LOCATION_FALLBACK covers "nothing scheduled" and old rows
+// that were created before scheduled_sessions carried a room at all.
+window.NEXT_LOCATION_FALLBACK = 'Main Building, Room 101';
+
+function escapeHtmlText(s) {
+    return String(s === null || s === undefined ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// Which class the widget is pointing at: the one that is live right now, else the
+// next one still to start on the active date, else that date's last class.
+function activeScheduledClass() {
+    if (typeof scheduleForDate !== 'function') return null;
+
+    var dateKey = activeScheduleKey();
+    var dayClasses = scheduleForDate(dateKey);
+    if (!dayClasses.length) return null;
+
+    for (var i = 0; i < dayClasses.length; i++) {
+        if (dayClasses[i].status === 'started') return dayClasses[i];
+    }
+
+    // Browsing another day has no "now" — show that day's first class.
+    if (dateKey !== localDateStr()) return dayClasses[0];
+
+    var now = new Date().getHours() * 60 + new Date().getMinutes();
+    for (var j = 0; j < dayClasses.length; j++) {
+        if (timeToMinutes(dayClasses[j].scheduledTime) >= now) return dayClasses[j];
+    }
+    return dayClasses[dayClasses.length - 1];
+}
+window.activeScheduledClass = activeScheduledClass;
+
+// The room string the widget displays and searches Google Maps for.
+function nextLocationRoomName() {
+    var classItem = activeScheduledClass();
+    var room = classItem && (classItem.room || classItem.roomNumber || classItem.location);
+    room = String(room === null || room === undefined ? '' : room).trim();
+    return room || window.NEXT_LOCATION_FALLBACK;
+}
+window.nextLocationRoomName = nextLocationRoomName;
+
+// One action shared by the map container and the Get Directions button.
+function openRoomInGoogleMaps() {
+    var roomName = nextLocationRoomName();
+    window.open('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(roomName), '_blank');
+}
+window.openRoomInGoogleMaps = openRoomInGoogleMaps;
+
+function renderNextLocation() {
+    var roomName = nextLocationRoomName();
+    var classItem = activeScheduledClass();
+
+    var roomEl = document.getElementById('nextLocationRoom');
+    if (roomEl) roomEl.textContent = roomName;
+
+    var hintEl = document.getElementById('nextLocationHint');
+    if (hintEl) {
+        if (!classItem) {
+            hintEl.textContent = 'No class scheduled — showing the default campus location';
+        } else if (classItem.status === 'started') {
+            hintEl.textContent = (classItem.subject || 'Class') + ' · in progress now';
+        } else {
+            hintEl.textContent = (classItem.subject || 'Class') + ' · ' + to12Hour(classItem.scheduledTime);
+        }
+    }
+
+    var mapEl = document.getElementById('studentMap');
+    if (mapEl) mapEl.title = 'Open "' + roomName + '" in Google Maps';
+
+    if (studentMapInstance && studentLocationMarker) {
+        studentLocationMarker.setPopupContent('<b>' + escapeHtmlText(roomName) + '</b><br>Tap the map for directions');
+    }
+}
+window.renderNextLocation = renderNextLocation;
+
+// Clicking the map, or Get Directions, opens the same Google Maps search.
+function bindNextLocationActions() {
+    var mapEl = document.getElementById('studentMap');
+    if (mapEl && !mapEl.getAttribute('data-maps-link-bound')) {
+        mapEl.setAttribute('data-maps-link-bound', '1');
+        mapEl.style.cursor = 'pointer';
+        mapEl.addEventListener('click', function (e) {
+            // Leaflet's zoom buttons and the OSM attribution link keep their own behaviour.
+            var t = e.target;
+            if (t && t.closest && t.closest('.leaflet-control, a')) return;
+            openRoomInGoogleMaps();
+        });
+    }
+
+    var btn = document.getElementById('getDirectionsBtn');
+    if (btn && !btn.getAttribute('data-maps-link-bound')) {
+        btn.setAttribute('data-maps-link-bound', '1');
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            openRoomInGoogleMaps();
+        });
+    }
+}
+window.bindNextLocationActions = bindNextLocationActions;
+
+// Initialize Leaflet Map with Geolocation.
+// Idempotent: #studentMap has exactly one owner now, and repeat calls only
+// re-measure the container instead of wiping Leaflet's panes.
 function initStudentMap() {
     const mapEl = document.getElementById('studentMap');
-    if (!mapEl || typeof L === 'undefined') return;
-    
-    // Clear dummy styles if any
-    mapEl.innerHTML = '';
-    
+    if (!mapEl) return;
+
+    // Leaflet sizes its tile grid from the container, so the height has to be real
+    // and settled before init — an indefinite height is what produced the blank /
+    // washed-out map. The markup sets it too; this is the belt-and-braces copy.
+    if (!mapEl.style.height) mapEl.style.height = '260px';
+
+    renderNextLocation();
+    bindNextLocationActions();
+
+    if (typeof L === 'undefined') {
+        // Leaflet CDN unreachable: leave a labelled, still-clickable placeholder
+        // rather than an empty grey box.
+        if (!studentMapInstance) {
+            mapEl.innerHTML = '<div class="flex flex-col items-center justify-center w-full h-full bg-surface-container text-on-surface-variant text-center px-4">' +
+                '<span class="material-symbols-outlined text-[28px] mb-1">map</span>' +
+                '<p class="font-label-sm text-[12px]">Tap to open in Google Maps</p></div>';
+        }
+        return;
+    }
+
     // Default location (fallback)
-    const fallbackLat = 22.5726; 
+    const fallbackLat = 22.5726;
     const fallbackLng = 88.3639;
-    
+
     if (!studentMapInstance) {
-        studentMapInstance = L.map('studentMap').setView([fallbackLat, fallbackLng], 15);
+        mapEl.innerHTML = '';                       // only safe before Leaflet owns the node
+        studentMapInstance = L.map(mapEl).setView([fallbackLat, fallbackLng], 15);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
             attribution: '© OpenStreetMap contributors'
         }).addTo(studentMapInstance);
+        // Re-measure once tiles are attached and again after the surrounding grid has
+        // settled; without this the first tile row paints and the rest stays grey.
+        studentMapInstance.whenReady(function () { studentMapInstance.invalidateSize(); });
+        setTimeout(function () { if (studentMapInstance) studentMapInstance.invalidateSize(); }, 400);
+    } else {
+        studentMapInstance.invalidateSize();
     }
-    
+
     // Try to get real location
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
+            if (!studentMapInstance) return;
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
-            
+
             studentMapInstance.setView([lat, lng], 17);
-            
+
             // Custom pin
             const markerHtml = `
                 <div class="flex flex-col items-center animate-bounce">
@@ -981,17 +1127,25 @@ function initStudentMap() {
                 iconSize: [32, 40],
                 iconAnchor: [16, 40]
             });
-            
-            L.marker([lat, lng], {icon: customIcon}).addTo(studentMapInstance)
-                .bindPopup('<b>Current Location</b>').openPopup();
-                
+
+            if (studentLocationMarker) studentMapInstance.removeLayer(studentLocationMarker);
+            studentLocationMarker = L.marker([lat, lng], {icon: customIcon}).addTo(studentMapInstance)
+                .bindPopup('<b>' + escapeHtmlText(nextLocationRoomName()) + '</b><br>Tap the map for directions')
+                .openPopup();
+            studentMapInstance.invalidateSize();
+
         }, (err) => {
             console.warn("Geolocation denied or error", err);
-            L.marker([fallbackLat, fallbackLng]).addTo(studentMapInstance)
-                .bindPopup('<b>Campus Location (Default)</b>');
+            if (!studentMapInstance || studentLocationMarker) return;
+            // Permission denied used to blank the whole widget. Keep the map and just
+            // pin the campus default.
+            studentLocationMarker = L.marker([fallbackLat, fallbackLng]).addTo(studentMapInstance)
+                .bindPopup('<b>' + escapeHtmlText(nextLocationRoomName()) + '</b><br>Tap the map for directions');
+            studentMapInstance.invalidateSize();
         });
     }
 }
+window.initStudentMap = initStudentMap;
 setTimeout(initStudentMap, 1500);
 
 
@@ -1279,26 +1433,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- 7. GEOLOCATION MAP FIX ---
-    const mapContainer = document.getElementById('studentMap');
-    if (mapContainer) {
-        mapContainer.innerHTML = '<div class="flex items-center justify-center w-full h-full min-h-[200px] bg-surface-variant/30 text-on-surface-variant rounded-2xl"><p>Locating...</p></div>';
-        
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    mapContainer.innerHTML = `<iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=${lat},${lon}&hl=en&z=15&output=embed" style="border-radius:1rem; min-height: 200px;"></iframe>`;
-                },
-                function(error) {
-                    mapContainer.innerHTML = '<div class="flex items-center justify-center w-full h-full min-h-[200px] bg-surface-variant/30 text-error rounded-2xl font-semibold"><p>Location permission denied.</p></div>';
-                }
-            );
-        } else {
-            mapContainer.innerHTML = '<div class="flex items-center justify-center w-full h-full min-h-[200px] bg-surface-variant/30 text-error rounded-2xl font-semibold"><p>Geolocation not supported.</p></div>';
-        }
-    }
+    // --- 7. NEXT LOCATION MAP ---
+    // This block used to overwrite #studentMap with a Google Maps <iframe> from inside
+    // an async getCurrentPosition callback. That callback could land after
+    // setTimeout(initStudentMap, 1500) had already put a Leaflet map in the same node,
+    // ripping out Leaflet's panes and leaving the widget blank or half-painted — and on
+    // a denied permission it replaced the map with an error box outright.
+    // #studentMap now has exactly one owner: initStudentMap(), which is idempotent.
+    if (typeof initStudentMap === 'function') initStudentMap();
 
     // --- 8. INITIALIZE ---
     // Bridge for the other calendar renderer (window.selectScheduleDate) so a day
