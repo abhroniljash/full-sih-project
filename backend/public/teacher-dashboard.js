@@ -83,7 +83,11 @@ if(setDeptEl) setDeptEl.value = teacher.department || '';
             var cls = document.getElementById('schedClass').value.trim();
             var dt = document.getElementById('schedDate').value;
             var tm = document.getElementById('schedTime').value;
-            
+            // Optional. When given it becomes the "Next Location" room on the
+            // students' dashboards, so it is sent even though it isn't required.
+            var roomEl = document.getElementById('schedRoom');
+            var rm = roomEl ? roomEl.value.trim() : '';
+
             if (!subj || !cls || !dt || !tm) {
                 showToast('Please fill all scheduling fields', 'warning');
                 return;
@@ -97,12 +101,14 @@ if(setDeptEl) setDeptEl.value = teacher.department || '';
                 subject: subj,
                 className: cls,
                 date: dt,
-                time: tm
+                time: tm,
+                room: rm
             }, teacherToken).then(function() {
                 showToast('Session scheduled for ' + dt + ' ' + tm, 'success');
                 document.getElementById('schedClass').value = '';
                 document.getElementById('schedDate').value = '';
                 document.getElementById('schedTime').value = '';
+                if (roomEl) roomEl.value = '';
             }).catch(function(err) {
                 showToast(err.message || 'Failed to schedule', 'danger');
             }).finally(function() {
@@ -126,8 +132,6 @@ var livenessCheckInterval = null;
 var livenessChallenges = [];
 var currentLivenessIdx = 0;
 var livenessActionPool = [
-    { id: 'look_up', text: 'Look Up' },
-    { id: 'look_down', text: 'Look Down' },
     { id: 'turn_left', text: 'Turn head Left' },
     { id: 'turn_right', text: 'Turn head Right' },
     { id: 'smile', text: 'Smile widely' }
