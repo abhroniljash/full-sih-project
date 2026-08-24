@@ -197,53 +197,151 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 // --- Schedule API ---
-function loadSchedule() {
-    API.get('/sessions/schedule', studentToken).then(res => {
-        const container = document.getElementById('scheduleTimelineContainer');
-        if (!container) return;
+// "Today's Schedule" must show ONLY the active date. The endpoint returns every
+// pending/started row across all dates, so rendering res.scheduled directly (as
+// this used to) listed historical classes — Aug 20/22/23 under a "Today" heading.
+// Fetching and rendering are split so a calendar click can re-filter the cached
+// rows without another round trip.
 
-        if (res.scheduled.length === 0) {
-            container.innerHTML = '<div style="text-align:center;padding:24px;">No upcoming classes scheduled.</div>';
-            return;
+// The date the schedule is currently showing: whatever the UI calendar has
+// selected, falling back to today.
+function activeScheduleKey() {
+    return toLocalDateKey(window.selectedScheduleDate) || localDateStr();
+}
+
+// '09:00' / '9:00' / '09:00:00' -> minutes since midnight. -1 when unparseable,
+// which sorts unknown times to the front rather than dropping the class.
+function timeToMinutes(t) {
+    var m = /^(\d{1,2}):(\d{2})/.exec(String(t || '').trim());
+    if (!m) return -1;
+    return parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
+}
+
+function to12Hour(t) {
+    var mins = timeToMinutes(t);
+    if (mins < 0) return String(t || '');
+    var h = Math.floor(mins / 60);
+    var mm = String(mins % 60).padStart(2, '0');
+    var suffix = h >= 12 ? 'PM' : 'AM';
+    var h12 = h % 12 === 0 ? 12 : h % 12;
+    return h12 + ':' + mm + ' ' + suffix;
+}
+
+// Strict date filter + chronological sort for one calendar day.
+function scheduleForDate(dateKey) {
+    var rows = Array.isArray(window.cachedSchedule) ? window.cachedSchedule : [];
+    return rows
+        .filter(function (s) { return toLocalDateKey(s.scheduledDate) === dateKey; })
+        .sort(function (a, b) { return timeToMinutes(a.scheduledTime) - timeToMinutes(b.scheduledTime); });
+}
+
+function renderScheduleTimeline() {
+    var container = document.getElementById('scheduleTimelineContainer');
+    if (!container) return;
+
+    var dateKey = activeScheduleKey();
+    var isToday = dateKey === localDateStr();
+    var dayClasses = scheduleForDate(dateKey);
+
+    if (dayClasses.length === 0) {
+        var label = isToday
+            ? 'No classes scheduled for today'
+            : 'No classes scheduled for ' + dateKey;
+        container.innerHTML =
+            '<div class="flex flex-col items-center justify-center py-16 text-center">' +
+            '<span class="material-symbols-outlined text-[40px] text-on-surface-variant/50 mb-3">event_busy</span>' +
+            '<p class="font-body-md text-body-md text-on-surface-variant font-medium">' + label + '</p>' +
+            '<p class="font-label-sm text-[12px] text-on-surface-variant/70 mt-1">Enjoy the free time.</p>' +
+            '</div>';
+        return;
+    }
+
+    // Insert the NOW marker in document flow between the last finished class and
+    // the next upcoming one, instead of the old hardcoded `top-[10%]` overlay that
+    // pointed at an arbitrary spot. Only meaningful while viewing today.
+    var nowMinutes = isToday ? (new Date().getHours() * 60 + new Date().getMinutes()) : -1;
+    var nowMarkerPlaced = !isToday;
+
+    var html = '<div class="absolute left-[52px] top-4 bottom-8 w-0.5 bg-surface-variant"></div>';
+
+    var nowMarker =
+        '<div class="flex items-center relative mb-8 -mt-4">' +
+        '<div class="w-12 pr-4 text-right font-label-sm text-[11px] text-error font-bold tracking-wider flex-shrink-0">NOW</div>' +
+        '<div class="w-3 h-3 rounded-full bg-error -ml-[7px] mr-6 z-20 ring-4 ring-surface-container-lowest"></div>' +
+        '<div class="flex-grow h-px border-t border-dashed border-error/50"></div>' +
+        '</div>';
+
+    dayClasses.forEach(function (s) {
+        var startMins = timeToMinutes(s.scheduledTime);
+
+        if (!nowMarkerPlaced && startMins > nowMinutes) {
+            html += nowMarker;
+            nowMarkerPlaced = true;
         }
 
-        let html = '';
-        html += '<div class="absolute left-[52px] top-4 bottom-8 w-0.5 bg-surface-variant"></div>';
-        
-        // Let's add a "Now" indicator just for looks
-        html += `
-  <div class="absolute left-[47px] top-[10%] w-3 h-3 rounded-full bg-error z-20 shadow-[0_0_0_4px_rgba(255,255,255,1)]"></div>
-  <div class="absolute left-[64px] top-[10%] right-0 h-px bg-error/30 z-20 -translate-y-1/2 border-t border-dashed border-error/50"></div>
-  <div class="absolute left-0 top-[10%] -translate-y-1/2 -mt-0.5">
-    <span class="font-label-sm text-[11px] text-error font-bold tracking-wider">NOW</span>
-  </div>`;
+        var isLive = s.status === 'started';
+        var isPast = isToday && !isLive && startMins >= 0 && startMins <= nowMinutes;
 
-        res.scheduled.forEach(s => {
-            html += `
-  <div class="flex items-start mb-12 group relative">
-    <div class="w-12 pt-5 text-right pr-4 font-label-sm text-label-sm text-on-surface-variant flex-shrink-0">
-      ${s.scheduledTime}
-    </div>
-    <!-- Node -->
-    <div class="w-3 h-3 rounded-full bg-outline-variant mt-6 -ml-[7px] mr-6 z-10 ring-4 ring-surface-container-lowest group-hover:bg-primary transition-colors"></div>
-    <!-- Card -->
-    <div class="flex-grow bg-surface-container-low rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group-hover:-translate-y-1 relative overflow-hidden">
-      <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-secondary"></div>
-      <div class="flex justify-between items-start mb-3 pl-2">
-        <div>
-          <span class="inline-block px-2.5 py-1 bg-surface-variant text-on-surface-variant font-label-sm text-[11px] uppercase tracking-wider rounded mb-2">${s.className}</span>
-          <h4 class="font-headline-md text-headline-md text-on-surface">${s.subject}</h4>
-        </div>
-        <span class="font-label-sm text-label-sm text-on-surface-variant bg-surface rounded-lg px-3 py-1 shadow-sm">${s.scheduledDate} ${s.scheduledTime}</span>
-      </div>
-      <div class="flex items-center gap-6 mt-4 pl-2">
-         <span class="text-sm font-medium text-on-surface-variant">Teacher: ${s.teacher}</span>
-      </div>
-    </div>
-  </div>`;
-        });
-        container.innerHTML = html;
-    }).catch(err => console.error('Failed to load schedule:', err));
+        var accent = isLive ? 'bg-error' : (isPast ? 'bg-outline-variant' : 'bg-secondary');
+        var nodeColor = isLive ? 'bg-error' : (isPast ? 'bg-outline-variant' : 'bg-primary');
+        var dim = isPast ? ' opacity-60' : '';
+
+        var badge = isLive
+            ? '<span class="inline-flex items-center gap-1 px-2.5 py-1 bg-error-container text-on-error-container font-label-sm text-[11px] uppercase tracking-wider rounded-full"><span class="w-1.5 h-1.5 rounded-full bg-error animate-pulse"></span>Live</span>'
+            : '';
+
+        html +=
+            '<div class="flex items-start mb-12 group relative' + dim + '">' +
+              '<div class="w-12 pt-5 text-right pr-4 font-label-sm text-label-sm text-on-surface-variant flex-shrink-0">' +
+                (s.scheduledTime || '--:--') +
+              '</div>' +
+              '<div class="w-3 h-3 rounded-full ' + nodeColor + ' mt-6 -ml-[7px] mr-6 z-10 ring-4 ring-surface-container-lowest transition-colors"></div>' +
+              '<div class="flex-grow bg-surface-container-low rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group-hover:-translate-y-1 relative overflow-hidden">' +
+                '<div class="absolute left-0 top-0 bottom-0 w-1.5 ' + accent + '"></div>' +
+                '<div class="flex justify-between items-start mb-3 pl-2 gap-3">' +
+                  '<div>' +
+                    '<div class="flex items-center gap-2 mb-2">' +
+                      '<span class="inline-block px-2.5 py-1 bg-surface-variant text-on-surface-variant font-label-sm text-[11px] uppercase tracking-wider rounded">' + (s.className || 'Class') + '</span>' +
+                      badge +
+                    '</div>' +
+                    '<h4 class="font-headline-md text-headline-md text-on-surface">' + (s.subject || 'Untitled') + '</h4>' +
+                  '</div>' +
+                  '<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface rounded-lg px-3 py-1 shadow-sm whitespace-nowrap">' + to12Hour(s.scheduledTime) + '</span>' +
+                '</div>' +
+                '<div class="flex items-center gap-6 mt-4 pl-2">' +
+                  '<div class="flex items-center gap-2 text-on-surface-variant">' +
+                    '<span class="material-symbols-outlined text-[18px]">person</span>' +
+                    '<span class="font-body-md text-label-sm">' + (s.teacher || 'TBA') + '</span>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>';
+    });
+
+    // Every class today is already over — the marker belongs at the end.
+    if (!nowMarkerPlaced) html += nowMarker;
+
+    container.innerHTML = html;
+}
+window.renderScheduleTimeline = renderScheduleTimeline;
+
+function loadSchedule() {
+    API.get('/sessions/schedule', studentToken).then(res => {
+        window.cachedSchedule = res.scheduled || [];
+        renderScheduleTimeline();
+        // Keep the counters/pill that read the same cache in step.
+        if (typeof renderScheduleGlance === 'function') renderScheduleGlance();
+    }).catch(err => {
+        console.error('Failed to load schedule:', err);
+        var container = document.getElementById('scheduleTimelineContainer');
+        if (container) {
+            container.innerHTML =
+                '<div class="flex flex-col items-center justify-center py-16 text-center">' +
+                '<span class="material-symbols-outlined text-[40px] text-error/60 mb-3">cloud_off</span>' +
+                '<p class="font-body-md text-body-md text-on-surface-variant font-medium">Could not load your schedule.</p>' +
+                '</div>';
+        }
+    });
 }
 setTimeout(loadSchedule, 500); // load after a short delay
 
@@ -622,55 +720,12 @@ loadDashboard = function() {
 };
 
 // 3. Upcoming Today in Home & Today at a Glance Schedule
-function loadUpcomingDashboard() {
-    API.get('/sessions/schedule', studentToken).then(res => {
-        const upcomingList = document.getElementById('upcomingTodayList');
-        const glanceList = document.getElementById('todayGlanceList');
-        const summaryPill = document.getElementById('scheduleSummaryPill');
-        
-        let upHtml = '';
-        let glHtml = '';
-        
-        const scheduled = res.scheduled || [];
-        if (summaryPill) {
-            summaryPill.textContent = scheduled.length + ' Classes Scheduled';
-        }
-
-        if (scheduled.length === 0) {
-            upHtml = '<div class="text-sm text-onSurface-variant">No classes today.</div>';
-            glHtml = '<div class="text-sm text-onSurface-variant">Nothing scheduled.</div>';
-        } else {
-            scheduled.forEach((s, idx) => {
-                const colorClass = idx % 2 === 0 ? 'bg-primary text-primary' : 'bg-secondary text-secondary';
-                upHtml += `
-                <div class="flex gap-4 group">
-                  <div class="flex flex-col items-center min-w-[60px]">
-                    <span class="font-label-sm text-label-sm text-on-surface">${s.scheduledTime}</span>
-                  </div>
-                  <div class="flex-1 bg-surface-container-low rounded-xl p-4 border border-transparent group-hover:border-outline-variant transition-colors relative overflow-hidden">
-                    <div class="absolute left-0 top-0 bottom-0 w-1 ${colorClass.split(' ')[0]}"></div>
-                    <p class="font-label-sm text-label-sm ${colorClass.split(' ')[1]} mb-1">${s.className}</p>
-                    <p class="font-body-md text-body-md text-on-surface font-medium leading-tight">${s.subject}</p>
-                    <div class="flex items-center gap-2 mt-3 text-on-surface-variant">
-                      <span class="font-label-sm text-[12px]">${s.teacher}</span>
-                    </div>
-                  </div>
-                </div>`;
-
-                glHtml += `
-                <div class="p-4 rounded-xl border border-surface-variant bg-surface flex gap-4 items-start relative overflow-hidden mt-3">
-                  <div class="absolute left-0 top-0 bottom-0 w-1 ${colorClass.split(' ')[0]}"></div>
-                  <div class="flex-1">
-                    <h5 class="text-sm font-bold text-onSurface mb-1">${s.subject}</h5>
-                    <p class="text-xs font-medium text-onSurface-variant flex items-center gap-1.5"><span class="w-2 h-2 rounded-full ${colorClass.split(' ')[0]}"></span>${s.scheduledTime}</p>
-                  </div>
-                </div>`;
-            });
-        }
-        if (upcomingList) upcomingList.innerHTML = upHtml;
-        if (glanceList) glanceList.innerHTML = glHtml;
-    });
-}
+// The single definition lives further down (search "function loadUpcomingDashboard").
+// There used to be an unfiltered version here plus an "override" assignment below it.
+// Because setTimeout(loadUpcomingDashboard, 600) evaluates the identifier at once, the
+// timer captured the ORIGINAL function and the override never applied to it — so the
+// Home tab and the summary pill kept listing classes from every date. One hoisted
+// declaration now means there is nothing to capture stale.
 setTimeout(loadUpcomingDashboard, 600);
 
 loadDashboard();
@@ -728,6 +783,8 @@ window.selectScheduleDate = function(dateStr) {
     window.selectedScheduleDate = dateStr;
     renderWeeklyCalendar();
     renderScheduleGlance();
+    // "Today's Schedule" is filtered by this same date, so it must re-render too.
+    if (typeof renderScheduleTimeline === 'function') renderScheduleTimeline();
     // renderWeeklyCalendar() and the calendar IIFE's renderCalendar() both own
     // #weeklyCalendarContainer and race on load, so whichever markup wins must still
     // refresh BOTH date-driven widgets. Push the new date into the IIFE's state too.
@@ -862,8 +919,10 @@ function renderScheduleGlance() {
     if (glanceList) glanceList.innerHTML = glHtml;
 }
 
-// Override loadUpcomingDashboard
-loadUpcomingDashboard = function() {
+// The one and only loadUpcomingDashboard. Declared (not assigned) so the
+// setTimeout further up resolves to this via hoisting. Everything it renders is
+// date-filtered downstream by renderScheduleGlance / renderScheduleTimeline.
+function loadUpcomingDashboard() {
     Promise.all([
         API.get('/sessions/schedule', studentToken),
         API.get('/dashboard/student', studentToken)
@@ -877,9 +936,10 @@ loadUpcomingDashboard = function() {
         
         renderWeeklyCalendar();
         renderScheduleGlance();
+        if (typeof renderScheduleTimeline === 'function') renderScheduleTimeline();
         if (typeof window.refreshGlanceFromCache === 'function') window.refreshGlanceFromCache();
     }).catch(e => console.error(e));
-};
+}
 
 // Initialize Leaflet Map with Geolocation
 function initStudentMap() {
@@ -1093,6 +1153,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // window.syncGlanceDate for why both must be updated).
                 window.selectedScheduleDate = picked;
                 if (typeof renderScheduleGlance === 'function') renderScheduleGlance();
+                if (typeof renderScheduleTimeline === 'function') renderScheduleTimeline();
                 // Re-render calendar UI to swap classes accurately based on State
                 renderCalendar();
             });
