@@ -252,8 +252,10 @@ var sections = document.querySelectorAll('.section');
 var overlay = document.getElementById('overlay');
 var sidebar = document.getElementById('sidebar');
 
-function switchSec(secId) {
-    
+// skipDataLoad: switch the visible tab without firing its fetch. Used by the init
+// block below, which runs before the per-section loaders further down are defined.
+function switchSec(secId, skipDataLoad) {
+
     sessionStorage.setItem('teacher_current_sec', secId);
 
     // Close performance dropdown if navigating away from performance sections
@@ -294,9 +296,13 @@ function switchSec(secId) {
         if(elPgSub) elPgSub.textContent = titles[secId][1];
     }
 
-    if (secId === 'students' && window.loadStudentDetails) {
-        window.loadStudentDetails();
-    }
+    if (!skipDataLoad) loadSectionData(secId);
+}
+
+// Fetches + renders the data for one section. Split out of switchSec() so the
+// initial page load can call it too, once every section's loader exists.
+function loadSectionData(secId) {
+    if(secId === 'students' && typeof window.loadStudentDetails === 'function') window.loadStudentDetails();
     if(secId === 'dashboard' && typeof loadDashboard === 'function') loadDashboard();
     if(secId === 'live' && typeof loadLiveSession === 'function') loadLiveSession();
     if(secId === 'report-class' && typeof loadClassReport === 'function') loadClassReport();
@@ -754,10 +760,18 @@ if(rSubj) rSubj.addEventListener('change', refreshDateReport);
 var rDate = document.getElementById('rdDate');
 if(rDate) rDate.addEventListener('change', refreshDateReport);
 
-// Init
+// Init — restore the active tab's VISUAL state only (highlight + page title).
+// The data fetch is deliberately deferred to bootstrapActiveSection() at the very
+// bottom of this file: the per-section loaders (window.loadStudentDetails in
+// particular) are assigned inside IIFEs further down and do not exist yet here.
+var activeSec = 'dashboard';
 try {
-    var savedSec = sessionStorage.getItem('teacher_current_sec') || 'dashboard';
-    switchSec(savedSec);
+    activeSec = sessionStorage.getItem('teacher_current_sec') || 'dashboard';
+} catch (e) {
+    console.warn('sessionStorage unavailable, defaulting to dashboard.', e);
+}
+try {
+    switchSec(activeSec, true);
 } catch (e) {
     console.error("Section loaded with missing elements, but execution continued.", e);
 }
@@ -1325,3 +1339,36 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
     }).catch(function(){});
 })();
 
+// --- Initial data bootstrap -------------------------------------------------
+// BUGFIX: the student details table used to sit on its static
+// "Loading student details..." placeholder until the user clicked away and back.
+// switchSec() runs near the top of this file, at which point the Student Details
+// IIFE has not yet assigned window.loadStudentDetails, so the guard silently
+// no-opped and no fetch was ever issued for the initially-active tab. The sidebar
+// click listener was the only thing that ever triggered it.
+// Fix: run the active section's loader here, after every loader is defined.
+var sectionBootstrapped = false;
+
+function bootstrapActiveSection() {
+    if (sectionBootstrapped) return;   // never fetch the same initial tab twice
+    sectionBootstrapped = true;
+
+    var secId = 'dashboard';
+    try {
+        secId = sessionStorage.getItem('teacher_current_sec') || 'dashboard';
+    } catch (e) {
+        console.warn('sessionStorage unavailable, bootstrapping dashboard.', e);
+    }
+
+    try {
+        loadSectionData(secId);
+    } catch (e) {
+        console.error('Failed to load initial data for section "' + secId + '".', e);
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootstrapActiveSection);
+} else {
+    bootstrapActiveSection();   // script was deferred/async and DOM is already parsed
+}
