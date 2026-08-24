@@ -2,6 +2,23 @@ const repo = require('../db/repository');
 const { asyncHandler, ApiError } = require('../utils/helpers');
 const config = require('../config');
 
+// Builds a single, parseable ISO timestamp for an absence record.
+// session.date is already a full ISO string (session.controller.js stores
+// `new Date().toISOString()`), so the old `session.date + 'T' + startTime`
+// produced '2026-08-24T03:30:00.000ZT09:00:00' — which new Date() rejects,
+// leaving the client unable to match absences to a calendar day.
+// Take the date half of session.date and graft startTime (local wall clock) on.
+function absenceTimestamp(session) {
+  const datePart = String(session.date || '').slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+    return session.date || new Date().toISOString();
+  }
+  const time = /^\d{2}:\d{2}(:\d{2})?$/.test(session.startTime || '')
+    ? (session.startTime.length === 5 ? session.startTime + ':00' : session.startTime)
+    : '00:00:00';
+  return datePart + 'T' + time;
+}
+
 // GET /api/dashboard/student  (student only)
 // Reproduces the "75% tracker" math from student-dashboard.js loadDashboard().
 const studentDashboard = asyncHandler(async (req, res) => {
@@ -99,7 +116,7 @@ const enrolledSubjects = {};
       };
     });
 
-  
+
   // Calculate specific missed/absent sessions
   const absences = [];
   relevantSessions.forEach(session => {
@@ -110,7 +127,7 @@ const enrolledSubjects = {};
       absences.push({
         sessionId: session.sessionId,
         subject: session.subject,
-        timestamp: session.date + 'T' + (session.startTime || '00:00:00'), // approximate timestamp
+        timestamp: absenceTimestamp(session),
         status: 'Absent'
       });
     }

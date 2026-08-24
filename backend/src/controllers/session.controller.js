@@ -110,7 +110,11 @@ const scheduleSession = asyncHandler(async (req, res) => {
 // GET /api/sessions/schedule (student and teacher)
 const getScheduledSessions = asyncHandler(async (req, res) => {
   let scheduled = repo.all('scheduled_sessions');
-  scheduled = scheduled.filter(s => s.status === 'pending');
+  // Include 'started' as well as 'pending'. The cron job flips a row to 'started'
+  // the moment its slot arrives, so a pending-only filter dropped every class that
+  // had already begun today — which is exactly the set the student's schedule page
+  // needs to show. Only 'completed'/'cancelled' rows are excluded.
+  scheduled = scheduled.filter(s => s.status === 'pending' || s.status === 'started');
   // Sort by date/time
   scheduled.sort((a, b) => new Date(a.scheduledDate + 'T' + a.scheduledTime) - new Date(b.scheduledDate + 'T' + b.scheduledTime));
   res.json({ success: true, count: scheduled.length, scheduled });
