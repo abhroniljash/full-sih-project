@@ -32,9 +32,7 @@ input, button, select { font-family: inherit; outline: none; }
     background-size: contain; 
     background-repeat: no-repeat;
     background-position: left center;
-    
 }
-
 .topnav-brand span { color: #4f46e5; }
 .topnav-right { display: flex; align-items: center; gap: 12px; }
 .user-pill {

@@ -57,14 +57,10 @@ input, button, textarea, select { font-family: inherit; outline: none; }
     background-size: contain; 
     background-repeat: no-repeat;
     background-position: left center;
-    
     margin-bottom: 30px;
     margin-left: 20px;
     margin-top: 15px;
 }
-
-
-
 
 .sidebar-head .logo {
     width: 34px; height: 34px;
