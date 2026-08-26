@@ -47,6 +47,28 @@ navItems.forEach(function(btn) {
     btn.addEventListener('click', function() { switchSec(this.dataset.sec); });
 });
 
+/* --- Off-canvas sidebar (mobile) -----------------------------------------
+   Below 768px teacher-dashboard.css slides .sidebar to translateX(-100%) and
+   only .sidebar.open brings it back. This page had no #menuBtn and no wiring,
+   so the nav and Logout were unreachable on a phone: 3 of the 4 sections could
+   never be opened. Mirrors the teacher dashboard's drawer. */
+var adminSidebar = document.getElementById('sidebar');
+var adminOverlay = document.getElementById('overlay');
+function setAdminDrawer(open) {
+    if (adminSidebar) adminSidebar.classList.toggle('open', open);
+    if (adminOverlay) adminOverlay.classList.toggle('show', open);
+}
+var menuBtn = document.getElementById('menuBtn');
+if (menuBtn) menuBtn.addEventListener('click', function() { setAdminDrawer(true); });
+if (adminOverlay) adminOverlay.addEventListener('click', function() { setAdminDrawer(false); });
+/* The open drawer covers the content, so picking a section must dismiss it. */
+navItems.forEach(function(btn) {
+    btn.addEventListener('click', function() { setAdminDrawer(false); });
+});
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') setAdminDrawer(false);
+});
+
 var logoutBtn = document.getElementById('logoutBtn');
 if(logoutBtn) {
     logoutBtn.addEventListener('click', function() {

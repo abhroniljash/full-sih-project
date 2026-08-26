@@ -34,6 +34,21 @@ body {
 a { text-decoration: none; color: #4f46e5; }
 input, button, textarea, select { font-family: inherit; outline: none; }
 
+/* --- Mobile guard-rails ----------------------------------------------------
+   Any element wider than the viewport used to scroll the whole page sideways,
+   which reads as "the text is overlapping / cut off" rather than as an
+   overflow. Clamp the document and let long words wrap instead of push.
+   overflow-x goes on html ONLY: on body it forces overflow-y to compute to
+   auto, which makes body a scroll container, and a sticky child of a
+   non-scrolling scroll container never sticks — it would kill .topbar. */
+html { max-width: 100%; overflow-x: hidden; }
+body { max-width: 100%; }
+img, svg, video, canvas { max-width: 100%; }
+h1, h2, h3, h4, p { overflow-wrap: break-word; }
+/* Grid and flex children default to min-width:auto, so a single unbroken
+   string (a roll number, an email) can force a card wider than its column. */
+.card, .stat-box, .card-body { min-width: 0; }
+
 /* --- Dashboard Layout --- */
 .dash-layout { display: flex; min-height: 100vh; }
 
@@ -560,6 +575,14 @@ table .text-blue { color: #4f46e5; font-weight: 600; }
     .form-grid { grid-template-columns: 1fr; }
     .chart-row { grid-template-columns: 1fr; gap: 10px; }
     .live-split { grid-template-columns: 1fr; }
+
+    /* Safety net for grids still declared with an inline style="" in the markup.
+       An inline declaration outranks every stylesheet rule, so without
+       !important a media query simply cannot collapse them. */
+    .card-body [style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+    /* Same problem, different property: the report filters carry inline
+       min-width:220px / 180px, which overrode the .filter-row rule below. */
+    .filter-row [style*="min-width"] { min-width: 100% !important; }
     
     .card-head { flex-direction: column; align-items: flex-start; gap: 10px; }
     .card-head .btn, .card-head button { align-self: flex-start; }
@@ -578,5 +601,47 @@ table .text-blue { color: #4f46e5; font-weight: 600; }
     
     #weeklyChart { padding-left: 0 !important; margin-left: 0 !important; }
     #participationChart { margin-left: 0 !important; }
+}
+
+/* --- Small phones (<= 480px) ----------------------------------------------
+   The 768px block gets the layout to one column; below ~480px the remaining
+   problem is horizontal budget in the top bar and the oversized display
+   figures, which were the pieces still colliding on a 360-375px screen. */
+@media (max-width: 480px) {
+    .content { padding: 12px 12px 24px; }
+    .topbar { padding: 10px 12px; gap: 8px; }
+    .page-title { font-size: 15px; }
+    .page-sub { font-size: 12px; }
+    /* Three things fought for the same row as the hamburger and page title.
+       The date is decorative and the name/role is already in the sidebar. */
+    .topbar-date { display: none; }
+    .header-uname, .header-urole { display: none; }
+    .header-divider { display: none; }
+    .topbar-right { gap: 4px; }
+
+    .card-head { padding: 14px 16px; }
+    .card-body { padding: 16px; }
+    .btn { padding: 10px 16px; }
+    /* 32px at 4px letter-spacing is ~180px of unbreakable text for a 6-char id. */
+    .session-result { padding: 18px 14px; }
+    .session-result .sid { font-size: 24px; letter-spacing: 2px; }
+    .live-list { max-height: 220px; }
+    .stat-box { padding: 16px; }
+    .stat-box .stat-val { font-size: 24px; }
+    .sidebar-head { width: 160px; height: 40px; margin-left: 16px; }
+    .face-circle-frame, .progress-ring { width: 170px; height: 170px; }
+    .face-video-clip { width: 150px; height: 150px; top: 10px; left: 10px; }
+    .liveness-steps { gap: 14px; }
+    .empty { padding: 32px 16px; }
+
+    /* teacher-dashboard.js builds these two panels with inline cssText anchored
+       at right:80px / right:120px to sit under their topbar icons. That is fine
+       on a desktop but wastes most of a 360px screen, so reclaim the full width.
+       !important is required: an inline declaration outranks a media query. */
+    #notifPanel, #msgPanel {
+        left: 8px !important;
+        right: 8px !important;
+        max-width: none !important;
+    }
 }
 

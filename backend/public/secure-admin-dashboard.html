@@ -9,6 +9,8 @@
 </head>
 <body>
     <div class="dash-layout">
+        <!-- Scrim for the off-canvas sidebar below 768px. -->
+        <div class="overlay" id="overlay"></div>
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-head">
@@ -31,6 +33,10 @@
         <main class="main-area">
             <div class="topbar">
                 <div class="topbar-left">
+                    <!-- Below 768px .sidebar is translateX(-100%) and only
+                         .sidebar.open brings it back. Without this button the
+                         admin nav and Logout were unreachable on a phone. -->
+                    <button class="menu-btn" id="menuBtn">☰</button>
                     <div>
                         <div class="page-title" id="pgTitle">Admin Dashboard</div>
                         <div class="page-sub" id="pgSub">Administration tools</div>
@@ -139,7 +145,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <div class="table-container">
+                            <div class="table-wrap">
                                 <table class="data-table">
                                     <thead>
                                         <tr>
@@ -169,7 +175,7 @@
                             <button class="btn btn-primary btn-sm" onclick="fetchActivityLogs()"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
                         </div>
                         <div class="card-body">
-                            <div class="table-container">
+                            <div class="table-wrap">
                                 <table class="data-table">
                                     <thead>
                                         <tr>

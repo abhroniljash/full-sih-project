@@ -1136,7 +1136,12 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
 
     var panel = document.createElement('div');
     panel.id = 'notifPanel';
-    panel.style.cssText = 'display:none;position:fixed;top:60px;right:80px;width:360px;max-height:440px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.12);z-index:200;overflow:hidden;';
+    // left+margin-left:auto instead of a bare width: this is position:fixed, so
+    // right:80px + width:360px put the left edge at 360-80-360 = -80px on a phone
+    // and a fixed box at negative x can never be scrolled to. Anchoring left as
+    // well makes the width shrink instead of overflowing, and margin-left:auto
+    // keeps the panel flush right (unchanged) once max-width binds on desktop.
+    panel.style.cssText = 'display:none;position:fixed;top:60px;left:12px;right:80px;width:auto;max-width:360px;margin-left:auto;max-height:440px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.12);z-index:200;overflow:hidden;';
     panel.innerHTML = '<div style="padding:16px 20px;border-bottom:1px solid #e2e8f0;font-weight:700;font-size:15px;color:#1e293b;display:flex;justify-content:space-between;align-items:center;">Notifications <button id="notifClose" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:18px;">✕</button></div><div id="notifList" style="overflow-y:auto;max-height:370px;padding:8px 0;"></div>';
     document.body.appendChild(panel);
 
@@ -1197,7 +1202,10 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
 
     var panel = document.createElement('div');
     panel.id = 'msgPanel';
-    panel.style.cssText = 'display:none;position:fixed;top:60px;right:120px;width:380px;max-height:480px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.12);z-index:200;overflow:hidden;';
+    // Same as #notifPanel: right:120px + width:380px put the left edge at
+    // 360-120-380 = -140px, hiding the first ~120px of every message row and
+    // putting the Reply button entirely off-screen.
+    panel.style.cssText = 'display:none;position:fixed;top:60px;left:12px;right:120px;width:auto;max-width:380px;margin-left:auto;max-height:480px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.12);z-index:200;overflow:hidden;';
     panel.innerHTML = '<div style="padding:16px 20px;border-bottom:1px solid #e2e8f0;font-weight:700;font-size:15px;color:#1e293b;display:flex;justify-content:space-between;align-items:center;">Messages <button id="msgClose" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:18px;">✕</button></div><div id="msgList" style="overflow-y:auto;max-height:400px;padding:8px 0;"></div>';
     document.body.appendChild(panel);
 
@@ -1311,10 +1319,14 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
                 html += '<div style="font-size:12px;color:#475569;margin-top:4px;line-height:1.4;">' + m.body + '</div>';
                 
                 if (m.fromRole === 'student') {
+                    // padding:4px + font-size:11px gave a ~53x26px hit area, and
+                    // because both are inline no media query could enlarge it.
+                    // Reply is the only way to answer a student, so it gets a
+                    // real 36px target; Resolved matches so the rows still line up.
                     if (isResolved) {
-                        html += '<button id="reply-btn-' + m.id + '" disabled style="margin-top:8px;padding:4px 10px;font-size:11px;background:#dcfce7;color:#166534;border:none;border-radius:4px;font-weight:600;">Resolved</button>';
+                        html += '<button id="reply-btn-' + m.id + '" disabled style="margin-top:8px;padding:9px 14px;min-height:36px;font-size:12px;background:#dcfce7;color:#166534;border:none;border-radius:6px;font-weight:600;">Resolved</button>';
                     } else {
-                        html += '<button id="reply-btn-' + m.id + '" onclick="openReply(\'' + m.from + '\', \'' + m.id + '\'); event.stopPropagation();" style="margin-top:8px;padding:4px 10px;font-size:11px;background:#e0e7ff;color:#4338ca;border:none;border-radius:4px;cursor:pointer;font-weight:600;">Reply</button>';
+                        html += '<button id="reply-btn-' + m.id + '" onclick="openReply(\'' + m.from + '\', \'' + m.id + '\'); event.stopPropagation();" style="margin-top:8px;padding:9px 14px;min-height:36px;font-size:12px;background:#e0e7ff;color:#4338ca;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Reply</button>';
                     }
                 }
                 

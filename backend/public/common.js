@@ -5,14 +5,24 @@ function showToast(message, type) {
     if (!container) {
         container = document.createElement('div');
         container.className = 'toast-box';
-        container.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;';
+        /* Anchored to the BOTTOM, not top:20px. At the top a toast is ~52px tall
+           (line-height 1.6 is inherited) and lands squarely on the "Back to Home"
+           link at z-index 9999, so the only navigation on the login pages was
+           covered and untappable for the full 4s. left+right instead of a bare
+           right:20px also lets the stack shrink to the screen. */
+        container.style.cssText = 'position:fixed;bottom:16px;left:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:flex-end;';
         document.body.appendChild(container);
     }
     var colors = { success: '#22c55e', warning: '#f59e0b', danger: '#ef4444', info: '#4f46e5' };
     var icons = { success: '✓', warning: '⚠', danger: '✕', info: 'ℹ' };
     var t = document.createElement('div');
-    t.style.cssText = 'min-width:300px;padding:14px 18px;background:#fff;border:1px solid #e2e8f0;border-left:4px solid '+(colors[type]||colors.info)+';border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.1);display:flex;align-items:center;gap:10px;font-family:Inter,sans-serif;font-size:14px;color:#1e293b;animation:toastSlide .3s ease;';
-    t.innerHTML = '<span style="color:'+(colors[type]||colors.info)+';font-size:16px;font-weight:700;">'+( icons[type]||icons.info)+'</span><span style="flex:1;">'+message+'</span><button onclick="this.parentElement.style.opacity=0;setTimeout(()=>this.parentElement.remove(),200)" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:16px;">✕</button>';
+    /* min-width:300px was the load-bearing bug: a border-box 300px floor forced
+       the toast to ~94% of a 360px screen. width:100% + max-width:400px keeps the
+       desktop size while letting it shrink on a phone. */
+    t.style.cssText = 'min-width:0;width:100%;max-width:400px;padding:14px 18px;background:#fff;border:1px solid #e2e8f0;border-left:4px solid '+(colors[type]||colors.info)+';border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.1);display:flex;align-items:center;gap:10px;font-family:Inter,sans-serif;font-size:14px;color:#1e293b;animation:toastSlide .3s ease;';
+    /* The dismiss glyph was a ~16x19px target (login.css's *{padding:0} strips the
+       UA button padding); negative margins keep the row height unchanged. */
+    t.innerHTML = '<span style="color:'+(colors[type]||colors.info)+';font-size:16px;font-weight:700;">'+( icons[type]||icons.info)+'</span><span style="flex:1;min-width:0;overflow-wrap:anywhere;">'+message+'</span><button onclick="this.parentElement.style.opacity=0;setTimeout(()=>this.parentElement.remove(),200)" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:16px;padding:8px;margin:-8px -6px -8px 0;line-height:1;flex-shrink:0;">✕</button>';
     container.appendChild(t);
     setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },200); }, 4000);
 }

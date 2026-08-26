@@ -17,9 +17,21 @@ body {
 a { text-decoration: none; color: #4f46e5; }
 a:hover { color: #4338ca; }
 
+/* --- Mobile guard-rails ---------------------------------------------------
+   overflow-x on html only — on body it makes body a scroll container. */
+html { max-width: 100%; overflow-x: hidden; }
+body { max-width: 100%; }
+h1, h2, h3, h4, p { overflow-wrap: break-word; }
+
 .login-page {
     width: 100%;
-    max-width: 440px;
+    /* Was 440px. With box-sizing:border-box and 20px padding that is a 400px
+       content box — but .login-card inside it asked for a flat 500px, so the
+       card stuck 100px out of its own parent on every screen. On a 375px phone
+       the content box is 335px, so 165px of the card (the right end of every
+       input) sat past the viewport edge. 540px - 40px padding = the same 500px
+       card on desktop, with nothing overflowing. */
+    max-width: 540px;
     padding: 20px;
 }
 .back-link {
@@ -40,7 +52,9 @@ a:hover { color: #4338ca; }
     border-radius: 16px;
     padding: 36px 32px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    width: 500px;
+    /* Was a hard 500px. .login-page caps the real width now, so this just
+       fills whatever the viewport allows. */
+    width: 100%;
 }
 .login-header {
     text-align: center;
@@ -99,10 +113,11 @@ a:hover { color: #4338ca; }
 }
 
 .password-wrap { position: relative; }
-.password-wrap .form-input { padding-right: 42px; }
+/* 48px, up from 42px, to clear the widened .toggle-pass below. */
+.password-wrap .form-input { padding-right: 48px; }
 .toggle-pass {
     position: absolute;
-    right: 10px;
+    right: 4px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -110,7 +125,16 @@ a:hover { color: #4338ca; }
     color: #94a3b8;
     cursor: pointer;
     font-size: 16px;
-    padding: 4px;
+    /* Was padding:4px, which — with *{padding:0} stripping the UA button padding —
+       made the whole target the ~20px glyph plus 4px, about 28x27px. The input is
+       ~44px tall (10+10 padding, 2 border, 22.4px line box), so a 40px square fits
+       inside it and clears the ~32px minimum on both axes. */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
 }
 .toggle-pass:hover { color: #64748b; }
 
@@ -225,6 +249,18 @@ a:hover { color: #4338ca; }
 }
 
 @media (max-width: 480px) {
+    /* body centres with align-items:center. When the card is taller than the
+       viewport — the admin portal with its demo box is, on a 375x667 phone —
+       centring overflows in BOTH directions and the top of the card becomes
+       unreachable, because you cannot scroll above the start of the page.
+       Anchoring to the top is the fix; the padding restores the breathing room. */
+    body { align-items: flex-start; }
+    .login-page { padding: 24px 16px 40px; }
     .login-card { padding: 28px 20px; }
+    .login-header { margin-bottom: 22px; }
+    .login-header h2 { font-size: 20px; }
     .form-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .demo-box { font-size: 12px; }
+    /* Long unbroken credentials in the demo box used to widen the card. */
+    .demo-box code { overflow-wrap: anywhere; }
 }

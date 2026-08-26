@@ -13,6 +13,17 @@ body {
 a { text-decoration: none; color: #4f46e5; }
 a:hover { color: #4338ca; }
 
+/* --- Mobile guard-rails ----------------------------------------------------
+   Anything wider than the viewport scrolled the whole page sideways, which
+   reads as "the text is overlapping" rather than as an overflow.
+   overflow-x goes on html ONLY: on body it forces overflow-y to compute to
+   auto, which makes body a scroll container, and a sticky child of a
+   non-scrolling scroll container never sticks — it would kill .navbar. */
+html { max-width: 100%; overflow-x: hidden; }
+body { max-width: 100%; }
+img, svg, video, canvas { max-width: 100%; }
+h1, h2, h3, h4, p { overflow-wrap: break-word; }
+
 /* --- Navbar --- */
 .navbar {
     display: flex;
@@ -36,9 +47,11 @@ a:hover { color: #4338ca; }
 .nav-brand span { color: #4f46e5; }
 .nav-logo {
     width: 500px;
+    /* 500px of logo in a 375px navbar pushed the login buttons off-screen. */
+    max-width: 55vw;
     height: 50px;
     background-image: url('logo.jpeg');
-    background-size: contain; 
+    background-size: contain;
     background-repeat: no-repeat;
     background-position: left center;
     animation: changeLogo 4s infinite;
@@ -85,7 +98,11 @@ a:hover { color: #4338ca; }
     text-align: center;
     padding: 200px 20px 60px;
     border-bottom: 1px solid #e2e8f0;
-    height: 700px;
+    /* Was height: 700px. A hard height on a text container clips its own
+       content the moment the heading wraps to more lines than it was
+       measured for; min-height keeps the tall desktop look and grows. */
+    min-height: 700px;
+    height: auto;
 }
 .hero-tag {
     display: inline-block;
@@ -210,7 +227,15 @@ a:hover { color: #4338ca; }
 .roles-section {
     padding: 150px 20px;
     text-align: center;
-    height: 750px;
+    /* Was height: 750px, and the contents never fitted it. 150px of padding top
+       and bottom already spends 300px; the heading pair spends ~135px; a
+       .role-card is ~320px tall. Side by side that is one 320px row and it
+       just squeaks in at ~755px. But .roles-grid collapses to ONE column at
+       768px, so the second card lands below the first and the section needs
+       ~1080px inside a 750px box — the overflow painted straight over
+       .features-section. This was the worst of the reported overlapping. */
+    min-height: 750px;
+    height: auto;
 }
 .roles-section h2 {
     font-size: 32px;
@@ -328,15 +353,41 @@ a:hover { color: #4338ca; }
 
 /* --- Responsive --- */
 @media (max-width: 768px) {
-    .navbar { padding: 12px 20px; }
+    .navbar { padding: 12px 20px; gap: 12px; }
+    .nav-brand { min-width: 0; }
+    .nav-logo { max-width: 60vw; height: 40px; }
+    .nav-links { gap: 12px; flex-shrink: 0; }
     .nav-links a:not(.nav-btn) { display: none; }
-    .hero { padding: 60px 20px 40px; }
+    /* .hero holds only a heading, one paragraph and two buttons, so the 200px
+       top padding and the 700px min-height were both decorative headroom. On a
+       phone that headroom is the entire first screenful before any text. */
+    .hero { padding: 60px 20px 40px; min-height: 0; }
     .hero h1 { font-size: 32px; }
     .hero p { font-size: 16px; }
     .hero-buttons { flex-direction: column; align-items: center; }
+    .hero-buttons .btn { width: 100%; max-width: 320px; }
+    /* Same reason as .hero: min-height released, padding brought back to
+       something a phone can afford. */
+    .roles-section { padding: 56px 20px; min-height: 0; }
+    .roles-section h2 { font-size: 26px; }
+    .roles-section p { margin-bottom: 32px; }
     .roles-grid { grid-template-columns: 1fr; max-width: 400px; }
-    .features-grid { grid-template-columns: 1fr 1fr; }
+    .role-card { padding: 28px 22px; }
+    .features-section { padding: 48px 20px 60px; }
+    .features-grid { grid-template-columns: 1fr 1fr; margin-top: 32px; }
 }
 @media (max-width: 480px) {
+    .navbar { padding: 10px 14px; }
+    .nav-logo { max-width: 62vw; height: 34px; }
+    .nav-btn { padding: 8px 14px; font-size: 13px; }
+    .hero { padding: 40px 16px 32px; }
+    .hero h1 { font-size: 26px; line-height: 1.3; }
+    .hero p { font-size: 15px; margin-bottom: 26px; }
+    .hero-tag { font-size: 12px; }
+    .roles-section { padding: 44px 16px; }
+    .roles-section h2 { font-size: 22px; }
+    .role-card { padding: 24px 18px; }
+    .features-section { padding: 40px 16px 52px; }
     .features-grid { grid-template-columns: 1fr; }
+    .footer { padding: 20px 16px; font-size: 13px; }
 }

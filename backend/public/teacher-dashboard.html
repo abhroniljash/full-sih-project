@@ -336,13 +336,19 @@
                 <div class="section" id="sec-report-class">
                     <div class="card">
                         <div class="card-head"><h3>Class Attendance Report</h3></div>
-                        <div class="card-body" style="padding:20px 24px;">
+                        <!-- Inline padding removed so the <=480px .card-body rule
+                             can apply; inline beats a media query, and those 24px
+                             of side padding were budget a 360px screen needs. -->
+                        <div class="card-body">
                             <div class="filter-row">
                                 <select class="form-input" id="rcSubject" style="min-width:220px;">
                                     <option value="">-- Select Subject --</option>
                                 </select>
                             </div>
-                            <div id="classReportBody">
+                            <!-- teacher-dashboard.js injects a bare 4-column table
+                                 here; without .table-wrap the Percentage column ran
+                                 off-screen with nothing to scroll. -->
+                            <div id="classReportBody" class="table-wrap">
                                 <div class="empty">
                                     <div class="empty-icon"><i class="fa-solid fa-square"></i></div>
                                     <h4>Select a Subject</h4>
@@ -357,14 +363,15 @@
                 <div class="section" id="sec-report-date">
                     <div class="card">
                         <div class="card-head"><h3>Date-wise Attendance Report</h3></div>
-                        <div class="card-body" style="padding:20px 24px;">
+                        <!-- Same as the class report above. -->
+                        <div class="card-body">
                             <div class="filter-row">
                                 <select class="form-input" id="rdSubject" style="min-width:220px;">
                                     <option value="">-- Select Subject --</option>
                                 </select>
                                 <input type="date" class="form-input" id="rdDate" style="min-width:180px;">
                             </div>
-                            <div id="dateReportBody">
+                            <div id="dateReportBody" class="table-wrap">
                                 <div class="empty">
                                     <div class="empty-icon"><i class="fa-solid fa-calendar"></i></div>
                                     <h4>Select Subject & Date</h4>
@@ -404,7 +411,10 @@
                                         <label class="form-label" style="font-size:12px;color:#64748b;">Room / Location</label>
                                         <input type="text" class="form-input" id="schedRoom" placeholder="e.g. Science Wing, Room 101" style="padding:8px 12px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
                                     </div>
-                                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+                                    <!-- .form-grid instead of an inline grid-template-columns: an inline
+                                         style beats every stylesheet rule, so the 768px collapse could
+                                         never reach this and Date/Time stayed 2-up on a phone. -->
+                                    <div class="form-grid" style="gap:12px;margin-bottom:16px;">
                                         <div class="form-group" style="margin:0;">
                                             <label class="form-label" style="font-size:12px;color:#64748b;">Date</label>
                                             <input type="date" class="form-input" id="schedDate" style="padding:8px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
@@ -431,7 +441,9 @@
                                     <h3 style="font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;margin:0;color:#1e293b;"><i class="fa-regular fa-user" style="color:#3b36d6;"></i> Update Profile</h3>
                                 </div>
                                 <div class="card-body" style="padding:0 20px 20px 20px;">
-                                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px;">
+                                    <!-- Same as the Date/Time pair above: class, not inline style, so
+                                         Display Name / Department can collapse to one column. -->
+                                    <div class="form-grid" style="gap:16px;margin-bottom:12px;">
                                         <div class="form-group" style="margin:0;">
                                             <label class="form-label" style="font-size:12px;color:#64748b;">Display Name</label>
                                             <input type="text" class="form-input" id="setName" placeholder="Sourish Sanyal" style="padding:8px 12px;font-size:14px;border-radius:6px;border:1px solid #e2e8f0;">
@@ -487,10 +499,17 @@
                                             <div style="font-weight:600;font-size:14px;color:#0f172a;">Dark Mode</div>
                                             <div style="font-size:11px;color:#64748b;">Switch between light and dark theme</div>
                                         </div>
-                                        <label style="position:relative;display:inline-block;width:44px;height:24px;cursor:pointer;">
+                                        <!-- 44x44 hit area, not 44x24: the input is
+                                             opacity:0;width:0;height:0 and both spans
+                                             are absolute, so this label WAS the whole
+                                             tap target at 24px tall. The track/dot are
+                                             inset by 10px so the switch still looks
+                                             44x24. Sizes are inline here, so no media
+                                             query could have fixed this. -->
+                                        <label style="position:relative;display:inline-block;width:44px;height:44px;cursor:pointer;">
                                             <input type="checkbox" id="darkModeToggle" style="opacity:0;width:0;height:0;">
-                                            <span id="toggleTrack" style="position:absolute;top:0;left:0;right:0;bottom:0;background:#cbd5e1;border-radius:24px;transition:0.3s;"></span>
-                                            <span id="toggleDot" style="position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:0.3s;box-shadow:0 1px 2px rgba(0,0,0,0.2);"></span>
+                                            <span id="toggleTrack" style="position:absolute;top:10px;left:0;right:0;bottom:10px;background:#cbd5e1;border-radius:24px;transition:0.3s;"></span>
+                                            <span id="toggleDot" style="position:absolute;top:13px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:0.3s;box-shadow:0 1px 2px rgba(0,0,0,0.2);"></span>
                                         </label>
                                     </div>
                                     <div style="padding:10px;border-radius:8px;background:#eff6ff;text-align:center;" id="themeStatusBox">

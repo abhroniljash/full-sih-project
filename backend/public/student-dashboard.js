@@ -104,7 +104,7 @@ function loadDashboard() {
                 var htmlPercentage = Math.max(10, t.percentage); // Minimum 10% height to be visible
                 var subjectAbbr = t.subject.substring(0, 3).toUpperCase();
                 
-                trackerHtml += '<div class="w-8 ' + bgClass + ' rounded-t-sm relative group transition-all hover:opacity-80 z-10" style="height:' + htmlPercentage + '%">' +
+                trackerHtml += '<div class="w-6 sm:w-8 ' + bgClass + ' rounded-t-sm relative group transition-all hover:opacity-80 z-10" style="height:' + htmlPercentage + '%">' +
                     '<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-inverse-surface text-inverse-on-surface font-label-sm text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">' + t.percentage + '% - ' + t.subject + '</div>' +
                     '<div class="absolute -bottom-6 left-1/2 -translate-x-1/2 font-label-sm text-[10px] text-on-surface-variant">' + subjectAbbr + '</div>' +
                 '</div>';
@@ -118,12 +118,12 @@ function loadDashboard() {
             tHtml = '<div style="text-align:center;padding:24px;">No attendance records found.</div>';
         } else {
             res.history.forEach(function(h) {
-                tHtml += '<div class="flex items-center justify-between py-3 border-b border-surface-variant/40">' +
-                    '<div>' +
-                    '<p class="font-body-md text-label-sm text-on-surface font-medium">' + h.subject + '</p>' +
+                tHtml += '<div class="flex items-center justify-between gap-3 py-3 border-b border-surface-variant/40">' +
+                    '<div class="min-w-0">' +
+                    '<p class="font-body-md text-label-sm text-on-surface font-medium break-words">' + h.subject + '</p>' +
                     '<p class="font-label-sm text-[12px] text-on-surface-variant mt-0.5">' + formatDateTime(h.timestamp) + '</p>' +
                     '</div>' +
-                    '<div class="px-2.5 py-1 bg-secondary-container/50 text-primary font-label-sm text-[11px] rounded-full font-semibold">Present</div>' +
+                    '<div class="shrink-0 px-2.5 py-1 bg-secondary-container/50 text-primary font-label-sm text-[11px] rounded-full font-semibold">Present</div>' +
                     '</div>';
             });
         }
@@ -196,6 +196,57 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+// --- Mobile navigation drawer ---------------------------------------------
+// Below `lg` the sidebar is translated off-canvas (-translate-x-full) so it stops
+// covering the page — a 256px fixed panel at z-50 was sitting on top of roughly
+// two thirds of a phone screen. This is the only thing that slides it back in.
+(function initSidebarDrawer() {
+    function ready(fn) {
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+        else fn();
+    }
+    ready(function () {
+        var sidebar = document.getElementById('studentSidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+        var toggle = document.getElementById('sidebarToggle');
+        var closeBtn = document.getElementById('sidebarClose');
+        if (!sidebar || !toggle) return;
+
+        function setOpen(open) {
+            // At lg and up `lg:translate-x-0` wins over this class, so leaving it
+            // applied on desktop is harmless.
+            sidebar.classList.toggle('-translate-x-full', !open);
+            if (overlay) overlay.classList.toggle('hidden', !open);
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            // Stop the page scrolling behind the drawer on touch devices.
+            document.body.style.overflow = open ? 'hidden' : '';
+        }
+        window.closeSidebar = function () { setOpen(false); };
+
+        toggle.addEventListener('click', function () {
+            setOpen(sidebar.classList.contains('-translate-x-full'));
+        });
+        if (closeBtn) closeBtn.addEventListener('click', function () { setOpen(false); });
+        if (overlay) overlay.addEventListener('click', function () { setOpen(false); });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') setOpen(false);
+        });
+        // Picking a section has to dismiss the drawer, or it covers what you picked.
+        Array.prototype.forEach.call(document.querySelectorAll('.nav-link'), function (l) {
+            l.addEventListener('click', function () { setOpen(false); });
+        });
+        // Crossing back to desktop width clears the mobile-only state, otherwise a
+        // stale body scroll lock survives once lg:translate-x-0 takes over.
+        window.addEventListener('resize', function () {
+            if (window.innerWidth >= 1024) {
+                if (overlay) overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        });
+    });
+})();
+
+
 // --- Schedule API ---
 // "Today's Schedule" must show ONLY the active date. The endpoint returns every
 // pending/started row across all dates, so rendering res.scheduled directly (as
@@ -262,12 +313,15 @@ function renderScheduleTimeline() {
     var nowMinutes = isToday ? (new Date().getHours() * 60 + new Date().getMinutes()) : -1;
     var nowMarkerPlaced = !isToday;
 
-    var html = '<div class="absolute left-[52px] top-4 bottom-8 w-0.5 bg-surface-variant"></div>';
+    // The rail is positioned against the 52px time gutter, which only exists from
+    // `sm` up — below that each row stacks its time above the card, so the rail
+    // would draw straight through the text.
+    var html = '<div class="hidden sm:block absolute left-[52px] top-4 bottom-8 w-0.5 bg-surface-variant"></div>';
 
     var nowMarker =
-        '<div class="flex items-center relative mb-8 -mt-4">' +
-        '<div class="w-12 pr-4 text-right font-label-sm text-[11px] text-error font-bold tracking-wider flex-shrink-0">NOW</div>' +
-        '<div class="w-3 h-3 rounded-full bg-error -ml-[7px] mr-6 z-20 ring-4 ring-surface-container-lowest"></div>' +
+        '<div class="flex items-center relative mb-6 sm:mb-8 -mt-2 sm:-mt-4">' +
+        '<div class="w-auto sm:w-12 pr-2 sm:pr-4 text-left sm:text-right font-label-sm text-[11px] text-error font-bold tracking-wider flex-shrink-0">NOW</div>' +
+        '<div class="hidden sm:block w-3 h-3 rounded-full bg-error sm:-ml-[7px] sm:mr-6 z-20 ring-4 ring-surface-container-lowest"></div>' +
         '<div class="flex-grow h-px border-t border-dashed border-error/50"></div>' +
         '</div>';
 
@@ -290,32 +344,35 @@ function renderScheduleTimeline() {
             ? '<span class="inline-flex items-center gap-1 px-2.5 py-1 bg-error-container text-on-error-container font-label-sm text-[11px] uppercase tracking-wider rounded-full"><span class="w-1.5 h-1.5 rounded-full bg-error animate-pulse"></span>Live</span>'
             : '';
 
+        // Below `sm` a row becomes a stack: time label, then card. The node dot is
+        // dropped with the rail, and the teacher/room pair stacks too — side by side
+        // those two were the main thing pushing text out of the card on a phone.
         html +=
-            '<div class="flex items-start mb-12 group relative' + dim + '">' +
-              '<div class="w-12 pt-5 text-right pr-4 font-label-sm text-label-sm text-on-surface-variant flex-shrink-0">' +
+            '<div class="flex flex-col sm:flex-row items-stretch sm:items-start mb-6 sm:mb-12 group relative' + dim + '">' +
+              '<div class="w-full sm:w-12 pt-0 sm:pt-5 text-left sm:text-right pr-0 sm:pr-4 mb-1 sm:mb-0 font-label-sm text-label-sm text-on-surface-variant flex-shrink-0">' +
                 (s.scheduledTime || '--:--') +
               '</div>' +
-              '<div class="w-3 h-3 rounded-full ' + nodeColor + ' mt-6 -ml-[7px] mr-6 z-10 ring-4 ring-surface-container-lowest transition-colors"></div>' +
-              '<div class="flex-grow bg-surface-container-low rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group-hover:-translate-y-1 relative overflow-hidden">' +
+              '<div class="hidden sm:block w-3 h-3 rounded-full ' + nodeColor + ' sm:mt-6 sm:-ml-[7px] sm:mr-6 z-10 ring-4 ring-surface-container-lowest transition-colors"></div>' +
+              '<div class="flex-grow min-w-0 bg-surface-container-low rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all group-hover:-translate-y-1 relative overflow-hidden">' +
                 '<div class="absolute left-0 top-0 bottom-0 w-1.5 ' + accent + '"></div>' +
-                '<div class="flex justify-between items-start mb-3 pl-2 gap-3">' +
-                  '<div>' +
-                    '<div class="flex items-center gap-2 mb-2">' +
+                '<div class="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-3 pl-2 gap-2 sm:gap-3">' +
+                  '<div class="min-w-0">' +
+                    '<div class="flex flex-wrap items-center gap-2 mb-2">' +
                       '<span class="inline-block px-2.5 py-1 bg-surface-variant text-on-surface-variant font-label-sm text-[11px] uppercase tracking-wider rounded">' + (s.className || 'Class') + '</span>' +
                       badge +
                     '</div>' +
-                    '<h4 class="font-headline-md text-headline-md text-on-surface">' + (s.subject || 'Untitled') + '</h4>' +
+                    '<h4 class="font-headline-md text-headline-md text-on-surface break-words">' + (s.subject || 'Untitled') + '</h4>' +
                   '</div>' +
-                  '<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface rounded-lg px-3 py-1 shadow-sm whitespace-nowrap">' + to12Hour(s.scheduledTime) + '</span>' +
+                  '<span class="self-start sm:self-auto shrink-0 font-label-sm text-label-sm text-on-surface-variant bg-surface rounded-lg px-3 py-1 shadow-sm whitespace-nowrap">' + to12Hour(s.scheduledTime) + '</span>' +
                 '</div>' +
-                '<div class="flex items-center gap-6 mt-4 pl-2">' +
-                  '<div class="flex items-center gap-2 text-on-surface-variant">' +
-                    '<span class="material-symbols-outlined text-[18px]">person</span>' +
-                    '<span class="font-body-md text-label-sm">' + (s.teacher || 'TBA') + '</span>' +
+                '<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 mt-4 pl-2">' +
+                  '<div class="flex items-center gap-2 text-on-surface-variant min-w-0">' +
+                    '<span class="material-symbols-outlined text-[18px] shrink-0">person</span>' +
+                    '<span class="font-body-md text-label-sm break-words">' + (s.teacher || 'TBA') + '</span>' +
                   '</div>' +
-                  '<div class="flex items-center gap-2 text-on-surface-variant">' +
-                    '<span class="material-symbols-outlined text-[18px]">location_on</span>' +
-                    '<span class="font-body-md text-label-sm">' +
+                  '<div class="flex items-center gap-2 text-on-surface-variant min-w-0">' +
+                    '<span class="material-symbols-outlined text-[18px] shrink-0">location_on</span>' +
+                    '<span class="font-body-md text-label-sm break-words">' +
                       escapeHtmlText(String(s.room || '').trim() || window.NEXT_LOCATION_FALLBACK || 'Main Building, Room 101') +
                     '</span>' +
                   '</div>' +
@@ -694,7 +751,7 @@ loadDashboard = function() {
                 trackerHtml += '<div class="absolute left-0 right-0 bottom-8 border-b border-dashed border-error/40 z-0"></div>';
                 res.tracker.forEach(function(t) {
                     var bgClass = t.percentage >= 75 ? 'bg-primary' : 'bg-error/80';
-                    trackerHtml += '<div class="w-8 ' + bgClass + ' rounded-t-sm relative group transition-all hover:opacity-80 z-10" style="height:' + Math.max(10, t.percentage) + '%"><div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-inverse-surface text-inverse-on-surface font-label-sm text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">' + t.percentage + '% - ' + t.subject + '</div><div class="absolute -bottom-6 left-1/2 -translate-x-1/2 font-label-sm text-[10px] text-on-surface-variant">' + t.subject.substring(0, 3).toUpperCase() + '</div></div>';
+                    trackerHtml += '<div class="w-6 sm:w-8 ' + bgClass + ' rounded-t-sm relative group transition-all hover:opacity-80 z-10" style="height:' + Math.max(10, t.percentage) + '%"><div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-inverse-surface text-inverse-on-surface font-label-sm text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">' + t.percentage + '% - ' + t.subject + '</div><div class="absolute -bottom-6 left-1/2 -translate-x-1/2 font-label-sm text-[10px] text-on-surface-variant">' + t.subject.substring(0, 3).toUpperCase() + '</div></div>';
                 });
                 trackerContainer.innerHTML = trackerHtml;
             }
@@ -705,7 +762,7 @@ loadDashboard = function() {
             tHtml = '<div style="text-align:center;padding:24px;">No attendance records found.</div>';
         } else {
             res.history.forEach(function(h) {
-                tHtml += '<div class="flex items-center justify-between py-3 border-b border-surface-variant/40"><div><p class="font-body-md text-label-sm text-on-surface font-medium">' + h.subject + '</p><p class="font-label-sm text-[12px] text-on-surface-variant mt-0.5">' + formatDateTime(h.timestamp) + '</p></div><div class="px-2.5 py-1 bg-secondary-container/50 text-primary font-label-sm text-[11px] rounded-full font-semibold">Present</div></div>';
+                tHtml += '<div class="flex items-center justify-between gap-3 py-3 border-b border-surface-variant/40"><div class="min-w-0"><p class="font-body-md text-label-sm text-on-surface font-medium break-words">' + h.subject + '</p><p class="font-label-sm text-[12px] text-on-surface-variant mt-0.5">' + formatDateTime(h.timestamp) + '</p></div><div class="shrink-0 px-2.5 py-1 bg-secondary-container/50 text-primary font-label-sm text-[11px] rounded-full font-semibold">Present</div></div>';
             });
         }
         document.getElementById('historyTable').innerHTML = tHtml;
@@ -770,17 +827,17 @@ function renderWeeklyCalendar() {
         
         if (isSelected) {
             html += `
-            <button onclick="selectScheduleDate('${dateStr}')" class="flex flex-col items-center justify-center p-4 rounded-2xl bg-primary text-on-primary shadow-lg transform -translate-y-1 scale-105 relative overflow-hidden">
+            <button onclick="selectScheduleDate('${dateStr}')" class="flex flex-col items-center justify-center min-w-0 px-1 py-3 sm:p-4 rounded-2xl bg-primary text-on-primary shadow-lg transform -translate-y-1 scale-105 relative overflow-hidden">
                 <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-                <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-primary-container relative z-10">${days[i]}</span>
-                <span class="font-headline-lg text-headline-lg mt-1 relative z-10">${dateNum}</span>
+                <span class="font-label-sm text-[10px] sm:text-label-sm uppercase tracking-normal sm:tracking-wider text-on-primary-container relative z-10">${days[i]}</span>
+                <span class="font-headline-lg text-[15px] sm:text-[20px] lg:text-headline-lg mt-1 relative z-10">${dateNum}</span>
                 <div class="w-1.5 h-1.5 rounded-full ${isToday ? 'bg-on-primary' : 'bg-transparent'} mt-2 relative z-10"></div>
             </button>`;
         } else {
             html += `
-            <button onclick="selectScheduleDate('${dateStr}')" class="flex flex-col items-center justify-center p-4 rounded-2xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-transform hover:-translate-y-1 shadow-sm group">
-                <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant group-hover:text-on-surface transition-colors">${days[i]}</span>
-                <span class="font-headline-lg text-headline-lg mt-1">${dateNum}</span>
+            <button onclick="selectScheduleDate('${dateStr}')" class="flex flex-col items-center justify-center min-w-0 px-1 py-3 sm:p-4 rounded-2xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-transform hover:-translate-y-1 shadow-sm group">
+                <span class="font-label-sm text-[10px] sm:text-label-sm uppercase tracking-normal sm:tracking-wider text-on-surface-variant group-hover:text-on-surface transition-colors">${days[i]}</span>
+                <span class="font-headline-lg text-[15px] sm:text-[20px] lg:text-headline-lg mt-1">${dateNum}</span>
                 <div class="w-1.5 h-1.5 rounded-full ${isToday ? 'bg-primary' : 'bg-outline-variant'} mt-2"></div>
             </button>`;
         }
@@ -873,14 +930,14 @@ function renderScheduleGlance() {
         dayScheduled.forEach((s, idx) => {
             const colorClass = idx % 2 === 0 ? 'bg-primary text-primary' : 'bg-secondary text-secondary';
             upHtml += `
-            <div class="flex gap-4 group">
-              <div class="flex flex-col items-center min-w-[60px]">
+            <div class="flex gap-3 sm:gap-4 group">
+              <div class="flex flex-col items-center w-14 shrink-0">
                 <span class="font-label-sm text-label-sm text-on-surface">${s.scheduledTime}</span>
               </div>
-              <div class="flex-1 bg-surface-container-low rounded-xl p-4 border border-transparent group-hover:border-outline-variant transition-colors relative overflow-hidden">
+              <div class="flex-1 min-w-0 bg-surface-container-low rounded-xl p-4 border border-transparent group-hover:border-outline-variant transition-colors relative overflow-hidden">
                 <div class="absolute left-0 top-0 bottom-0 w-1 ${colorClass.split(' ')[0]}"></div>
                 <p class="font-label-sm text-label-sm ${colorClass.split(' ')[1]} mb-1">${s.className}</p>
-                <p class="font-body-md text-body-md text-on-surface font-medium leading-tight">${s.subject}</p>
+                <p class="font-body-md text-body-md text-on-surface font-medium leading-tight break-words">${s.subject}</p>
               </div>
             </div>`;
         });
@@ -1276,19 +1333,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Active blue card
                 dotClass = attendedThisDay ? 'bg-white' : 'bg-transparent';
                 newHtml += `
-                <button class="date-card flex flex-col items-center justify-center p-4 rounded-2xl bg-primary text-on-primary shadow-lg transform -translate-y-1 scale-105 relative overflow-hidden" data-date="${dateStr}">
+                <button class="date-card flex flex-col items-center justify-center min-w-0 px-1 py-3 sm:p-4 rounded-2xl bg-primary text-on-primary shadow-lg transform -translate-y-1 scale-105 relative overflow-hidden" data-date="${dateStr}">
                     <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-                    <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-primary-container relative z-10">${daysShort[i]}</span>
-                    <span class="font-headline-lg text-headline-lg mt-1 relative z-10">${dateNum}</span>
+                    <span class="font-label-sm text-[10px] sm:text-label-sm uppercase tracking-normal sm:tracking-wider text-on-primary-container relative z-10">${daysShort[i]}</span>
+                    <span class="font-headline-lg text-[15px] sm:text-[20px] lg:text-headline-lg mt-1 relative z-10">${dateNum}</span>
                     <div class="w-1.5 h-1.5 rounded-full ${dotClass} mt-2 relative z-10" ${!attendedThisDay ? 'style="border: 1px solid rgba(255,255,255,0.5);"' : ''}></div>
                 </button>`;
             } else {
                 // Inactive white/surface card
                 dotClass = attendedThisDay ? 'bg-primary' : 'bg-outline-variant';
                 newHtml += `
-                <button class="date-card flex flex-col items-center justify-center p-4 rounded-2xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-transform hover:-translate-y-1 shadow-sm group" data-date="${dateStr}">
-                    <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant group-hover:text-on-surface transition-colors">${daysShort[i]}</span>
-                    <span class="font-headline-lg text-headline-lg mt-1">${dateNum}</span>
+                <button class="date-card flex flex-col items-center justify-center min-w-0 px-1 py-3 sm:p-4 rounded-2xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-transform hover:-translate-y-1 shadow-sm group" data-date="${dateStr}">
+                    <span class="font-label-sm text-[10px] sm:text-label-sm uppercase tracking-normal sm:tracking-wider text-on-surface-variant group-hover:text-on-surface transition-colors">${daysShort[i]}</span>
+                    <span class="font-headline-lg text-[15px] sm:text-[20px] lg:text-headline-lg mt-1">${dateNum}</span>
                     <div class="w-1.5 h-1.5 rounded-full ${dotClass} mt-2" ${!attendedThisDay ? 'style="background-color: transparent; border: 1px solid #cbd5e1;"' : ''}></div>
                 </button>`;
             }
@@ -1327,13 +1384,13 @@ document.addEventListener('DOMContentLoaded', function() {
             attend:  { box: 'bg-primary-container/20',   icon: 'bg-primary-container text-on-primary-container', sym: 'check_circle' },
         }[kind] || { box: 'bg-primary-container/20', icon: 'bg-primary-container text-on-primary-container', sym: 'check_circle' };
         return `
-                <div class="flex items-center gap-4 p-3 ${style.box} rounded-xl">
+                <div class="flex items-center gap-3 sm:gap-4 p-3 ${style.box} rounded-xl">
                     <div class="w-10 h-10 rounded-full ${style.icon} flex items-center justify-center shrink-0">
                         <span class="material-symbols-outlined text-[20px]">${style.sym}</span>
                     </div>
-                    <div>
-                        <p class="font-label-sm text-label-sm text-on-surface font-bold">${title}</p>
-                        <p class="font-body-md text-[13px] text-on-surface-variant">${subtitle}</p>
+                    <div class="min-w-0">
+                        <p class="font-label-sm text-label-sm text-on-surface font-bold break-words">${title}</p>
+                        <p class="font-body-md text-[13px] text-on-surface-variant break-words">${subtitle}</p>
                     </div>
                 </div>`;
     }
