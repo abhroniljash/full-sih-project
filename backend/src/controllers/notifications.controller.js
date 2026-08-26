@@ -3,7 +3,7 @@ const { asyncHandler } = require('../utils/helpers');
 
 const getNotifications = asyncHandler(async (req, res) => {
   const notifications = [];
-  
+
   const sessions = repo.all('sessions');
   const activeSessions = sessions.filter(s => s.status === 'active');
   if (activeSessions.length > 0) {

@@ -122,7 +122,7 @@ if(setDeptEl) setDeptEl.value = teacher.department || '';
 
 var currentLiveSessionId = null;
 var faceDetectInterval = null;
-var knownFaces = [];  
+var knownFaces = [];
 var markedThisSession = {};
 
 // --- Liveness Detection System ---
@@ -148,14 +148,14 @@ function resetLivenessUI() {
 function startLivenessSequence(roll, name) {
     if (livenessActive) return;
     livenessActive = true;
-    
+
     var overlay = document.getElementById('liveLivenessOverlay');
     var promptEl = document.getElementById('liveLivenessPrompt');
     var barEl = document.getElementById('liveLivenessBar');
     var vid = document.getElementById('camVideo');
-    
+
     if (overlay) overlay.style.display = 'flex';
-    
+
     // Pick 2-3 random challenges
     var numChallenges = Math.floor(Math.random() * 2) + 2; // 2 or 3
     var pool = [...livenessActionPool];
@@ -165,9 +165,9 @@ function startLivenessSequence(roll, name) {
         livenessChallenges.push(pool[idx]);
         pool.splice(idx, 1);
     }
-    
+
     currentLivenessIdx = 0;
-    
+
     function failLiveness() {
         if (promptEl) {
             promptEl.textContent = 'Liveness Failed. Try Again.';
@@ -178,7 +178,7 @@ function startLivenessSequence(roll, name) {
             resetLivenessUI();
         }, 1500);
     }
-    
+
     function nextChallenge() {
         if (currentLivenessIdx >= livenessChallenges.length) {
             // Success!
@@ -187,7 +187,7 @@ function startLivenessSequence(roll, name) {
                 promptEl.style.color = '#16a34a';
             }
             if (barEl) barEl.style.width = '100%';
-            
+
             API.post('/attendance/mark-manual', {
                 sessionId: currentLiveSessionId,
                 rollNumber: roll,
@@ -204,19 +204,19 @@ function startLivenessSequence(roll, name) {
             });
             return;
         }
-        
+
         var ch = livenessChallenges[currentLivenessIdx];
         if (promptEl) {
             promptEl.style.color = '#3525cd';
             promptEl.textContent = "Hi " + name.split(' ')[0] + "! Step " + (currentLivenessIdx + 1) + ": " + ch.text;
         }
-        
+
         var totalTimeMs = 5000;
         var timeLeftMs = totalTimeMs;
         var startTs = Date.now();
-        
+
         if (livenessCheckInterval) clearInterval(livenessCheckInterval);
-        
+
         livenessCheckInterval = setInterval(function() {
             var elapsed = Date.now() - startTs;
             timeLeftMs = totalTimeMs - elapsed;
@@ -225,9 +225,9 @@ function startLivenessSequence(roll, name) {
                 failLiveness();
                 return;
             }
-            
+
             if (barEl) barEl.style.width = (timeLeftMs / totalTimeMs * 100) + '%';
-            
+
             FaceEngine.detectWithLandmarks(vid).then(function(result) {
                 if (!result) return;
                 var passed = false;
@@ -236,7 +236,7 @@ function startLivenessSequence(roll, name) {
                 else if (ch.id === 'turn_left') passed = FaceEngine.detectHeadTurn(result.landmarks, 'left');
                 else if (ch.id === 'turn_right') passed = FaceEngine.detectHeadTurn(result.landmarks, 'right');
                 else if (ch.id === 'smile') passed = FaceEngine.detectSmile(result.landmarks);
-                
+
                 if (passed) {
                     clearInterval(livenessCheckInterval);
                     currentLivenessIdx++;
@@ -245,7 +245,7 @@ function startLivenessSequence(roll, name) {
             });
         }, 150);
     }
-    
+
     nextChallenge();
 }
 
@@ -572,7 +572,7 @@ if(startCamBtn) {
         var cp = document.getElementById('camPlaceholder');
         var cl = document.getElementById('camLoading');
         var vid = document.getElementById('camVideo');
-        
+
         // Hide placeholder and show loading instantly
         if (cp) cp.style.display = 'none';
         if (cl) {
@@ -589,10 +589,10 @@ if(startCamBtn) {
             if (knownFaces.length === 0) {
                 showToast('No students have enrolled Face ID yet', 'warning');
             }
-            
+
             var clSub = document.getElementById('camLoadingSubText');
             if (clSub) clSub.textContent = 'Requesting camera access...';
-            
+
             return navigator.mediaDevices.getUserMedia({ video: true });
         }).then(function(stream) {
             if (vid) {
@@ -624,10 +624,10 @@ if(startCamBtn) {
                         if (markedThisSession[roll]) return; // already marked
 
                         markedThisSession[roll] = true; // Set optimistic lock
-                        
+
                         // INSTEAD OF MARKING DIRECTLY, START LIVENESS
                         startLivenessSequence(roll, result.match.name);
-                        
+
                     }).catch(function() { /* ignore transient detection errors */ });
                 }, 1500);
             }
@@ -804,7 +804,7 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
     var circleFrame   = document.querySelector('.face-circle-frame');
     var submitBtn     = document.getElementById('submitRegBtn');
     var regStatus     = document.getElementById('regFaceStatus');
-    
+
     var stream = null;
     var livenessInterval = null;
     var capturedDescriptor = null;
@@ -825,12 +825,12 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
         if (video) video.srcObject = null;
         if (captureArea) captureArea.classList.remove('active');
         if (circleFrame) circleFrame.classList.remove('pulse');
-        
+
         faceHoldTime = 0;
         setProgress(0);
         if (instructionEl) { instructionEl.textContent = 'Position face in the circle'; instructionEl.classList.remove('success'); }
         if (overlayText) overlayText.style.display = 'none';
-        
+
         startBtn.style.display = 'inline-flex';
         startBtn.disabled = false;
         recaptureBtn.style.display = 'none';
@@ -853,10 +853,10 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
                     setProgress(0);
                     return;
                 }
-                
+
                 if (overlayText) overlayText.style.display = 'none';
                 faceHoldTime += 300; // loop runs every 300ms
-                
+
                 var fraction = Math.min(faceHoldTime / REQUIRED_HOLD_TIME, 1);
                 setProgress(fraction);
 
@@ -882,16 +882,16 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
                 cancelBtn.style.display = 'inline-flex';
                 return;
             }
-            
+
             var canvas = document.createElement('canvas');
             canvas.width = video.videoWidth; canvas.height = video.videoHeight;
             var ctx = canvas.getContext('2d');
             ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
+
             capturedDescriptor = Array.from(descriptor);
             capturedImageBase64 = canvas.toDataURL('image/jpeg', 0.8);
-            
+
             submitBtn.disabled = false;
             regStatus.innerHTML = '<span style="color:#22c55e"><i class="fa-solid fa-check-circle"></i> Face captured successfully. Ready to register.</span>';
             stopCamera();
@@ -1021,10 +1021,10 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
                    '</tr></thead><tbody>';
 
         students.forEach(function(s) {
-            var avatar = s.faceImage ? '<img src="'+s.faceImage+'" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">' 
+            var avatar = s.faceImage ? '<img src="'+s.faceImage+'" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">'
                                      : '<div style="width:40px;height:40px;border-radius:50%;background:#e2e8f0;display:flex;align-items:center;justify-content:center;color:#64748b;font-weight:bold;">'+s.name.charAt(0)+'</div>';
             var regNo = s.registrationNumber || 'N/A';
-            
+
             html += '<tr id="row-'+s.id+'">' +
                     '<td>' + avatar + '</td>' +
                     '<td class="val-name"><strong>' + s.name + '</strong></td>' +
@@ -1048,27 +1048,27 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
         var student = loadedStudents.find(function(s) { return s.id === id; });
         if (!student) return;
         var row = document.getElementById('row-'+id);
-        
+
         row.querySelector('.val-name').innerHTML = '<input type="text" class="form-input" style="padding:4px 8px;font-size:13px;" id="editName-'+id+'" value="'+student.name+'">';
         row.querySelector('.val-roll').innerHTML = '<input type="text" class="form-input" style="padding:4px 8px;font-size:13px;width:80px;" id="editRoll-'+id+'" value="'+student.rollNumber+'">';
         row.querySelector('.val-reg').innerHTML = '<input type="text" class="form-input" style="padding:4px 8px;font-size:13px;width:100px;" id="editReg-'+id+'" value="'+(student.registrationNumber||'')+'">';
         row.querySelector('.val-dept').innerHTML = '<input type="text" class="form-input" style="padding:4px 8px;font-size:13px;" id="editDept-'+id+'" value="'+student.department+'">';
         row.querySelector('.val-sem').innerHTML = '<input type="text" class="form-input" style="padding:4px 8px;font-size:13px;width:100px;" id="editSem-'+id+'" value="'+(student.semester||'')+'">';
-        
-        document.getElementById('acts-'+id).innerHTML = 
+
+        document.getElementById('acts-'+id).innerHTML =
             '<button class="btn btn-success btn-sm" onclick="saveStudent(\'' + id + '\')"><i class="fa-solid fa-check"></i> Save</button>' +
             '<button class="btn btn-sm" style="background:#e2e8f0;color:#475569;" onclick="loadStudentDetails()">Cancel</button>';
     };
 
     window.saveStudent = function(id) {
         if (!confirm('Are you sure you want to save these updated details?')) return;
-        
+
         var name = document.getElementById('editName-'+id).value.trim();
         var roll = document.getElementById('editRoll-'+id).value.trim();
         var reg = document.getElementById('editReg-'+id).value.trim();
         var dept = document.getElementById('editDept-'+id).value.trim();
         var sem = document.getElementById('editSem-'+id).value.trim();
-        
+
         API.put('/students/' + id, { name: name, rollNumber: roll, registrationNumber: reg, department: dept, semester: sem }, teacherToken)
             .then(function(res) {
                 showToast('Details updated successfully!', 'success');
@@ -1081,7 +1081,7 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
 
     window.deleteStudent = function(id) {
         if (!confirm('Are you sure you want to delete this student? This action cannot be undone.')) return;
-        
+
         API.del('/students/' + id, teacherToken)
             .then(function(res) {
                 showToast('Student deleted successfully', 'success');
@@ -1101,7 +1101,7 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
 
             var csvContent = "data:text/csv;charset=utf-8,";
             csvContent += "ID,Name,Roll Number,Registration Number,Department,Semester,Face Enrolled At\n";
-            
+
             loadedStudents.forEach(function(s) {
                 var row = [
                     s.id,
@@ -1231,9 +1231,9 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
         replyModal.style.display = 'none';
         document.getElementById('replyBody').value = '';
     });
-    
+
     var currentReplyMsgId = null;
-    
+
     document.getElementById('sendReply').addEventListener('click', function() {
         var body = document.getElementById('replyBody').value;
         if(!body.trim()) return showToast('Please type a reply', 'warning');
@@ -1249,7 +1249,7 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
             showToast('Reply sent successfully!', 'success');
             replyModal.style.display = 'none';
             document.getElementById('replyBody').value = '';
-            
+
             // Dynamically update the specific message card
             if (currentReplyMsgId) {
                 var card = document.getElementById('msg-card-' + currentReplyMsgId);
@@ -1304,7 +1304,7 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
                 var isUnread = !m.read;
                 var bg = isUnread ? '#f0f9ff' : '#fff';
                 var isResolved = (m.status === 'resolved');
-                
+
                 html += '<div id="msg-card-' + m.id + '" style="padding:12px 20px;border-bottom:1px solid #f1f5f9;background:' + bg + ';" onclick="markMsgRead(\'' + m.id + '\', this)">';
                 html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;">';
                 // Remove the unread dot indicator if read (or we just use the background)
@@ -1317,7 +1317,7 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
                 html += '</div>';
                 html += '<div style="font-weight:500;font-size:12px;color:#334155;margin-top:2px;">' + m.subject + '</div>';
                 html += '<div style="font-size:12px;color:#475569;margin-top:4px;line-height:1.4;">' + m.body + '</div>';
-                
+
                 if (m.fromRole === 'student') {
                     // padding:4px + font-size:11px gave a ~53x26px hit area, and
                     // because both are inline no media query could enlarge it.
@@ -1329,7 +1329,7 @@ document.querySelectorAll('.nav-group-label.collapsible').forEach(function(label
                         html += '<button id="reply-btn-' + m.id + '" onclick="openReply(\'' + m.from + '\', \'' + m.id + '\'); event.stopPropagation();" style="margin-top:8px;padding:9px 14px;min-height:36px;font-size:12px;background:#e0e7ff;color:#4338ca;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Reply</button>';
                     }
                 }
-                
+
                 html += '</div>';
             });
             var unread = msgs.filter(function(m){ return !m.read; }).length;

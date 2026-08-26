@@ -93,7 +93,7 @@ const myRecords = asyncHandler(async (req, res) => {
   }
   const roll = req.user.rollNumber;
   const records = repo.findMany('attendance', (a) => a.rollNumber === roll);
-  
+
   // Calculate total sessions per subject
   const sessions = repo.all('sessions') || [];
   const subjectTotals = {};

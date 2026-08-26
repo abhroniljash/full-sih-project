@@ -38,7 +38,7 @@ function switchSec(secId) {
         var elPgSub = document.getElementById('pgSub');
         if(elPgSub) elPgSub.textContent = titles[secId][1];
     }
-    
+
     if (secId === 'teachers-list') fetchTeachers();
     if (secId === 'activity-logs') fetchActivityLogs();
 }
@@ -81,7 +81,7 @@ var regForm = document.getElementById('teacherRegisterForm');
 if(regForm) {
     regForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        
+
         var tName = document.getElementById('tName').value.trim();
         var tEmail = document.getElementById('tEmail').value.trim();
         var tDept = document.getElementById('tDept').value.trim();
@@ -102,12 +102,12 @@ if(regForm) {
         btn.disabled = true;
         btn.textContent = 'Creating...';
 
-        API.post('/auth/teacher/register', { 
-            name: tName, 
-            email: tEmail, 
-            department: tDept, 
-            subject: tSubj, 
-            password: tPass 
+        API.post('/auth/teacher/register', {
+            name: tName,
+            email: tEmail,
+            department: tDept,
+            subject: tSubj,
+            password: tPass
         }, adminToken)
         .then(function(res) {
             showToast('Teacher account created successfully!', 'success');
@@ -129,7 +129,7 @@ var broadcastForm = document.getElementById('broadcastForm');
 if(broadcastForm) {
     broadcastForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        
+
         var bTitle = document.getElementById('bTitle').value.trim();
         var bMessage = document.getElementById('bMessage').value.trim();
         var bType = document.getElementById('bType').value;
@@ -143,10 +143,10 @@ if(broadcastForm) {
         btn.disabled = true;
         btn.textContent = 'Sending...';
 
-        API.post('/notifications/broadcast', { 
-            title: bTitle, 
-            message: bMessage, 
-            type: bType 
+        API.post('/notifications/broadcast', {
+            title: bTitle,
+            message: bMessage,
+            type: bType
         }, adminToken)
         .then(function(res) {
             showToast('Broadcast sent to all teachers!', 'success');
@@ -169,7 +169,7 @@ window.fetchTeachers = function() {
     var tbody = document.getElementById('teachersTbody');
     if (!tbody) return;
     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Loading teachers...</td></tr>';
-    
+
     API.get('/admin/teachers', adminToken)
     .then(function(res) {
         allTeachersData = res.teachers || [];
@@ -277,7 +277,7 @@ window.exportTeachersCSV = function() {
         var date = t.createdAt ? formatDate(t.createdAt) : '-';
         csv += `"${t.employeeId || '-'}","${t.name || '-'}","${t.email || '-'}","${t.department || '-'}","${t.subject || '-'}","${date}"\n`;
     });
-    
+
     var blob = new Blob([csv], { type: 'text/csv' });
     var url = window.URL.createObjectURL(blob);
     var a = document.createElement('a');
@@ -292,7 +292,7 @@ window.fetchActivityLogs = function() {
     var tbody = document.getElementById('activityTbody');
     if (!tbody) return;
     tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Loading activity...</td></tr>';
-    
+
     API.get('/admin/teacher-activity', adminToken)
     .then(function(res) {
         var logs = res.activity || [];
@@ -300,7 +300,7 @@ window.fetchActivityLogs = function() {
             tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No activity logged yet.</td></tr>';
             return;
         }
-        
+
         // Sort descending
         logs.sort(function(a, b) {
             return new Date(b.createdAt) - new Date(a.createdAt);

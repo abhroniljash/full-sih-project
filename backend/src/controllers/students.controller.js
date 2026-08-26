@@ -22,10 +22,10 @@ const deleteStudent = asyncHandler(async (req, res) => {
 const updateStudent = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { name, rollNumber, registrationNumber, department, semester } = req.body;
-  
+
   const student = repo.findOne('students', (s) => s.id === id);
   if (!student) throw new ApiError(404, 'Student not found');
-  
+
   const updated = await repo.update('students', (s) => s.id === id, {
     name: name || student.name,
     rollNumber: rollNumber || student.rollNumber,
@@ -33,7 +33,7 @@ const updateStudent = asyncHandler(async (req, res) => {
     department: department || student.department,
     semester: semester || student.semester,
   });
-  
+
   const { passwordHash, ...safeData } = updated;
   res.json({ success: true, student: safeData });
 });

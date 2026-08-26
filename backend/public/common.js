@@ -129,10 +129,10 @@ function copyText(text) {
 function confirmLogout(role) {
     var overlay = document.createElement('div');
     overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;';
-    
+
     var modal = document.createElement('div');
     modal.style.cssText = 'background:#fff;border-radius:12px;padding:24px;width:320px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);transform:scale(0.9);transition:transform 0.2s;';
-    
+
     modal.innerHTML = `
         <div style="font-size:40px;color:#ef4444;margin-bottom:12px;"><i class="fa-solid fa-right-from-bracket"></i></div>
         <h3 style="font-size:18px;color:#1e293b;margin-bottom:8px;">Are you sure?</h3>
@@ -142,22 +142,22 @@ function confirmLogout(role) {
             <button id="confirmLogout" style="padding:8px 16px;border-radius:8px;border:none;background:#ef4444;color:#fff;font-weight:600;cursor:pointer;">Yes, Logout</button>
         </div>
     `;
-    
+
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
-    
+
     // Animate in
     requestAnimationFrame(() => {
         overlay.style.opacity = '1';
         modal.style.transform = 'scale(1)';
     });
-    
+
     document.getElementById('cancelLogout').onclick = function() {
         overlay.style.opacity = '0';
         modal.style.transform = 'scale(0.9)';
         setTimeout(() => overlay.remove(), 200);
     };
-    
+
     document.getElementById('confirmLogout').onclick = function() {
         if (role === 'teacher') {
             API.post('/auth/teacher/logout', {}, Auth.getToken('teacher')).finally(() => {

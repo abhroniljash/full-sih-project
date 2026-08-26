@@ -31,14 +31,14 @@ async function init() {
     console.warn('[db] WARNING: ' + lastError);
     return;
   }
-  
+
   try {
     // Connect without destructive syncs (no drop, no force: true)
     await mongoose.connect(uri);
     isConnected = true;
     lastError = null;
     DbModel = mongoose.model('Database', DbSchema);
-    
+
     let doc = await DbModel.findOne();
     if (!doc) {
       console.log('[db] No existing data found in cloud, initializing defaults.');
@@ -46,7 +46,7 @@ async function init() {
     } else {
       console.log('[db] Existing data loaded from Cloud Database successfully.');
     }
-    
+
     // Load into memory for fast synchronous reads
     memoryDb = { ...DEFAULT_DATA, ...doc.data };
   } catch (err) {
@@ -69,7 +69,7 @@ let writeQueue = Promise.resolve();
 function write(data) {
   // 1. Update memory immediately so subsequent sync reads see the new data
   memoryDb = { ...data };
-  
+
   // 2. Persist to MongoDB asynchronously
   if (!isConnected || !DbModel) return Promise.resolve();
 
@@ -79,7 +79,7 @@ function write(data) {
   }).catch(err => {
     console.error('[db] Cloud write failed:', err);
   });
-  
+
   return writeQueue;
 }
 

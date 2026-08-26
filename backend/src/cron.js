@@ -5,43 +5,37 @@ const { generateSessionId } = require('./utils/helpers');
 // Run every minute
 cron.schedule('* * * * *', async () => {
   console.log('[CRON] Checking for scheduled sessions...');
-  
+
   // Get current time in IST (Asia/Kolkata)
-  const now = new Date();
-  const options = { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false };
-  const formatter = new Intl.DateTimeFormat('en-IN', options);
-  
-  // parts will look like: 22/08/2026, 19:05
-  // en-IN format usually puts DD/MM/YYYY. Let's parse it safely.
   const dateString = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
   const istDate = new Date(dateString);
-  
+
   const year = istDate.getFullYear();
   const month = String(istDate.getMonth() + 1).padStart(2, '0');
   const day = String(istDate.getDate()).padStart(2, '0');
   const currentDate = `${year}-${month}-${day}`;
-  
+
   const hours = String(istDate.getHours()).padStart(2, '0');
   const minutes = String(istDate.getMinutes()).padStart(2, '0');
   const currentTime = `${hours}:${minutes}`;
 
   // Find pending scheduled sessions that are due
-  const pendingSessions = repo.findMany('scheduled_sessions', s => 
-    s.status === 'pending' && 
+  const pendingSessions = repo.findMany('scheduled_sessions', s =>
+    s.status === 'pending' &&
     (s.scheduledDate < currentDate || (s.scheduledDate === currentDate && s.scheduledTime <= currentTime))
   );
 
   for (const s of pendingSessions) {
     try {
       console.log(`[CRON] Auto-starting session for ${s.subject} by ${s.teacher}`);
-      
+
       let sessionId = generateSessionId();
       while (repo.findOne('sessions', (x) => x.sessionId === sessionId)) {
         sessionId = generateSessionId();
       }
 
       // Automatically end any currently active session for this teacher
-      await repo.update('sessions', 
+      await repo.update('sessions',
         x => x.teacherId === s.teacherId && x.status === 'active',
         { status: 'ended' }
       );

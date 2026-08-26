@@ -64,7 +64,7 @@ h1, h2, h3, h4, p { overflow-wrap: break-word; }
     50% , 100%{
         background-image: url('logo2.jpeg');
     }
-    
+
 }
 
 .nav-links {
@@ -78,7 +78,7 @@ h1, h2, h3, h4, p { overflow-wrap: break-word; }
     color: #4f46e5#fff;
     transition: color 0.2s;
 }
-.nav-links a:hover { 
+.nav-links a:hover {
     color: #4f46e5;
     text-decoration: underline;
  }
@@ -121,7 +121,7 @@ h1, h2, h3, h4, p { overflow-wrap: break-word; }
     line-height: 1.35;
     margin-bottom: 16px;
     overflow: visible;
-    
+
 }
 .hero h1 span {
      background:hsl(189, 98%, 33%) 0%;
@@ -133,7 +133,7 @@ h1, h2, h3, h4, p { overflow-wrap: break-word; }
 .hero p {
     font-size: 18px;
     color: #100606;
-    
+
     max-width: 560px;
     margin: 0 auto 36px;
     line-height: 1.4;
@@ -163,9 +163,9 @@ h1, h2, h3, h4, p { overflow-wrap: break-word; }
     font-family: 'Noto Sans Devanagari', sans-serif;
     padding-top: 0.12em;
  }
-.lang-bn { 
+.lang-bn {
     font-family: 'Noto Sans Bengali', sans-serif;
-    padding-top: 0.12em; 
+    padding-top: 0.12em;
 }
 .lang-ta { font-family: 'Noto Sans Tamil', sans-serif; }
 .lang-te { font-family: 'Noto Sans Telugu', sans-serif; }

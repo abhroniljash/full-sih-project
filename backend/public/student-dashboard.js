@@ -103,7 +103,7 @@ function loadDashboard() {
                 var bgClass = isSafe ? 'bg-primary' : 'bg-error/80';
                 var htmlPercentage = Math.max(10, t.percentage); // Minimum 10% height to be visible
                 var subjectAbbr = t.subject.substring(0, 3).toUpperCase();
-                
+
                 trackerHtml += '<div class="w-6 sm:w-8 ' + bgClass + ' rounded-t-sm relative group transition-all hover:opacity-80 z-10" style="height:' + htmlPercentage + '%">' +
                     '<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-inverse-surface text-inverse-on-surface font-label-sm text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">' + t.percentage + '% - ' + t.subject + '</div>' +
                     '<div class="absolute -bottom-6 left-1/2 -translate-x-1/2 font-label-sm text-[10px] text-on-surface-variant">' + subjectAbbr + '</div>' +
@@ -148,14 +148,13 @@ document.addEventListener('DOMContentLoaded', function() {
     links.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
-            
+
             // Allow clicked link to work even if clicked on a child element
             const anchor = e.target.closest('a');
             if (!anchor) return;
             const target = anchor.getAttribute('data-target');
-            
+
             if (!target) return;
-            console.log("Switching to tab: " + target);
             if (target === 'communication') {
                 if (typeof window.fetchStudentConcerns === 'function') {
                     window.fetchStudentConcerns();
@@ -560,13 +559,11 @@ setTimeout(loadSchedule, 500); // load after a short delay
             const response = await fetch('/api/messages', {
                 headers: { 'Authorization': 'Bearer ' + studentToken }
             });
-            
+
             if (!response.ok) throw new Error('API response was not ok');
-            
+
             const rawData = await response.json();
             const data = rawData.messages || [];
-
-            console.log("Concerns fetched:", data); // Debugging line
 
             // Handle Empty State
             if (!data || data.length === 0) {
@@ -580,7 +577,7 @@ setTimeout(loadSchedule, 500); // load after a short delay
                 const isResolved = item.status && item.status.toLowerCase() === 'resolved';
                 const badgeClass = isResolved ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700';
                 const badgeText = isResolved ? 'Issue Resolved' : 'Pending';
-                
+
                 htmlString += `
                 <div class="p-3 border rounded-lg shadow-sm bg-white mb-3">
                     <div class="flex justify-between items-center mb-2">
@@ -598,7 +595,7 @@ setTimeout(loadSchedule, 500); // load after a short delay
             container.innerHTML = '<p class="text-sm text-red-500 text-center py-4">Failed to load requests. Please try again.</p>';
         }
     };
-    
+
     // Call initially
     window.fetchStudentConcerns();
 })();
@@ -701,7 +698,7 @@ function updateExtendedDashboard(res) {
             const statusBg = isSafe ? 'bg-primary/10 text-primary' : 'bg-error/10 text-error';
             const statusText = isSafe ? 'ON TRACK' : 'BELOW THRESHOLD';
             const recoText = isSafe ? (t.classesNeededFor75 === 0 ? 'Maintain current pace' : 'Safe margin') : ('Need to attend next ' + t.classesNeededFor75 + ' classes');
-            
+
             rowsHtml += `
             <tr class="hover:bg-surface-low transition-colors">
                 <td class="px-6 py-4">
@@ -732,7 +729,6 @@ function updateExtendedDashboard(res) {
 }
 
 // Hook into the existing loadDashboard promise
-const originalLoadDashboard = loadDashboard;
 loadDashboard = function() {
     API.get('/dashboard/student', studentToken).then(function(res) {
         // Run old code manually here to ensure we don't break it
@@ -807,16 +803,16 @@ let studentLocationMarker = null;
 function renderWeeklyCalendar() {
     const container = document.getElementById('weeklyCalendarContainer');
     if (!container) return;
-    
+
     // Get current week Monday to Sunday
     const curr = new Date();
     const day = curr.getDay(); // 0 = Sun, 1 = Mon
-    const diff = curr.getDate() - day + (day === 0 ? -6 : 1); 
+    const diff = curr.getDate() - day + (day === 0 ? -6 : 1);
     const monday = new Date(curr.setDate(diff));
-    
+
     let html = '';
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    
+
     for (let i = 0; i < 7; i++) {
         const d = new Date(monday);
         d.setDate(monday.getDate() + i);
@@ -824,7 +820,7 @@ function renderWeeklyCalendar() {
         const dateNum = d.getDate();
         const isSelected = dateStr === window.selectedScheduleDate;
         const isToday = dateStr === localDateStr();
-        
+
         if (isSelected) {
             html += `
             <button onclick="selectScheduleDate('${dateStr}')" class="flex flex-col items-center justify-center min-w-0 px-1 py-3 sm:p-4 rounded-2xl bg-primary text-on-primary shadow-lg transform -translate-y-1 scale-105 relative overflow-hidden">
@@ -898,7 +894,7 @@ function renderScheduleGlance() {
     const summaryPill = document.getElementById('scheduleSummaryPill');
     const attCount = document.getElementById('todayAttendedCount');
     const skipCount = document.getElementById('todaySkippedCount');
-    
+
     // Filter by selected date using normalised local date keys, so an ISO/UTC
     // attendance timestamp still matches the bare 'YYYY-MM-DD' schedule date.
     const selectedKey = toLocalDateKey(window.selectedScheduleDate);
@@ -942,7 +938,7 @@ function renderScheduleGlance() {
             </div>`;
         });
     }
-    
+
     // Render Glance (Attended + Pending + Absences). Attended rows are included so
     // the list can never contradict the "Attended" counter above it.
     if (useFallback) {
@@ -997,11 +993,11 @@ function loadUpcomingDashboard() {
     ]).then(responses => {
         const schedRes = responses[0];
         const dashRes = responses[1];
-        
+
         window.cachedSchedule = schedRes.scheduled || [];
         window.cachedAbsences = dashRes.absences || [];
         window.cachedHistory = dashRes.history || [];
-        
+
         renderWeeklyCalendar();
         renderScheduleGlance();
         if (typeof renderScheduleTimeline === 'function') renderScheduleTimeline();
@@ -1213,7 +1209,7 @@ setTimeout(initStudentMap, 1500);
 // USER REQUESTED STRICT LOGIC V3 (PREDICTABLE STATE-DRIVEN)
 // ==========================================
 document.addEventListener('DOMContentLoaded', function() {
-    
+
     // --- 1. STATE MANAGEMENT ---
     let calendarState = {
         weekOffset: 0,
@@ -1225,7 +1221,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- 2. DOM ELEMENTS ---
     const calendarContainer = document.querySelector('.grid.grid-cols-7.gap-card-gap');
     const calendarSection = document.querySelector('.mb-section-margin.w-full');
-    
+
     let leftArrow, rightArrow, monthHeader, weekSubheader;
     if (calendarSection) {
         const buttons = calendarSection.querySelectorAll('button');
@@ -1258,7 +1254,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function getMonday(d) {
         const date = new Date(d);
         const day = date.getDay();
-        const diff = date.getDate() - day + (day === 0 ? -6 : 1); 
+        const diff = date.getDate() - day + (day === 0 ? -6 : 1);
         return new Date(date.setDate(diff));
     }
 
@@ -1280,14 +1276,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- 4. RENDER CALENDAR CORE LOGIC ---
     function renderCalendar() {
         if (!calendarContainer) return;
-        
+
         // Wipe container strictly to kill old listeners and DOM
         calendarContainer.innerHTML = '';
 
         const today = new Date();
         const startOfWeek = getMonday(today);
         startOfWeek.setDate(startOfWeek.getDate() + (calendarState.weekOffset * 7));
-        
+
         // Update Headers dynamically
         if (monthHeader) {
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -1319,16 +1315,16 @@ document.addEventListener('DOMContentLoaded', function() {
         // Generate 7 days HTML
         const daysShort = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
         let newHtml = '';
-        
+
         weekDates.forEach((dateStr, i) => {
             // Fix timezone parsing shift by extracting date directly from the local string (YYYY-MM-DD)
             const dateNum = parseInt(dateStr.split('-')[2], 10);
             const isActive = (dateStr === calendarState.selectedDate);
-            
+
             // Check dynamic dot
             const attendedThisDay = calendarState.attendanceHistory.some(a => a.timestamp && toLocalDateKey(a.timestamp) === dateStr);
             let dotClass = '';
-            
+
             if (isActive) {
                 // Active blue card
                 dotClass = attendedThisDay ? 'bg-white' : 'bg-transparent';

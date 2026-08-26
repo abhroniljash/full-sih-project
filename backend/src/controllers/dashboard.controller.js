@@ -31,7 +31,7 @@ const studentDashboard = asyncHandler(async (req, res) => {
   // Only count subjects the student has actually attended at least once;
   // if they haven't attended anything yet, fall back to showing everything
   // so the dashboard isn't completely empty (same bug-fix note as the frontend).
-const enrolledSubjects = {};
+  const enrolledSubjects = {};
   const enrolledSubjectTeacherIds = {};
   myAttendance.forEach((a) => {
     const session = allSessions.find((s) => s.sessionId === a.sessionId);

@@ -133,12 +133,10 @@ var FaceEngine = (function () {
         var p = landmarks.positions;
         var leftCorner = p[48];
         var rightCorner = p[54];
-        var mouthCenter = p[51];
-        // If corners are higher (smaller Y) than mouth center, it's a smile. 
         // Also check width ratio to ensure it's stretching.
         var width = landmarkDist(leftCorner, rightCorner);
         var jawWidth = landmarkDist(p[3], p[13]);
-        return (width / jawWidth) > 0.38; 
+        return (width / jawWidth) > 0.38;
     }
 
     // Full detection pass: returns { landmarks, descriptor? } or null

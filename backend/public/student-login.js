@@ -35,7 +35,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         })
         .catch(function(loginErr) {
             showToast(loginErr.message || 'Invalid credentials or account not found. Please contact your teacher to register.', 'danger');
-            btn.classList.remove('loading'); 
+            btn.classList.remove('loading');
             btn.disabled = false;
         });
 });

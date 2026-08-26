@@ -40,7 +40,7 @@ app.get('/api/db-status', (req, res) => {
   const uri = process.env.DATABASE_URL || process.env.MONGO_URI;
   const mongooseState = require('mongoose').connection.readyState;
   const stateMeaning = ['Disconnected', 'Connected', 'Connecting', 'Disconnecting'][mongooseState] || 'Unknown';
-  
+
   // Try to grab the exact error from our cloudDb wrapper
   let exactError = null;
   try {

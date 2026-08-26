@@ -4,14 +4,14 @@ const { asyncHandler, ApiError } = require('../utils/helpers');
 const getMessages = asyncHandler(async (req, res) => {
   const allMessages = repo.all('messages') || [];
   // For teachers, they might match on ID or username. We include messages to them.
-  let messages = allMessages.filter(m => 
-    m.toId === req.user.id || 
-    m.to === req.user.username || 
+  let messages = allMessages.filter(m =>
+    m.toId === req.user.id ||
+    m.to === req.user.username ||
     (req.user.role === 'teacher' && m.to === 'teacher' && !m.toId) ||
-    m.from === req.user.username || 
+    m.from === req.user.username ||
     m.from === req.user.id
   );;
-  
+
   // Populate real name
   messages = messages.map(m => {
     let realName = m.fromName;
@@ -61,7 +61,7 @@ const markRead = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const message = repo.findOne('messages', m => m.id === id);
   if (!message) throw new ApiError(404, 'Message not found');
-  
+
   const updated = await repo.update('messages', m => m.id === id, { read: true });
   res.json({ success: true, message: updated });
 });

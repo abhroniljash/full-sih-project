@@ -125,7 +125,7 @@ const teacherLogin = asyncHandler(async (req, res) => {
   if (!ok) throw new ApiError(401, 'Invalid email or password');
 
   const token = signToken({ id: teacher.id, role: 'teacher', email: teacher.email });
-  
+
   await repo.insert('teacher_activity', {
     teacherId: teacher.id,
     teacherName: teacher.name,
@@ -146,7 +146,7 @@ const adminLogin = asyncHandler(async (req, res) => {
   if (!username || !password) throw new ApiError(400, 'username and password required');
 
   let admin = repo.findOne('admins', (a) => a.username === username);
-  
+
   // Seed default admin if no admins exist
   if (!admin && repo.all('admins').length === 0 && username === 'admin') {
     const passwordHash = await bcrypt.hash(password, 10);
@@ -158,7 +158,7 @@ const adminLogin = asyncHandler(async (req, res) => {
   }
 
   if (!admin) throw new ApiError(401, 'Invalid credentials');
-  
+
   const ok = await bcrypt.compare(password, admin.passwordHash);
   if (!ok) throw new ApiError(401, 'Invalid credentials');
 
